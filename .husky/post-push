@@ -10,18 +10,16 @@ SUBMODULE_PATH="content/private"
 
 # Check if submodule reference has changed
 if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
-  # Check if the submodule is in a different state than what's committed
-  if ! git diff --quiet --cached -- "$SUBMODULE_PATH" 2>/dev/null && \
-     ! git diff --quiet -- "$SUBMODULE_PATH" 2>/dev/null; then
+  # Check if the submodule reference differs from what's committed
+  if ! git diff --quiet -- "$SUBMODULE_PATH" 2>/dev/null; then
+    
+    echo ""
+    echo "📌 Updating submodule reference after push..."
     
     # Submodule reference differs from what's committed
     git add "$SUBMODULE_PATH" 2>/dev/null
     
-    if ! git diff --quiet --cached -- "$SUBMODULE_PATH" 2>/dev/null; then
-      echo ""
-      echo "📌 Updating submodule reference after push..."
-      
-      git commit -m "Update private submodule reference" 2>/dev/null && \
+    if git commit -m "Update private submodule reference" 2>/dev/null; then
       git push 2>/dev/null && \
       echo "✓ Submodule reference updated and pushed"
     fi
