@@ -1,6 +1,11 @@
 #!/bin/bash
 # Post-commit hook: Automatically commit changes in private submodule
 
+# Unset git environment variables that might interfere with submodule operations
+unset GIT_DIR
+unset GIT_WORK_TREE
+unset GIT_INDEX_FILE
+
 source "$(dirname "$0")/submodule-helpers.sh"
 
 # Check if there are any changes in the submodule
