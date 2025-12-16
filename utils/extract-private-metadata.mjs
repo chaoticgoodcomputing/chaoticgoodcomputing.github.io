@@ -11,6 +11,47 @@ const PUBLIC_DIR = "content/public"
 const PRIVATE_BODY_FILE = "content/public/assets/PRIVATE_FILE_BODY.md"
 
 /**
+ * Extract wikilinks and markdown links from content
+ * @param {string} content - The markdown content to extract links from
+ * @returns {string[]} Array of formatted link strings
+ */
+function extractLinks(content) {
+  const links = []
+  const seen = new Set()
+  
+  // Extract wikilinks: [[link]] or [[link|display text]]
+  const wikilinkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g
+  let match
+  
+  while ((match = wikilinkRegex.exec(content)) !== null) {
+    const linkTarget = match[1]
+    const displayText = match[2] || linkTarget
+    const linkStr = `[${displayText}](${linkTarget})`
+    
+    if (!seen.has(linkStr)) {
+      links.push(linkStr)
+      seen.add(linkStr)
+    }
+  }
+  
+  // Extract markdown links: [text](url)
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
+  
+  while ((match = markdownLinkRegex.exec(content)) !== null) {
+    const displayText = match[1]
+    const url = match[2]
+    const linkStr = `[${displayText}](${url})`
+    
+    if (!seen.has(linkStr)) {
+      links.push(linkStr)
+      seen.add(linkStr)
+    }
+  }
+  
+  return links
+}
+
+/**
  * Extract frontmatter from private markdown files and create cleaned versions
  * in the public directory, preserving the directory structure.
  * 
@@ -18,7 +59,7 @@ const PRIVATE_BODY_FILE = "content/public/assets/PRIVATE_FILE_BODY.md"
  */
 async function extractPrivateMetadata() {
   console.log("🔍 Scanning for private markdown files...")
-  
+
   // Read the private file body template
   let privateBodyContent = "*This is a private note. Only metadata is publicly available.*\n"
   try {
@@ -26,38 +67,41 @@ async function extractPrivateMetadata() {
   } catch (error) {
     console.log("⚠️  Could not read PRIVATE_FILE_BODY.md, using default message")
   }
-  
+
   // Find all markdown files in the private directory
   const privateFiles = await globby([`${PRIVATE_DIR}/**/*.md`], {
     ignore: ["**/node_modules/**", "**/.git/**"],
   })
-  
+
   if (privateFiles.length === 0) {
     console.log("ℹ️  No private markdown files found.")
     return
   }
-  
+
   console.log(`📄 Found ${privateFiles.length} private file(s)`)
-  
+
   let extracted = 0
   let skipped = 0
   let errors = 0
-  
+
   for (const privateFilePath of privateFiles) {
     try {
       // Calculate the relative path from private dir
       const relativePath = relative(PRIVATE_DIR, privateFilePath)
       const publicFilePath = join(PUBLIC_DIR, relativePath)
-      
+
       // Read the private file
       const content = await readFile(privateFilePath, "utf-8")
+
+      // Parse frontmatter and content
+      const { data: frontmatter, content: bodyContent } = matter(content)
       
-      // Parse frontmatter
-      const { data: frontmatter } = matter(content)
-      
+      // Extract links from the original content
+      const links = extractLinks(bodyContent)
+
       // Create a markdown file with only frontmatter
       let cleanedContent = ""
-      
+
       if (Object.keys(frontmatter).length > 0) {
         // Convert frontmatter back to YAML
         cleanedContent = "---\n"
@@ -75,32 +119,41 @@ async function extractPrivateMetadata() {
         }
         cleanedContent += "---\n\n"
       }
-      
+
       cleanedContent += privateBodyContent
       
+      // Add links section if there are any links
+      if (links.length > 0) {
+        cleanedContent += "\n\n## Links\n\n"
+        cleanedContent += "This note originally contained the following links:\n\n"
+        for (const link of links) {
+          cleanedContent += `- ${link}\n`
+        }
+      }
+
       // Rewrite links from private/ to public/ paths
       cleanedContent = cleanedContent.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
-      
+
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })
-      
+
       // Write the cleaned file
       await writeFile(publicFilePath, cleanedContent, "utf-8")
-      
+
       console.log(`✅ Extracted ${relativePath}`)
       extracted++
-      
+
     } catch (error) {
       console.error(`❌ Error processing ${privateFilePath}:`, error instanceof Error ? error.message : error)
       errors++
     }
   }
-  
+
   console.log(`\n📊 Summary:`)
   console.log(`   ✅ Extracted: ${extracted}`)
   console.log(`   ⏭️  Skipped: ${skipped}`)
   console.log(`   ❌ Errors: ${errors}`)
-  
+
   // Fix links in all public markdown files
   await fixLinksInPublicFiles()
 }
@@ -110,21 +163,21 @@ async function extractPrivateMetadata() {
  */
 async function fixLinksInPublicFiles() {
   console.log(`\n🔗 Fixing links in public markdown files...`)
-  
+
   const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
     ignore: ["**/node_modules/**", "**/.git/**"],
   })
-  
+
   let fixed = 0
-  
+
   for (const publicFilePath of publicFiles) {
     try {
       let content = await readFile(publicFilePath, "utf-8")
       const originalContent = content
-      
+
       // Replace private/ links with public/ links
       content = content.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
-      
+
       // Only write if changes were made
       if (content !== originalContent) {
         await writeFile(publicFilePath, content, "utf-8")
@@ -136,7 +189,7 @@ async function fixLinksInPublicFiles() {
       console.error(`  ❌ Error fixing links in ${publicFilePath}:`, error instanceof Error ? error.message : error)
     }
   }
-  
+
   if (fixed > 0) {
     console.log(`\n🔗 Fixed links in ${fixed} file(s)`)
   } else {
