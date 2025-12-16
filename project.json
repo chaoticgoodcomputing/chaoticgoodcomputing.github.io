@@ -24,7 +24,7 @@
         ],
         "parallel": false
       },
-      "dependsOn": ["_sync-submodule"]
+      "dependsOn": [ "_sync-submodule" ]
     },
     "serve": {
       "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
@@ -43,7 +43,7 @@
       },
       "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": ["_extract-metadata"]
+      "dependsOn": [ "_extract-metadata" ]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",
@@ -62,7 +62,7 @@
       },
       "defaultConfiguration": "site",
       "outputs": [ "{projectRoot}/public" ],
-      "dependsOn": ["_extract-metadata"]
+      "dependsOn": [ "_extract-metadata" ]
     },
     "check": {
       "//": "Type checking and formatting validation",
