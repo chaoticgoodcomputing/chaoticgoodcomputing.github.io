@@ -8,6 +8,7 @@ import { existsSync } from "fs"
 
 const PRIVATE_DIR = "content/private"
 const PUBLIC_DIR = "content/public"
+const PRIVATE_BODY_FILE = "content/public/assets/PRIVATE_FILE_BODY.md"
 
 /**
  * Extract frontmatter from private markdown files and create cleaned versions
@@ -17,6 +18,14 @@ const PUBLIC_DIR = "content/public"
  */
 async function extractPrivateMetadata() {
   console.log("🔍 Scanning for private markdown files...")
+  
+  // Read the private file body template
+  let privateBodyContent = "*This is a private note. Only metadata is publicly available.*\n"
+  try {
+    privateBodyContent = await readFile(PRIVATE_BODY_FILE, "utf-8")
+  } catch (error) {
+    console.log("⚠️  Could not read PRIVATE_FILE_BODY.md, using default message")
+  }
   
   // Find all markdown files in the private directory
   const privateFiles = await globby([`${PRIVATE_DIR}/**/*.md`], {
@@ -74,7 +83,7 @@ async function extractPrivateMetadata() {
         cleanedContent += "---\n\n"
       }
       
-      cleanedContent += `*This is a private note. Only metadata is publicly available.*\n`
+      cleanedContent += privateBodyContent
       
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })
