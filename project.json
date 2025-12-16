@@ -1,0 +1,69 @@
+{
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "name": "quartz",
+  "root": ".",
+  "sourceRoot": "quartz",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d {args.dir}" ],
+        "parallel": false
+      },
+      "configurations": {
+        "docs": {
+          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d docs/reference/external/quartz/repo/docs" ]
+        },
+        "site": {
+          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d content" ]
+        }
+      },
+      "defaultConfiguration": "site",
+      "continuous": true
+    },
+    "build": {
+      "//": "Production build to public/. Use build:docs or build:site for presets.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [ "./quartz/bootstrap-cli.mjs build -d {args.dir}" ],
+        "parallel": false
+      },
+      "configurations": {
+        "docs": {
+          "commands": [ "./quartz/bootstrap-cli.mjs build -d docs/reference/external/quartz/repo/docs" ]
+        },
+        "site": {
+          "commands": [ "./quartz/bootstrap-cli.mjs build -d content" ]
+        }
+      },
+      "defaultConfiguration": "site",
+      "outputs": [ "{projectRoot}/public" ]
+    },
+    "check": {
+      "//": "Type checking and formatting validation",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [ "tsc --noEmit", "npx prettier . --check" ],
+        "parallel": false
+      }
+    },
+    "format": {
+      "//": "Auto-format codebase with Prettier",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [ "npx prettier . --write" ],
+        "parallel": false
+      }
+    },
+    "test": {
+      "//": "Run tests via tsx",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [ "tsx --test" ],
+        "parallel": false
+      }
+    }
+  }
+}
