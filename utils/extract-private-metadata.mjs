@@ -78,6 +78,9 @@ async function extractPrivateMetadata() {
       
       cleanedContent += privateBodyContent
       
+      // Rewrite links from private/ to public/ paths
+      cleanedContent = cleanedContent.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
+      
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })
       
@@ -97,6 +100,48 @@ async function extractPrivateMetadata() {
   console.log(`   ✅ Extracted: ${extracted}`)
   console.log(`   ⏭️  Skipped: ${skipped}`)
   console.log(`   ❌ Errors: ${errors}`)
+  
+  // Fix links in all public markdown files
+  await fixLinksInPublicFiles()
+}
+
+/**
+ * Fix links in public markdown files that point to private/ paths
+ */
+async function fixLinksInPublicFiles() {
+  console.log(`\n🔗 Fixing links in public markdown files...`)
+  
+  const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
+    ignore: ["**/node_modules/**", "**/.git/**"],
+  })
+  
+  let fixed = 0
+  
+  for (const publicFilePath of publicFiles) {
+    try {
+      let content = await readFile(publicFilePath, "utf-8")
+      const originalContent = content
+      
+      // Replace private/ links with public/ links
+      content = content.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
+      
+      // Only write if changes were made
+      if (content !== originalContent) {
+        await writeFile(publicFilePath, content, "utf-8")
+        const relativePath = relative(PUBLIC_DIR, publicFilePath)
+        console.log(`  ✅ Fixed links in ${relativePath}`)
+        fixed++
+      }
+    } catch (error) {
+      console.error(`  ❌ Error fixing links in ${publicFilePath}:`, error instanceof Error ? error.message : error)
+    }
+  }
+  
+  if (fixed > 0) {
+    console.log(`\n🔗 Fixed links in ${fixed} file(s)`)
+  } else {
+    console.log(`\n🔗 No link fixes needed`)
+  }
 }
 
 // Run the extraction
