@@ -10,6 +10,7 @@ source "$(dirname "$0")/submodule-helpers.sh"
 
 SUBMODULE_PATH="content/private"
 PUBLIC_DIR="content/public"
+SYNC_MARKER="content/public/assets/PRIVATE_VAULT_LAST_SYNC.md"
 
 # Check if submodule exists and is accessible
 if [ ! -d "$SUBMODULE_PATH" ]; then
@@ -27,6 +28,16 @@ if ! check_remote_access 2>/dev/null; then
   echo -e "${YELLOW}⚠️  Private content remote not accessible (working offline)${NC}"
 fi
 
+# Check if there are uncommitted changes in the private submodule
+SUBMODULE_HAS_CHANGES=false
+if (cd "$SUBMODULE_PATH" && ! git diff --quiet 2>/dev/null) || \
+   (cd "$SUBMODULE_PATH" && ! git diff --cached --quiet 2>/dev/null) || \
+   [ -n "$(cd "$SUBMODULE_PATH" && git ls-files --others --exclude-standard 2>/dev/null)" ]; then
+  SUBMODULE_HAS_CHANGES=true
+  echo ""
+  echo "📝 Detected uncommitted changes in private vault - will sync after extraction"
+fi
+
 # Run the extraction script
 echo ""
 echo "🔄 Extracting private metadata..."
@@ -34,6 +45,17 @@ echo "🔄 Extracting private metadata..."
 if node utils/extract-private-metadata.mjs; then
   # Stage any newly created or updated metadata files
   git add "$PUBLIC_DIR" 2>/dev/null || true
+  
+  # If submodule has changes, update the sync marker to trigger a commit
+  if [ "$SUBMODULE_HAS_CHANGES" = true ]; then
+    echo "📌 Updating sync marker for private vault changes..."
+    echo "Last synced: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > "$SYNC_MARKER"
+    echo "" >> "$SYNC_MARKER"
+    echo "This file is automatically updated when the private vault has changes." >> "$SYNC_MARKER"
+    echo "It ensures the main repository tracks private vault state changes." >> "$SYNC_MARKER"
+    git add "$SYNC_MARKER" 2>/dev/null || true
+  fi
+  
   echo ""
 else
   echo -e "${YELLOW}⚠️  Metadata extraction encountered issues (non-fatal)${NC}"
