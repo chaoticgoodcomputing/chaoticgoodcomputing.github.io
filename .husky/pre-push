@@ -5,6 +5,21 @@ source "$(dirname "$0")/submodule-helpers.sh"
 
 # Check if submodule has unpushed commits
 if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
+  # Ensure submodule is on main branch with upstream tracking
+  (
+    cd "$SUBMODULE_PATH" 2>/dev/null || exit 0
+    
+    # If in detached HEAD, checkout main
+    if ! git symbolic-ref -q HEAD > /dev/null; then
+      git checkout main 2>/dev/null || git checkout -b main 2>/dev/null
+    fi
+    
+    # Ensure upstream tracking is set
+    if ! git rev-parse @{u} > /dev/null 2>&1; then
+      git branch --set-upstream-to=origin/main main 2>/dev/null
+    fi
+  )
+  
   # Check for unpushed commits in a subshell
   HAS_UNPUSHED=$(
     cd "$SUBMODULE_PATH" 2>/dev/null || exit 0
