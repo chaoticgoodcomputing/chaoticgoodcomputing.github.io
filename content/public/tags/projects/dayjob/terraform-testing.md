@@ -33,4 +33,4 @@ GROUP BY file.link
 
 ## Hindsight
 
-[[content/notes/scratch/terraform-localstack|Binned — rationale available]]
+[[public/content/notes/scratch/terraform-localstack|Binned — rationale available]]

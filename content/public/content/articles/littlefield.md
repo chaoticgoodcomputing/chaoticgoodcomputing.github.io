@@ -15,7 +15,7 @@ tags:
 
 ## Too much time to kill
 
-This Monday, I started the last major semester of [[content/notes/qamo|my undergraduate career]]. That's right, folks - after six years, four program changes, and [[content/notes/stability-of-marriage|one brain surgery]] (which, in my personal opinion, is one too many), I will *finally* be wrapping up my degree!
+This Monday, I started the last major semester of [[public/content/notes/qamo|my undergraduate career]]. That's right, folks - after six years, four program changes, and [[public/content/notes/stability-of-marriage|one brain surgery]] (which, in my personal opinion, is one too many), I will *finally* be wrapping up my degree!
 
 My last two semesters will be my first part-time courseloads of my academic career, which leaves me quite a bit of extra time. Given that there's not much to do during the quaran*time*, I took a bit of extra time to go over the top in a class I'm taking on operations and supply chain management.
 
