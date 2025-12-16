@@ -1,0 +1,20 @@
+---
+title: "Did you know that domain names can have emojis?"
+date: "2024-03-18T00:00:00.000Z"
+updated: "2024-03-18T00:00:00.000Z"
+tags:
+  - "notes/scratch"
+  - "engineering/devops"
+  - "horticulture"
+draft: false
+---
+
+# Private Note
+
+This note contains private content that is not publicly available.
+
+Only the metadata (frontmatter) from this note is accessible in the public repository.
+
+---
+
+If you're the owner of this content and would like to make it public, you can move it from the private repository to the public repository.
