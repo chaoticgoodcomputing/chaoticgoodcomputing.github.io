@@ -1,0 +1,30 @@
+#!/bin/bash
+# Post-commit hook: Automatically commit changes in private submodule
+
+source "$(dirname "$0")/submodule-helpers.sh"
+
+# Check if there are any changes in the submodule
+if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
+  cd "$SUBMODULE_PATH" || exit 0
+  
+  # Check for unstaged or staged changes
+  if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    cd - > /dev/null
+    
+    echo ""
+    echo "📝 Detected changes in $SUBMODULE_NAME..."
+    
+    # Get the commit message from the main repo
+    MAIN_COMMIT_MSG=$(git log -1 --pretty=%B)
+    
+    safe_submodule_exec "commit" "git add -A && git commit -m 'Sync: $MAIN_COMMIT_MSG'"
+    
+    echo ""
+    echo "💡 Tip: Changes in $SUBMODULE_NAME are committed but not pushed."
+    echo "   Run 'git push' to sync both repositories."
+  else
+    cd - > /dev/null
+  fi
+fi
+
+exit 0

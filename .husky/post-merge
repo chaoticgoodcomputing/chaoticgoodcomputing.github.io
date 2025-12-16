@@ -1,0 +1,13 @@
+#!/bin/bash
+# Post-merge hook: Update private submodule after pulling changes
+
+source "$(dirname "$0")/submodule-helpers.sh"
+
+echo ""
+echo "🔄 Updating $SUBMODULE_NAME after merge/pull..."
+
+safe_submodule_exec "update" "git submodule update --init --recursive --remote"
+
+echo ""
+
+exit 0

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Post-checkout hook: Update private submodule when switching branches
+
+source "$(dirname "$0")/submodule-helpers.sh"
+
+# Arguments: previous HEAD, new HEAD, branch flag (1 for branch checkout, 0 for file checkout)
+PREV_HEAD=$1
+NEW_HEAD=$2
+BRANCH_CHECKOUT=$3
+
+# Only run for branch checkouts
+if [ "$BRANCH_CHECKOUT" = "1" ]; then
+  echo ""
+  echo "🔄 Updating $SUBMODULE_NAME after branch checkout..."
+  
+  safe_submodule_exec "update" "git submodule update --init --recursive --remote"
+  
+  echo ""
+fi
+
+exit 0

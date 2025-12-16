@@ -5,6 +5,27 @@
   "sourceRoot": "quartz",
   "projectType": "application",
   "targets": {
+    "_sync-submodule": {
+      "//": "Initialize and update the content/private git submodule. Not meant to be called directly.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "git submodule update --init --recursive --remote content/private"
+        ],
+        "parallel": false
+      }
+    },
+    "_extract-metadata": {
+      "//": "Extract frontmatter from private content and create cleaned versions in public. Not meant to be called directly.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/extract-private-metadata.mjs"
+        ],
+        "parallel": false
+      },
+      "dependsOn": ["_sync-submodule"]
+    },
     "serve": {
       "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
       "executor": "nx:run-commands",
@@ -17,11 +38,12 @@
           "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d docs/reference/external/quartz/repo/docs" ]
         },
         "site": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d content" ]
+          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d content/public" ]
         }
       },
       "defaultConfiguration": "site",
-      "continuous": true
+      "continuous": true,
+      "dependsOn": ["_extract-metadata"]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",
@@ -35,11 +57,12 @@
           "commands": [ "./quartz/bootstrap-cli.mjs build -d docs/reference/external/quartz/repo/docs" ]
         },
         "site": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build -d content" ]
+          "commands": [ "./quartz/bootstrap-cli.mjs build -d content/public" ]
         }
       },
       "defaultConfiguration": "site",
-      "outputs": [ "{projectRoot}/public" ]
+      "outputs": [ "{projectRoot}/public" ],
+      "dependsOn": ["_extract-metadata"]
     },
     "check": {
       "//": "Type checking and formatting validation",

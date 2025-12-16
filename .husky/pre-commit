@@ -1,0 +1,8 @@
+#!/bin/bash
+# Pre-commit hook: Run tests before committing
+
+# Uncomment to run tests before each commit
+# pnpm test
+
+exit 0
+

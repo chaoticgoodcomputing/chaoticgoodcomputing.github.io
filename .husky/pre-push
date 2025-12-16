@@ -1,0 +1,28 @@
+#!/bin/bash
+# Pre-push hook: Push private submodule changes before pushing main repo
+
+source "$(dirname "$0")/submodule-helpers.sh"
+
+# Check if submodule has unpushed commits
+if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
+  cd "$SUBMODULE_PATH" || exit 0
+  
+  # Check if there are commits that haven't been pushed
+  LOCAL=$(git rev-parse @ 2>/dev/null)
+  REMOTE=$(git rev-parse @{u} 2>/dev/null)
+  
+  if [ "$LOCAL" != "$REMOTE" ] && [ -n "$LOCAL" ] && [ -n "$REMOTE" ]; then
+    cd - > /dev/null
+    
+    echo ""
+    echo "🚀 Pushing $SUBMODULE_NAME changes first..."
+    
+    safe_submodule_exec "push" "git push"
+    
+    echo ""
+  else
+    cd - > /dev/null
+  fi
+fi
+
+exit 0
