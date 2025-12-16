@@ -49,13 +49,6 @@ async function extractPrivateMetadata() {
       const relativePath = relative(PRIVATE_DIR, privateFilePath)
       const publicFilePath = join(PUBLIC_DIR, relativePath)
       
-      // Skip if the file already exists in public (real public content takes precedence)
-      if (existsSync(publicFilePath)) {
-        console.log(`⏭️  Skipped ${relativePath} (already exists in public)`)
-        skipped++
-        continue
-      }
-      
       // Read the private file
       const content = await readFile(privateFilePath, "utf-8")
       

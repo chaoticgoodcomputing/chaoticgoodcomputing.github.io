@@ -8,12 +8,6 @@ tags:
 draft: true
 ---
 
-# Private Note
+This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
 
-This note contains private content that is not publicly available.
-
-Only the metadata (frontmatter) from this note is accessible in the public repository.
-
----
-
-If you're the owner of this content and would like to make it public, you can move it from the private repository to the public repository.
+If you are interested in what this note contains, please [[contact|reach out to me!]] If it's not anything terribly sensitive, I'm happy to chat about it!
