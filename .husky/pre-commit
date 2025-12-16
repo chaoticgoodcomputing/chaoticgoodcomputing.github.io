@@ -1,8 +1,43 @@
 #!/bin/bash
-# Pre-commit hook: Run tests before committing
+# Pre-commit hook: Extract private metadata before committing
 
-# Uncomment to run tests before each commit
-# pnpm test
+# Unset git environment variables
+unset GIT_DIR
+unset GIT_WORK_TREE
+unset GIT_INDEX_FILE
+
+source "$(dirname "$0")/submodule-helpers.sh"
+
+SUBMODULE_PATH="content/private"
+PUBLIC_DIR="content/public"
+
+# Check if submodule exists and is accessible
+if [ ! -d "$SUBMODULE_PATH" ]; then
+  echo -e "${YELLOW}⚠️  Private content submodule not found - skipping metadata extraction${NC}"
+  exit 0
+fi
+
+if [ ! -e "$SUBMODULE_PATH/.git" ]; then
+  echo -e "${YELLOW}⚠️  Private content submodule not initialized - skipping metadata extraction${NC}"
+  exit 0
+fi
+
+# Check if remote is accessible (optional - extraction can work offline)
+if ! check_remote_access 2>/dev/null; then
+  echo -e "${YELLOW}⚠️  Private content remote not accessible (working offline)${NC}"
+fi
+
+# Run the extraction script
+echo ""
+echo "🔄 Extracting private metadata..."
+
+if node utils/extract-private-metadata.mjs; then
+  # Stage any newly created or updated metadata files
+  git add "$PUBLIC_DIR" 2>/dev/null || true
+  echo ""
+else
+  echo -e "${YELLOW}⚠️  Metadata extraction encountered issues (non-fatal)${NC}"
+fi
 
 exit 0
 
