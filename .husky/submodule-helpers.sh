@@ -43,21 +43,24 @@ safe_submodule_exec() {
     return 0
   fi
   
-  cd "$SUBMODULE_PATH" || {
-    echo -e "${YELLOW}⚠️  Could not enter $SUBMODULE_NAME directory${NC}"
-    return 0
-  }
+  # Execute the command in a subshell to avoid directory change issues
+  (
+    cd "$SUBMODULE_PATH" || {
+      echo -e "${YELLOW}⚠️  Could not enter $SUBMODULE_NAME directory${NC}"
+      return 0
+    }
+    
+    # Execute the command
+    if eval "$command" 2>&1; then
+      echo -e "${GREEN}✓ $SUBMODULE_NAME: $operation successful${NC}"
+      return 0
+    else
+      echo -e "${YELLOW}⚠️  $SUBMODULE_NAME: $operation failed (non-fatal)${NC}"
+      return 0
+    fi
+  )
   
-  # Execute the command
-  if eval "$command" 2>&1; then
-    echo -e "${GREEN}✓ $SUBMODULE_NAME: $operation successful${NC}"
-    cd - > /dev/null
-    return 0
-  else
-    echo -e "${YELLOW}⚠️  $SUBMODULE_NAME: $operation failed (non-fatal)${NC}"
-    cd - > /dev/null
-    return 0
-  fi
+  return 0
 }
 
 # Export functions for use in other scripts

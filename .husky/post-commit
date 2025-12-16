@@ -5,12 +5,15 @@ source "$(dirname "$0")/submodule-helpers.sh"
 
 # Check if there are any changes in the submodule
 if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
-  cd "$SUBMODULE_PATH" || exit 0
+  # Check for changes in a subshell
+  HAS_CHANGES=$(
+    cd "$SUBMODULE_PATH" 2>/dev/null || exit 0
+    if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+      echo "yes"
+    fi
+  )
   
-  # Check for unstaged or staged changes
-  if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-    cd - > /dev/null
-    
+  if [ "$HAS_CHANGES" = "yes" ]; then
     echo ""
     echo "📝 Detected changes in $SUBMODULE_NAME..."
     
@@ -22,8 +25,6 @@ if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
     echo ""
     echo "💡 Tip: Changes in $SUBMODULE_NAME are committed but not pushed."
     echo "   Run 'git push' to sync both repositories."
-  else
-    cd - > /dev/null
   fi
 fi
 
