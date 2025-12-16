@@ -44,7 +44,6 @@ title: "<% title %>"
 date: <% tp.date.now() %>
 tags:
   - <% latestFileSeasonTag %>
-  - notes/daily
 draft: false
 ---
 

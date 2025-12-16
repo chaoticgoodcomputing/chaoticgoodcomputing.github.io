@@ -1,0 +1,42 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "git",
+  "root": "utils/gitops",
+  "projectType": "library",
+  "targets": {
+    "commit": {
+      "//": "Commit changes to both main repo and private submodule with synchronized commit messages",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bash utils/gitops/commit.sh \"{args.message}\""
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "push": {
+      "//": "Push both repositories (submodule first, then main repo)",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bash utils/gitops/push.sh"
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "sync": {
+      "//": "Commit and push in one command",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bash utils/gitops/commit.sh \"{args.message}\"",
+          "bash utils/gitops/push.sh"
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}
