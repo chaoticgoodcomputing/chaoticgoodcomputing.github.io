@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-public
 prof
 tsconfig.tsbuildinfo
 .obsidian
@@ -8,3 +7,4 @@ tsconfig.tsbuildinfo
 .replit
 replit.nix
 .nx
+/public
