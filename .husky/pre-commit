@@ -43,8 +43,12 @@ echo ""
 echo "🔄 Extracting private metadata..."
 
 if node utils/extract-private-metadata.mjs; then
-  # Stage any newly created or updated metadata files
-  git add "$PUBLIC_DIR" 2>/dev/null || true
+  # Stage all changes in public directory for this commit
+  # This ensures extracted metadata is included in the current commit
+  if [ -d "$PUBLIC_DIR" ]; then
+    echo "📝 Staging extracted metadata files..."
+    git add "$PUBLIC_DIR/"
+  fi
   
   # If submodule has changes, update the sync marker to trigger a commit
   if [ "$SUBMODULE_HAS_CHANGES" = true ]; then
@@ -53,7 +57,7 @@ if node utils/extract-private-metadata.mjs; then
     echo "" >> "$SYNC_MARKER"
     echo "This file is automatically updated when the private vault has changes." >> "$SYNC_MARKER"
     echo "It ensures the main repository tracks private vault state changes." >> "$SYNC_MARKER"
-    git add "$SYNC_MARKER" 2>/dev/null || true
+    git add "$SYNC_MARKER"
   fi
   
   echo ""
