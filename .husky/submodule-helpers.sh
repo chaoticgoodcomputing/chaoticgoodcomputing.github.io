@@ -32,6 +32,30 @@ check_remote_access() {
   return $result
 }
 
+# Function to retry a command with exponential backoff
+retry_with_backoff() {
+  local max_attempts=5
+  local timeout=1
+  local attempt=1
+  local exitCode=0
+
+  while [ $attempt -le $max_attempts ]; do
+    if eval "$@"; then
+      return 0
+    else
+      exitCode=$?
+    fi
+
+    if [ $attempt -lt $max_attempts ]; then
+      sleep $timeout
+      timeout=$((timeout * 2))
+    fi
+    attempt=$((attempt + 1))
+  done
+
+  return $exitCode
+}
+
 # Function to safely execute git operations in submodule
 safe_submodule_exec() {
   local operation="$1"
@@ -66,6 +90,7 @@ safe_submodule_exec() {
 # Export functions for use in other scripts
 export -f check_remote_access
 export -f safe_submodule_exec
+export -f retry_with_backoff
 export SUBMODULE_PATH
 export SUBMODULE_NAME
 export RED YELLOW GREEN NC

@@ -18,36 +18,36 @@ const PRIVATE_BODY_FILE = "content/public/assets/PRIVATE_FILE_BODY.md"
 function extractLinks(content) {
   const links = []
   const seen = new Set()
-  
+
   // Extract wikilinks: [[link]] or [[link|display text]]
   const wikilinkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g
   let match
-  
+
   while ((match = wikilinkRegex.exec(content)) !== null) {
     const linkTarget = match[1]
     const displayText = match[2] || linkTarget
     const linkStr = `[${displayText}](${linkTarget})`
-    
+
     if (!seen.has(linkStr)) {
       links.push(linkStr)
       seen.add(linkStr)
     }
   }
-  
+
   // Extract markdown links: [text](url)
   const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
-  
+
   while ((match = markdownLinkRegex.exec(content)) !== null) {
     const displayText = match[1]
     const url = match[2]
     const linkStr = `[${displayText}](${url})`
-    
+
     if (!seen.has(linkStr)) {
       links.push(linkStr)
       seen.add(linkStr)
     }
   }
-  
+
   return links
 }
 
@@ -95,7 +95,7 @@ async function extractPrivateMetadata() {
 
       // Parse frontmatter and content
       const { data: frontmatter, content: bodyContent } = matter(content)
-      
+
       // Extract links from the original content
       const links = extractLinks(bodyContent)
 
@@ -121,7 +121,7 @@ async function extractPrivateMetadata() {
       }
 
       cleanedContent += privateBodyContent
-      
+
       // Add links section if there are any links
       if (links.length > 0) {
         cleanedContent += "\n\n## Links\n\n"
@@ -132,7 +132,7 @@ async function extractPrivateMetadata() {
       }
 
       // Rewrite links from private/ to public/ paths
-      cleanedContent = cleanedContent.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
+      cleanedContent = cleanedContent.replace(/private\/([\w\-\/\.]+)/g, '$1')
 
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })

@@ -19,13 +19,26 @@ if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
   )
   
   if [ "$HAS_CHANGES" = "yes" ]; then
+    # Wait briefly to ensure main repo commit has fully completed
+    sleep 0.2
+    
     echo ""
     echo "📝 Detected changes in $SUBMODULE_NAME..."
     
     # Get the commit message from the main repo
     MAIN_COMMIT_MSG=$(git log -1 --pretty=%B)
     
-    safe_submodule_exec "commit" "git add -A && git commit -m 'Sync: $MAIN_COMMIT_MSG'"
+    # Use retry logic for submodule commit in case of transient lock issues
+    (
+      cd "$SUBMODULE_PATH" || exit 0
+      
+      if retry_with_backoff git add -A && retry_with_backoff git commit -m "'Sync: $MAIN_COMMIT_MSG'"; then
+        echo -e "${GREEN}✓ $SUBMODULE_NAME: commit successful${NC}"
+      else
+        echo -e "${YELLOW}⚠️  $SUBMODULE_NAME: could not commit changes${NC}"
+        echo -e "${YELLOW}   You may need to commit manually in $SUBMODULE_PATH${NC}"
+      fi
+    )
     
     echo ""
     echo "💡 Tip: Changes in $SUBMODULE_NAME are committed but not pushed."
