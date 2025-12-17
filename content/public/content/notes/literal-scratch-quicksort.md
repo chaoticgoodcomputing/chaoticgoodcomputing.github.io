@@ -1,24 +1,19 @@
 ---
 title: "From The Archive: Scratch Quicksort"
-date: "2018-07-18T00:00:00.000Z"
-updated: "2024-03-03T00:00:00.000Z"
+date: 2018-07-18
+updated: 2024-03-03
 tags:
-  - "mentoring"
-  - "engineering/scratch"
-  - "notes"
-  - "private"
+  - mentoring
+  - engineering/scratch
+  - notes
 draft: false
 ---
+As an addendum to the [[content/notes/literal-scratch-piano|Scratch Piano Application]], I also around the same time cooked up an implementation of QuickSort. At my partner's recent swim meet I sat next to [[content/notes/periodic/daily/2024-03-02|a couple kids who've been learning Scratch]] and they were showing off some games they'd made.
 
-This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
+i was shocked - when it was my turn to show off, they didn't seem very impressed by this.
 
-If you are interested in what this note contains, please [[contact|reach out to me!]] If it's not anything terribly sensitive, I'm happy to chat about it!
+<iframe src="https://scratch.mit.edu/projects/236670084/embed" allowtransparency="true" width="485" height="402" frameborder="0" scrolling="no" allowfullscreen></iframe>
 
+honestly, the sort isn't the weird thing - it's the code itself that makes me, with 6 years of hindsight, think "...why the fuck would I make this?"
 
-## Links
-
-This note originally contained the following links:
-
-- [Scratch Piano Application](content/notes/literal-scratch-piano)
-- [a couple kids who've been learning Scratch](content/notes/periodic/daily/2024-03-02)
-- [Pasted image 20240303000743.png](Pasted image 20240303000743.png)
+![[Pasted image 20240303000743.png]]

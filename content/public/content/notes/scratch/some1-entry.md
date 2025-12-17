@@ -1,28 +1,27 @@
 ---
-title: "Entries to SOME 1"
-date: "2024-02-27T00:00:00.000Z"
-updated: "2024-02-27T00:00:00.000Z"
+title: Entries to SOME 1
+date: 2024-02-27
+updated: 2024-02-27
 tags:
-  - "engineering/python"
-  - "viz/doodles"
-  - "economics/market-design"
-  - "notes/scratch"
-  - "private"
+  - engineering/python
+  - viz/doodles
+  - economics/market-design
+  - notes/scratch
 draft: false
 ---
+Awhile ago, the channel 3blue1brown announced an internship and public competition, Summer of Math Education - at the time, I submitted some half-assed entries that I've kept around since then.
 
-This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
+## Bachelor Analysis
 
-If you are interested in what this note contains, please [[contact|reach out to me!]] If it's not anything terribly sensitive, I'm happy to chat about it!
+![[bachelors.jpeg]]
 
+## Excerpts from Stable Marriage
 
-## Links
+Largely taken from [[content/notes/stability-of-marriage|a presentation on stable matching algorithms]]
+![[stable_matching_1.png]]
+![[stable_matching_2.png]]
+![[stable_matching_3.png]] ^77ff26
 
-This note originally contained the following links:
+## Optimal Stopping Problem
 
-- [bachelors.jpeg](bachelors.jpeg)
-- [a presentation on stable matching algorithms](content/notes/stability-of-marriage)
-- [stable_matching_1.png](stable_matching_1.png)
-- [stable_matching_2.png](stable_matching_2.png)
-- [stable_matching_3.png](stable_matching_3.png)
-- [stopping.jpeg](stopping.jpeg)
+![[stopping.jpeg]]

@@ -1,29 +1,25 @@
 ---
-title: "From the Archive: \"What *are* Supply Chains, Anyway?\""
-date: "2019-07-01T00:00:00.000Z"
+title: 'From the Archive: "What *are* Supply Chains, Anyway?"'
+date: 2019-07-01
 tags:
-  - "economics/finance"
-  - "engineering/python"
-  - "viz"
-  - "notes"
-  - "private"
-updated: "2024-02-27T00:00:00.000Z"
+  - economics/finance
+  - engineering/python
+  - viz
+  - notes
+updated: 2024-02-27
 ---
+Below, you'll find some graphs. These are what is known in the field of [[tags/viz/index|data visualization]] as "bad."
 
-This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
+These graphs are (as far as I can recall) my first attempts at using & visualizing network structures. As much as I would like to say they're not too bad for a first attempt, they don't "speak for themselves" as much as they "scream torments in the face of the viewer."
 
-If you are interested in what this note contains, please [[contact|reach out to me!]] If it's not anything terribly sensitive, I'm happy to chat about it!
+The below graphs are stock tickers, connected to one another by their supplier relationships. For example, if Company A publicly noted that they received supplies from Company B, that would be denoted by a connecting edge.
 
+![[assets/messy-graph.svg]]
 
-## Links
+Below is my first (and only) attempt to organize the above output. If I'm recalling correctly (and this was in 2019, so [[content/notes/caveat-lector|caveat lector]]), this was at least an attempt to get the first-order to third-order suppliers of a given set of equities and place their order in shells around the center. It's messy, it's noisy, and frankly, incomprehensible.
 
-This note originally contained the following links:
+![[assets/circle-graph.png]]
 
-- [data visualization](tags/viz/index)
-- [assets/messy-graph.svg](assets/messy-graph.svg)
-- [caveat lector](content/notes/caveat-lector)
-- [assets/circle-graph.png](assets/circle-graph.png)
-- [the parts of economics that aren't related to either studying (or making) money](content/notes/qamo)
-- [feel free to reach out](contact)
-- [graph cycles](https://neopythonic.blogspot.com/2009/01/detecting-cycles-in-directed-graph.html)
-- [purchasing access to a Bloomberg terminal falls well outside the financial means of CGC](https://arc.net/l/quote/fwsjojws)
+The hope of this analysis was to ultimately connect supply chains and, as a secondary goal, find [graph cycles](https://neopythonic.blogspot.com/2009/01/detecting-cycles-in-directed-graph.html) among a set of target stocks to find and catalog "supply loops", and see if stocks in a given supply loop rise and fall together. The visualization acted more as a sanity check to see if my web scraper was working and less of a rigorous tool for understanding.
+
+Despite my area of focus being [[content/notes/qamo|the parts of economics that aren't related to either studying (or making) money]], this is something I'd like to return to again in the future. However, I unfortunately don't have the same level of data access that I did as an undergraduate, and [purchasing access to a Bloomberg terminal falls well outside the financial means of CGC](https://arc.net/l/quote/fwsjojws). However, if you're ever looking for somebody to make bad graphs pro-bono and *do* have access to that kind of data, please [[contact|feel free to reach out]].

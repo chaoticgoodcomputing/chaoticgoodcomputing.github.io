@@ -1,21 +1,10 @@
 ---
-title: "Diary of a Raycastaway"
-date: "2024-02-28T00:00:00.000Z"
-updated: "2024-02-28T00:00:00.000Z"
+title: Diary of a Raycastaway
+date: 2024-02-28
+updated: 2024-02-28
 tags:
-  - "goblin-slaying"
-  - "notes"
-  - "private"
+  - goblin-slaying
+  - notes
 draft: false
 ---
-
-This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
-
-If you are interested in what this note contains, please [[contact|reach out to me!]] If it's not anything terribly sensitive, I'm happy to chat about it!
-
-
-## Links
-
-This note originally contained the following links:
-
-- [Raycast](https://www.raycast.com/)
+Recently, I stumbled on [Raycast](https://www.raycast.com/) - a MacOS Spotlight replacement that I would *highly* recommend to *everybody*, not just engineers.
