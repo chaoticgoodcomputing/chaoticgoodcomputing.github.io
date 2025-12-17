@@ -17,7 +17,7 @@ PUBLIC_DIR="content/public"
 # Validate commit message
 if [ -z "$1" ]; then
   echo -e "${RED}❌ Error: Commit message is required${NC}"
-  echo "Usage: nx git:commit \"your commit message\""
+  echo "Usage: nx run git:commit \"your commit message\""
   exit 1
 fi
 
@@ -124,4 +124,4 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}✅ Commit complete!${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo -e "💡 Run ${BLUE}nx git:push${NC} to push both repositories"
+echo -e "💡 Run ${BLUE}nx run git:push${NC} to push both repositories"
