@@ -61,25 +61,9 @@ echo -e "   Submodule: $([ "$SUBMODULE_HAS_CHANGES" = true ] && echo -e "${GREEN
 echo ""
 
 # ─────────────────────────────────────────────────────────
-# Step 2: Extract private metadata
+# Step 2: Commit submodule first (if it has changes)
 # ─────────────────────────────────────────────────────────
-echo -e "${BLUE}[2/5]${NC} Extracting private metadata..."
-
-if [ -d "$SUBMODULE_PATH" ] && [ -e "$SUBMODULE_PATH/.git" ]; then
-  if node utils/extract-private-metadata.mjs; then
-    echo -e "${GREEN}   ✓ Extraction complete${NC}"
-  else
-    echo -e "${YELLOW}   ⚠️  Extraction had issues (continuing anyway)${NC}"
-  fi
-else
-  echo -e "${YELLOW}   ⚠️  Submodule not available, skipping extraction${NC}"
-fi
-echo ""
-
-# ─────────────────────────────────────────────────────────
-# Step 3: Commit submodule first (if it has changes)
-# ─────────────────────────────────────────────────────────
-echo -e "${BLUE}[3/5]${NC} Processing submodule..."
+echo -e "${BLUE}[2/4]${NC} Processing submodule..."
 
 if [ "$SUBMODULE_HAS_CHANGES" = true ]; then
   echo "   Staging and committing submodule changes..."
@@ -98,9 +82,9 @@ fi
 echo ""
 
 # ─────────────────────────────────────────────────────────
-# Step 4: Stage all changes in main repo
+# Step 3: Stage all changes in main repo
 # ─────────────────────────────────────────────────────────
-echo -e "${BLUE}[4/5]${NC} Staging main repo changes..."
+echo -e "${BLUE}[3/4]${NC} Staging main repo changes..."
 
 # Stage everything including the updated submodule reference
 git add -A
@@ -108,9 +92,9 @@ echo -e "${GREEN}   ✓ All changes staged${NC}"
 echo ""
 
 # ─────────────────────────────────────────────────────────
-# Step 5: Commit main repo
+# Step 4: Commit main repo
 # ─────────────────────────────────────────────────────────
-echo -e "${BLUE}[5/5]${NC} Committing main repo..."
+echo -e "${BLUE}[4/4]${NC} Committing main repo..."
 
 # Use --no-verify to skip hooks since we've already handled everything
 if git commit --no-verify -m "$COMMIT_MSG"; then
