@@ -6,6 +6,7 @@ tags:
   - "mentoring"
   - "engineering/scratch"
   - "notes"
+  - "private"
 draft: false
 ---
 

@@ -4,6 +4,7 @@ date: "2019-08-01T00:00:00.000Z"
 tags:
   - "engineering/typescript"
   - "notes"
+  - "private"
 ---
 
 This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.

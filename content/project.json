@@ -4,7 +4,7 @@
   "root": "content",
   "projectType": "library",
   "targets": {
-    "extract": {
+    "sync": {
       "//": "Extract frontmatter from private content and create cleaned versions in public.",
       "executor": "nx:run-commands",
       "options": {

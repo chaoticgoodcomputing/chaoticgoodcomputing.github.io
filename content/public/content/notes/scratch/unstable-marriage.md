@@ -6,6 +6,7 @@ tags:
   - "data"
   - "economics/market-design"
   - "notes/scratch"
+  - "private"
 draft: false
 ---
 

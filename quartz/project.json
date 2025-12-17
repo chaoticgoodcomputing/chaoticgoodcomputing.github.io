@@ -23,7 +23,7 @@
       },
       "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": [ "vault:extract" ]
+      "dependsOn": [ "vault:sync" ]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",
@@ -43,7 +43,7 @@
       },
       "defaultConfiguration": "site",
       "outputs": [ "{workspaceRoot}/public" ],
-      "dependsOn": [ "vault:extract" ]
+      "dependsOn": [ "vault:sync" ]
     },
     "check": {
       "//": "Type checking and formatting validation",

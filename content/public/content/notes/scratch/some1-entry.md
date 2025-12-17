@@ -7,6 +7,7 @@ tags:
   - "viz/doodles"
   - "economics/market-design"
   - "notes/scratch"
+  - "private"
 draft: false
 ---
 

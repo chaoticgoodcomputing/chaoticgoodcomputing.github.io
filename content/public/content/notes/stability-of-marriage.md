@@ -6,6 +6,7 @@ tags:
   - "economics/market-design"
   - "viz/doodles"
   - "notes"
+  - "private"
 ---
 
 This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.

@@ -96,6 +96,16 @@ async function extractPrivateMetadata() {
       // Parse frontmatter and content
       const { data: frontmatter, content: bodyContent } = matter(content)
 
+      // Ensure "private" tag is added to tags array
+      if (!frontmatter.tags) {
+        frontmatter.tags = []
+      } else if (!Array.isArray(frontmatter.tags)) {
+        frontmatter.tags = [frontmatter.tags]
+      }
+      if (!frontmatter.tags.includes("private")) {
+        frontmatter.tags.push("private")
+      }
+
       // Extract links from the original content
       const links = extractLinks(bodyContent)
 

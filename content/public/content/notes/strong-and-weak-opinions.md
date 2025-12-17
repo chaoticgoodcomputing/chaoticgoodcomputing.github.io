@@ -6,6 +6,7 @@ tags:
   - "engineering"
   - "notes"
   - "economics/project-management"
+  - "private"
 draft: false
 ---
 

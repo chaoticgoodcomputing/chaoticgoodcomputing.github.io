@@ -14,7 +14,7 @@
         "parallel": false,
         "cwd": "utils/gitops"
       },
-      "dependsOn": [ "vault:extract" ]
+      "dependsOn": [ "vault:sync" ]
     },
     "push": {
       "//": "Push both repositories (submodule first, then main repo)",

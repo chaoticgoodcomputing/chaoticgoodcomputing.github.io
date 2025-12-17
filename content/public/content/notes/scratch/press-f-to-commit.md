@@ -5,6 +5,7 @@ updated: "2024-02-28T00:00:00.000Z"
 tags:
   - "viz"
   - "notes/scratch"
+  - "private"
 draft: false
 ---
 

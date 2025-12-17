@@ -6,6 +6,7 @@ tags:
   - "engineering"
   - "goblin-slaying"
   - "notes"
+  - "private"
 draft: false
 ---
 

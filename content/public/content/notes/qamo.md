@@ -5,6 +5,7 @@ updated: "2024-02-26T00:00:00.000Z"
 tags:
   - "economics"
   - "notes"
+  - "private"
 draft: false
 ---
 

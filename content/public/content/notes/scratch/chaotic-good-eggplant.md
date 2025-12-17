@@ -6,6 +6,7 @@ tags:
   - "notes/scratch"
   - "engineering/devops"
   - "horticulture"
+  - "private"
 draft: false
 ---
 

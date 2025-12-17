@@ -6,6 +6,7 @@ tags:
   - "horticulture"
   - "engineering/typescript"
   - "notes"
+  - "private"
 draft: false
 ---
 

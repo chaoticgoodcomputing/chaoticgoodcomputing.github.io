@@ -5,6 +5,7 @@ tags:
   - "engineering/devops"
   - "projects/dayjob/terraform-testing"
   - "notes/scratch"
+  - "private"
 draft: false
 ---
 

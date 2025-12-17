@@ -7,6 +7,7 @@ tags:
   - "engineering"
   - "mentoring/tutorials"
   - "notes"
+  - "private"
 draft: false
 ---
 
