@@ -5,11 +5,11 @@
   "projectType": "library",
   "targets": {
     "commit": {
-      "//": "Commit changes to both main repo and private submodule with synchronized commit messages. e.g. (`git commit '<message>'`)",
+      "//": "Commit changes to both main repo and private submodule with synchronized commit messages. Usage: nx run git:commit \"message\"",
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "bash commit.sh"
+          "bash commit.sh {args._}"
         ],
         "parallel": false,
         "cwd": "utils/gitops"
