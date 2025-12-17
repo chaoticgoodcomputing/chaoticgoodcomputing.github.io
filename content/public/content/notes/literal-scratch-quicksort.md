@@ -19,5 +19,5 @@ If you are interested in what this note contains, please [[contact|reach out to 
 This note originally contained the following links:
 
 - [Scratch Piano Application](content/notes/literal-scratch-piano)
-- [a couple kids who've been learning Scratch](content/notes/periodic/daily/2024-03-02#Today's Report)
+- [a couple kids who've been learning Scratch](content/notes/periodic/daily/2024-03-02)
 - [Pasted image 20240303000743.png](Pasted image 20240303000743.png)

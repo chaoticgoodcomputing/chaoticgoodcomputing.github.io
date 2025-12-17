@@ -19,7 +19,7 @@ If you are interested in what this note contains, please [[contact|reach out to 
 This note originally contained the following links:
 
 - [I dabbled a bit in programming on Roblox](content/articles/robloxaville)
-- [pretty glaring security concerns](content/articles/robloxaville#^4b7922)
+- [pretty glaring security concerns](content/articles/robloxaville#)
 - [under-engineered](content/notes/over-under-engineering)
 - [pretty glaring shortcomings of the Roblox engine itself](content/articles/robloxaville#Back in the Saddle)
 - [and posts](content/notes/digital-gardening-with-quartz)

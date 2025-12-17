@@ -6,9 +6,9 @@ import { mkdir, readFile, writeFile } from "fs/promises"
 import { dirname, relative, join } from "path"
 import { existsSync } from "fs"
 
-const PRIVATE_DIR = "content/private"
-const PUBLIC_DIR = "content/public"
-const PRIVATE_BODY_FILE = "content/public/assets/PRIVATE_FILE_BODY.md"
+const PRIVATE_DIR = "private"
+const PUBLIC_DIR = "public"
+const PRIVATE_BODY_FILE = "public/assets/PRIVATE_FILE_BODY.md"
 
 /**
  * Extract wikilinks and markdown links from content
@@ -55,7 +55,7 @@ function extractLinks(content) {
  * Extract frontmatter from private markdown files and create cleaned versions
  * in the public directory, preserving the directory structure.
  * 
- * Files that already exist in content/public are skipped (public content takes precedence).
+ * Files that already exist in public are skipped (public content takes precedence).
  */
 async function extractPrivateMetadata() {
   console.log("🔍 Scanning for private markdown files...")

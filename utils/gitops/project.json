@@ -9,10 +9,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "bash utils/gitops/commit.sh \"{args.message}\""
+          "bash commit.sh"
         ],
         "parallel": false,
-        "cwd": "{workspaceRoot}"
+        "cwd": "utils/gitops"
       }
     },
     "push": {
@@ -20,22 +20,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "bash utils/gitops/push.sh"
+          "bash push.sh"
         ],
         "parallel": false,
-        "cwd": "{workspaceRoot}"
-      }
-    },
-    "sync": {
-      "//": "Commit and push in one command",
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "bash utils/gitops/commit.sh \"{args.message}\"",
-          "bash utils/gitops/push.sh"
-        ],
-        "parallel": false,
-        "cwd": "{workspaceRoot}"
+        "cwd": "utils/gitops"
       }
     }
   }

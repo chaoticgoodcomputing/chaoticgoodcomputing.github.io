@@ -18,7 +18,7 @@ If you are interested in what this note contains, please [[contact|reach out to 
 
 This note originally contained the following links:
 
-- [that's an irrational way to think about projects.](content/notes/digital-gardening-with-quartz#The cost of perfection is infinite.)
+- [that's an irrational way to think about projects.](content/notes/digital-gardening-with-quartz)
 - [Writing small games on Roblox](content/articles/robloxaville)
 - [Python](tags/engineering/python)
 - [Spark](content/articles/structured-streaming)

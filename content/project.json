@@ -1,0 +1,19 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "vault",
+  "root": "content",
+  "projectType": "library",
+  "targets": {
+    "extract": {
+      "//": "Extract frontmatter from private content and create cleaned versions in public.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/extract-private-metadata.mjs"
+        ],
+        "parallel": false,
+        "cwd": "content"
+      }
+    }
+  }
+}

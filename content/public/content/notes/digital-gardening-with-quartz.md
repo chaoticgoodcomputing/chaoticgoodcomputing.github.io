@@ -20,7 +20,7 @@ This note originally contained the following links:
 
 - [the Databricks guest post on Spark Structured Streaming](content/articles/structured-streaming)
 - [the editorial standards I started this blog with](content/articles/hello-blog)
-- [frankly enviable](content/articles/structured-streaming#Using Spark Structured Streaming)
+- [frankly enviable](content/articles/structured-streaming)
 - [final published draft](https://www.databricks.com/blog/2022/07/14/using-spark-structured-streaming-to-scale-your-analytics.html)
 - [Maggie Appleton's Ethos on Digital Gardening](https://arc.net/l/quote/abfpadro)
 - [Maggie Appleton's diagram of digital media on a spectrum of polish, ranging from chaos to cultivated, with digital gardening between "private notes" and "classic blog posts](https://res.cloudinary.com/dg3gyk0gu/image/upload/c_scale,f_auto,q_auto:good,w_1100/v1593765637/maggieappleton.com/notes/garden-history/digital-garden.png)

@@ -39,7 +39,7 @@ For the purposes of this note, I am going to refer to this type of language as *
 
 GPTinglish, to me, can be described in a few ways:
 
-- It's **Business English**. Office English. [[public/content/notes/the-quest-to-slay-the-goblin#^9d3b38|LinkedIn™]] English. I hope, to those of you reading who have also worked a traditional office job, that you can recognize this shorthand as the type of thing that you'd find in your Outlook inbox;
+- It's **Business English**. Office English. [[public/content/notes/the-quest-to-slay-the-goblin#|LinkedIn™]] English. I hope, to those of you reading who have also worked a traditional office job, that you can recognize this shorthand as the type of thing that you'd find in your Outlook inbox;
 - It's **Boring English**. It's the median of the language, absent of all personality or human voice; and
 - It's **Bing-English**. Meant to half-heartedly celebrate Microsoft's role in solidifying what is very likely a [self-consuming business model](https://www.youtube.com/watch?v=Si_mGxIzHlU) , poised to consume the very medium it was trained on, this is the type of English that we (currently) see from Bing Copilot, ChatGPT, Gemini, and others
 
