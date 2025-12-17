@@ -9,10 +9,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "bash commit.sh {args._}"
+          "bash utils/gitops/commit.sh {args._}"
         ],
         "parallel": false,
-        "cwd": "utils/gitops"
+        "cwd": "{workspaceRoot}"
       },
       "dependsOn": [ "vault:sync" ]
     },
@@ -21,10 +21,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "bash push.sh"
+          "bash utils/gitops/push.sh"
         ],
         "parallel": false,
-        "cwd": "utils/gitops"
+        "cwd": "{workspaceRoot}"
       }
     }
   }
