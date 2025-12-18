@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "site:serve",
+			"type": "shell",
+			"command": "nx run site:serve",
+			"isBackground": true,
+			"options": {
+				"shell": { "executable": "zsh", "args": [ "-i", "-c" ] }
+			},
+			"problemMatcher": {
+				"pattern": {
+					"regexp": "^(.*)$",
+					"file": 1
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": ".",
+					"endsPattern": "Started a Quartz server listening at"
+				}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			}
+		},
+		{
+			"label": "curl-test",
+			"type": "shell",
+			"command": "curl -s http://localhost:8080 | head -20",
+			"group": "test"
+		}
+	]
+}

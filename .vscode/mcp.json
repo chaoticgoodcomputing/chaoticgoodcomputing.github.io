@@ -1,0 +1,12 @@
+{
+	"servers": {
+		"browserMcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"@browsermcp/mcp@latest"
+			]
+		}
+	},
+	"inputs": []
+}

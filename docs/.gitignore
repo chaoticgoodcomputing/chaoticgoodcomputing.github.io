@@ -1,3 +1,5 @@
 # Ignore all repo subdirectories
 reference/external/*/repo/
+scratch/**/*
+!scratch/.gitkeep
 quartz
