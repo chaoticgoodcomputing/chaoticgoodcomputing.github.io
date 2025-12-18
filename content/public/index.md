@@ -58,3 +58,40 @@ npm install
 npm run build
 npm start
 ```
+
+### Mermaid Diagrams
+
+Interactive mermaid diagrams with pan, zoom, and expand functionality:
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> E[Fix Issue]
+    E --> B
+    C --> F[Done]
+```
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Browser
+    participant Server
+    User->>Browser: Click expand
+    Browser->>Browser: Clone SVG
+    Browser->>Browser: Show popup
+    User->>Browser: Pan & Zoom
+    Browser->>Browser: Transform diagram
+    User->>Browser: Press Esc
+    Browser->>Browser: Hide popup
+```
+
+```mermaid
+pie title Development Time Distribution
+    "Planning" : 15
+    "Coding" : 40
+    "Testing" : 25
+    "Documentation" : 10
+    "Refactoring" : 10
+```

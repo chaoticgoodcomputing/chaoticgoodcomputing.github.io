@@ -20,7 +20,7 @@ import calloutScript from "../../components/scripts/Callout.inline"
 // @ts-ignore
 import checkboxScript from "../../components/scripts/Checkbox.inline"
 // @ts-ignore
-import mermaidScript from "../../components/scripts/mermaid.inline"
+import mermaidScript from "../../components/scripts/Mermaid.inline"
 import mermaidStyle from "../../components/styles/mermaid.inline.scss"
 import { FilePath, pathToRoot, slugTag, slugifyFilePath } from "../../util/path"
 import { toHast } from "mdast-util-to-hast"

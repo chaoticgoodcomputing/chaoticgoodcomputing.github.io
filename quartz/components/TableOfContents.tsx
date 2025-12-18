@@ -4,7 +4,7 @@ import modernStyle from "./styles/toc.scss"
 import { classNames } from "../util/lang"
 
 // @ts-ignore
-import script from "./scripts/toc.inline"
+import script from "./scripts/TableOfContents.inline"
 import { i18n } from "../i18n"
 import OverflowListFactory from "./OverflowList"
 import { concatenateResources } from "../util/resources"

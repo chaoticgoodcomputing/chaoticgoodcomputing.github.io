@@ -2,7 +2,7 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import style from "./styles/tagExplorer.scss"
 
 // @ts-ignore
-import script from "./scripts/tag-explorer.inline"
+import script from "./scripts/TagExplorer.inline"
 import { classNames } from "../util/lang"
 import OverflowListFactory from "./OverflowList"
 import { concatenateResources } from "../util/resources"

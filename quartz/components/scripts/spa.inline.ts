@@ -2,13 +2,27 @@ import micromorph from "micromorph"
 import { FullSlug, RelativeURL, getFullSlug, normalizeRelativeURLs } from "../../util/path"
 import { fetchCanonical } from "./util"
 
-// adapted from `micromorph`
-// https://github.com/natemoo-re/micromorph
+// ============================================================================
+// HELPER FUNCTIONS - URL & Navigation Utilities
+// ============================================================================
+
 const NODE_TYPE_ELEMENT = 1
+const cleanupFns: Set<(...args: any[]) => void> = new Set()
 let announcer = document.createElement("route-announcer")
-const isElement = (target: EventTarget | null): target is Element =>
-  (target as Node)?.nodeType === NODE_TYPE_ELEMENT
-const isLocalUrl = (href: string) => {
+let isNavigating = false
+let p: DOMParser
+
+/**
+ * Check if a target is an Element node
+ */
+function _isElement(target: EventTarget | null): target is Element {
+  return (target as Node)?.nodeType === NODE_TYPE_ELEMENT
+}
+
+/**
+ * Check if a URL is on the same origin
+ */
+function _isLocalUrl(href: string): boolean {
   try {
     const url = new URL(href)
     if (window.location.origin === url.origin) {
@@ -18,32 +32,64 @@ const isLocalUrl = (href: string) => {
   return false
 }
 
-const isSamePage = (url: URL): boolean => {
+/**
+ * Check if a URL is the same page (origin + pathname match)
+ */
+function _isSamePage(url: URL): boolean {
   const sameOrigin = url.origin === window.location.origin
   const samePath = url.pathname === window.location.pathname
   return sameOrigin && samePath
 }
 
-const getOpts = ({ target }: Event): { url: URL; scroll?: boolean } | undefined => {
-  if (!isElement(target)) return
-  if (target.attributes.getNamedItem("target")?.value === "_blank") return
-  const a = target.closest("a")
+/**
+ * Extract navigation options from click event
+ */
+function _getNavigationOpts(event: Event): { url: URL; scroll?: boolean } | undefined {
+  if (!_isElement(event.target)) return
+  if (event.target.attributes.getNamedItem("target")?.value === "_blank") return
+
+  const a = event.target.closest("a")
   if (!a) return
   if ("routerIgnore" in a.dataset) return
+
   const { href } = a
-  if (!isLocalUrl(href)) return
+  if (!_isLocalUrl(href)) return
+
   return { url: new URL(href), scroll: "routerNoscroll" in a.dataset ? false : undefined }
 }
 
-function notifyNav(url: FullSlug) {
+/**
+ * Dispatch navigation event to notify listeners
+ */
+function _notifyNav(url: FullSlug): void {
   const event: CustomEventMap["nav"] = new CustomEvent("nav", { detail: { url } })
   document.dispatchEvent(event)
 }
 
-const cleanupFns: Set<(...args: any[]) => void> = new Set()
-window.addCleanup = (fn) => cleanupFns.add(fn)
+/**
+ * Dispatch pre-navigation event
+ */
+function _notifyPreNav(): void {
+  const event: CustomEventMap["prenav"] = new CustomEvent("prenav", { detail: {} })
+  document.dispatchEvent(event)
+}
 
-function startLoading() {
+/**
+ * Clean up all registered cleanup functions
+ */
+function _runCleanup(): void {
+  cleanupFns.forEach((fn) => fn())
+  cleanupFns.clear()
+}
+
+// ============================================================================
+// HELPER FUNCTIONS - UI Updates
+// ============================================================================
+
+/**
+ * Start loading bar animation
+ */
+function _startLoading(): void {
   const loadingBar = document.createElement("div")
   loadingBar.className = "navigation-progress"
   loadingBar.style.width = "0"
@@ -56,12 +102,62 @@ function startLoading() {
   }, 100)
 }
 
-let isNavigating = false
-let p: DOMParser
-async function _navigate(url: URL, isBack: boolean = false) {
-  isNavigating = true
-  startLoading()
-  p = p || new DOMParser()
+/**
+ * Update document title from new page HTML
+ */
+function _updateTitle(html: Document, url: URL): string {
+  let title = html.querySelector("title")?.textContent
+  if (title) {
+    document.title = title
+  } else {
+    const h1 = document.querySelector("h1")
+    title = h1?.innerText ?? h1?.textContent ?? url.pathname
+  }
+  return title
+}
+
+/**
+ * Update route announcer for screen readers
+ */
+function _updateAnnouncer(html: Document, title: string): void {
+  if (announcer.textContent !== title) {
+    announcer.textContent = title
+  }
+  announcer.dataset.persist = ""
+  html.body.appendChild(announcer)
+}
+
+/**
+ * Scroll to hash target or top of page
+ */
+function _scrollToTarget(url: URL): void {
+  if (url.hash) {
+    const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
+    el?.scrollIntoView()
+  } else {
+    window.scrollTo({ top: 0 })
+  }
+}
+
+/**
+ * Update head elements by removing old and adding new (except persisted)
+ */
+function _updateHead(html: Document): void {
+  const elementsToRemove = document.head.querySelectorAll(":not([data-persist])")
+  elementsToRemove.forEach((el) => el.remove())
+
+  const elementsToAdd = html.head.querySelectorAll(":not([data-persist])")
+  elementsToAdd.forEach((el) => document.head.appendChild(el))
+}
+
+// ============================================================================
+// HELPER FUNCTIONS - Navigation Core
+// ============================================================================
+
+/**
+ * Fetch and parse page content
+ */
+async function _fetchPage(url: URL): Promise<string | undefined> {
   const contents = await fetchCanonical(url)
     .then((res) => {
       const contentType = res.headers.get("content-type")
@@ -75,66 +171,107 @@ async function _navigate(url: URL, isBack: boolean = false) {
       window.location.assign(url)
     })
 
+  return contents
+}
+
+/**
+ * Core navigation logic - update DOM with new page
+ */
+async function _performNavigation(url: URL, isBack: boolean): Promise<void> {
+  _startLoading()
+  p = p || new DOMParser()
+
+  const contents = await _fetchPage(url)
   if (!contents) return
 
-  // notify about to nav
-  const event: CustomEventMap["prenav"] = new CustomEvent("prenav", { detail: {} })
-  document.dispatchEvent(event)
-
-  // cleanup old
-  cleanupFns.forEach((fn) => fn())
-  cleanupFns.clear()
+  _notifyPreNav()
+  _runCleanup()
 
   const html = p.parseFromString(contents, "text/html")
   normalizeRelativeURLs(html, url)
 
-  let title = html.querySelector("title")?.textContent
-  if (title) {
-    document.title = title
-  } else {
-    const h1 = document.querySelector("h1")
-    title = h1?.innerText ?? h1?.textContent ?? url.pathname
-  }
-  if (announcer.textContent !== title) {
-    announcer.textContent = title
-  }
-  announcer.dataset.persist = ""
-  html.body.appendChild(announcer)
+  const title = _updateTitle(html, url)
+  _updateAnnouncer(html, title)
 
-  // morph body
+  // Morph body with new content
   micromorph(document.body, html.body)
 
-  // scroll into place and add history
+  // Scroll and update history
   if (!isBack) {
-    if (url.hash) {
-      const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
-      el?.scrollIntoView()
-    } else {
-      window.scrollTo({ top: 0 })
-    }
+    _scrollToTarget(url)
   }
 
-  // now, patch head, re-executing scripts
-  const elementsToRemove = document.head.querySelectorAll(":not([data-persist])")
-  elementsToRemove.forEach((el) => el.remove())
-  const elementsToAdd = html.head.querySelectorAll(":not([data-persist])")
-  elementsToAdd.forEach((el) => document.head.appendChild(el))
+  _updateHead(html)
 
-  // delay setting the url until now
-  // at this point everything is loaded so changing the url should resolve to the correct addresses
+  // Update URL after everything is loaded
   if (!isBack) {
     history.pushState({}, "", url)
   }
 
-  notifyNav(getFullSlug(window))
+  _notifyNav(getFullSlug(window))
   delete announcer.dataset.persist
 }
 
-async function navigate(url: URL, isBack: boolean = false) {
+// ============================================================================
+// HELPER FUNCTIONS - Event Handlers
+// ============================================================================
+
+/**
+ * Handle same-page hash navigation
+ */
+function _handleSamePageHash(url: URL): boolean {
+  if (_isSamePage(url) && url.hash) {
+    const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
+    el?.scrollIntoView()
+    history.pushState({}, "", url)
+    return true
+  }
+  return false
+}
+
+/**
+ * Handle click events for SPA navigation
+ */
+async function _handleClick(event: MouseEvent): Promise<void> {
+  const opts = _getNavigationOpts(event)
+  if (!opts || event.ctrlKey || event.metaKey) return
+
+  const { url } = opts
+  event.preventDefault()
+
+  if (_handleSamePageHash(url)) {
+    return
+  }
+
+  navigate(url, false)
+}
+
+/**
+ * Handle popstate events for browser back/forward
+ */
+function _handlePopstate(event: PopStateEvent): void {
+  const opts = _getNavigationOpts(event)
+  if (window.location.hash && window.location.pathname === opts?.url?.pathname) return
+
+  navigate(new URL(window.location.toString()), true)
+}
+
+// ============================================================================
+// MARK: MAIN
+// ============================================================================
+
+window.addCleanup = (fn) => cleanupFns.add(fn)
+
+/**
+ * Navigate to a new URL with SPA behavior
+ * @param url - Target URL to navigate to
+ * @param isBack - Whether this is a back navigation
+ */
+async function navigate(url: URL, isBack: boolean = false): Promise<void> {
   if (isNavigating) return
   isNavigating = true
   try {
-    await _navigate(url, isBack)
+    await _performNavigation(url, isBack)
   } catch (e) {
     console.error(e)
     window.location.assign(url)
@@ -145,30 +282,13 @@ async function navigate(url: URL, isBack: boolean = false) {
 
 window.spaNavigate = navigate
 
+/**
+ * Create and initialize the SPA router
+ */
 function createRouter() {
   if (typeof window !== "undefined") {
-    window.addEventListener("click", async (event) => {
-      const { url } = getOpts(event) ?? {}
-      // dont hijack behaviour, just let browser act normally
-      if (!url || event.ctrlKey || event.metaKey) return
-      event.preventDefault()
-
-      if (isSamePage(url) && url.hash) {
-        const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
-        el?.scrollIntoView()
-        history.pushState({}, "", url)
-        return
-      }
-
-      navigate(url, false)
-    })
-
-    window.addEventListener("popstate", (event) => {
-      const { url } = getOpts(event) ?? {}
-      if (window.location.hash && window.location.pathname === url?.pathname) return
-      navigate(new URL(window.location.toString()), true)
-      return
-    })
+    window.addEventListener("click", _handleClick)
+    window.addEventListener("popstate", _handlePopstate)
   }
 
   return new (class Router {
@@ -188,8 +308,11 @@ function createRouter() {
 }
 
 createRouter()
-notifyNav(getFullSlug(window))
+_notifyNav(getFullSlug(window))
 
+/**
+ * Define route announcer custom element for accessibility
+ */
 if (!customElements.get("route-announcer")) {
   const attrs = {
     "aria-live": "assertive",
