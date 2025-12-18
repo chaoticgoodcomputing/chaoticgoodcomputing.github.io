@@ -17,7 +17,7 @@ export type ContentDetails = {
   tags: string[]
   content: string
   richContent?: string
-  date?: Date
+  date?: string  // ISO date string
   description?: string
 }
 
@@ -84,8 +84,8 @@ function generateRSSFeed(cfg: GlobalConfiguration, idx: ContentIndexMap, limit?:
       <title>${escapeHTML(cfg.pageTitle)}</title>
       <link>https://${base}</link>
       <description>${!!limit ? i18n(cfg.locale).pages.rss.lastFewNotes({ count: limit }) : i18n(cfg.locale).pages.rss.recentNotes} on ${escapeHTML(
-        cfg.pageTitle,
-      )}</description>
+    cfg.pageTitle,
+  )}</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       ${items}
     </channel>
@@ -140,12 +140,11 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
       const fp = joinSegments("static", "contentIndex") as FullSlug
       const simplifiedIndex = Object.fromEntries(
         Array.from(linkIndex).map(([slug, content]) => {
-          // remove description and from content index as nothing downstream
+          // remove description from content index as nothing downstream
           // actually uses it. we only keep it in the index as we need it
-          // for the RSS feed
+          // for the RSS feed. Convert date to ISO string for JSON serialization.
           delete content.description
-          delete content.date
-          return [slug, content]
+          return [slug, { ...content, date: content.date?.toISOString() }]
         }),
       )
 
