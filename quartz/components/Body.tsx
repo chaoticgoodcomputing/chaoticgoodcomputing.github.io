@@ -1,5 +1,5 @@
 // @ts-ignore
-import clipboardScript from "./scripts/clipboard.inline"
+import clipboardScript from "./scripts/Clipboard.inline"
 import clipboardStyle from "./styles/clipboard.scss"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 

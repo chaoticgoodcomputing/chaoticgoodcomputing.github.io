@@ -16,9 +16,9 @@ import path from "path"
 import { splitAnchor } from "../../util/path"
 import { JSResource, CSSResource } from "../../util/resources"
 // @ts-ignore
-import calloutScript from "../../components/scripts/callout.inline"
+import calloutScript from "../../components/scripts/Callout.inline"
 // @ts-ignore
-import checkboxScript from "../../components/scripts/checkbox.inline"
+import checkboxScript from "../../components/scripts/Checkbox.inline"
 // @ts-ignore
 import mermaidScript from "../../components/scripts/mermaid.inline"
 import mermaidStyle from "../../components/styles/mermaid.inline.scss"

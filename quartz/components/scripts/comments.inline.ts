@@ -1,47 +1,4 @@
-const changeTheme = (e: CustomEventMap["themechange"]) => {
-  const theme = e.detail.theme
-  const iframe = document.querySelector("iframe.giscus-frame") as HTMLIFrameElement
-  if (!iframe) {
-    return
-  }
-
-  if (!iframe.contentWindow) {
-    return
-  }
-
-  iframe.contentWindow.postMessage(
-    {
-      giscus: {
-        setConfig: {
-          theme: getThemeUrl(getThemeName(theme)),
-        },
-      },
-    },
-    "https://giscus.app",
-  )
-}
-
-const getThemeName = (theme: string) => {
-  if (theme !== "dark" && theme !== "light") {
-    return theme
-  }
-  const giscusContainer = document.querySelector(".giscus") as GiscusElement
-  if (!giscusContainer) {
-    return theme
-  }
-  const darkGiscus = giscusContainer.dataset.darkTheme ?? "dark"
-  const lightGiscus = giscusContainer.dataset.lightTheme ?? "light"
-  return theme === "dark" ? darkGiscus : lightGiscus
-}
-
-const getThemeUrl = (theme: string) => {
-  const giscusContainer = document.querySelector(".giscus") as GiscusElement
-  if (!giscusContainer) {
-    return `https://giscus.app/themes/${theme}.css`
-  }
-  return `${giscusContainer.dataset.themeUrl ?? "https://giscus.app/themes"}/${theme}.css`
-}
-
+/** Type definition for Giscus container element with required data attributes */
 type GiscusElement = Omit<HTMLElement, "dataset"> & {
   dataset: DOMStringMap & {
     repo: `${string}/${string}`
@@ -59,12 +16,63 @@ type GiscusElement = Omit<HTMLElement, "dataset"> & {
   }
 }
 
-document.addEventListener("nav", () => {
+/**
+ * Get the theme name based on current theme and container configuration
+ */
+function _getThemeName(theme: string): string {
+  if (theme !== "dark" && theme !== "light") {
+    return theme
+  }
   const giscusContainer = document.querySelector(".giscus") as GiscusElement
   if (!giscusContainer) {
+    return theme
+  }
+  const darkGiscus = giscusContainer.dataset.darkTheme ?? "dark"
+  const lightGiscus = giscusContainer.dataset.lightTheme ?? "light"
+  return theme === "dark" ? darkGiscus : lightGiscus
+}
+
+/**
+ * Get the full theme URL for Giscus
+ */
+function _getThemeUrl(theme: string): string {
+  const giscusContainer = document.querySelector(".giscus") as GiscusElement
+  if (!giscusContainer) {
+    return `https://giscus.app/themes/${theme}.css`
+  }
+  return `${giscusContainer.dataset.themeUrl ?? "https://giscus.app/themes"}/${theme}.css`
+}
+
+/**
+ * Handle theme change events and update Giscus iframe
+ */
+function _changeTheme(e: CustomEventMap["themechange"]) {
+  const theme = e.detail.theme
+  const iframe = document.querySelector("iframe.giscus-frame") as HTMLIFrameElement
+  if (!iframe) {
     return
   }
 
+  if (!iframe.contentWindow) {
+    return
+  }
+
+  iframe.contentWindow.postMessage(
+    {
+      giscus: {
+        setConfig: {
+          theme: _getThemeUrl(_getThemeName(theme)),
+        },
+      },
+    },
+    "https://giscus.app",
+  )
+}
+
+/**
+ * Create and configure the Giscus script element
+ */
+function _createGiscusScript(giscusContainer: GiscusElement): HTMLScriptElement {
   const giscusScript = document.createElement("script")
   giscusScript.src = "https://giscus.app/client.js"
   giscusScript.async = true
@@ -80,13 +88,31 @@ document.addEventListener("nav", () => {
   giscusScript.setAttribute("data-reactions-enabled", giscusContainer.dataset.reactionsEnabled)
   giscusScript.setAttribute("data-input-position", giscusContainer.dataset.inputPosition)
   giscusScript.setAttribute("data-lang", giscusContainer.dataset.lang)
+
   const theme = document.documentElement.getAttribute("saved-theme")
   if (theme) {
-    giscusScript.setAttribute("data-theme", getThemeUrl(getThemeName(theme)))
+    giscusScript.setAttribute("data-theme", _getThemeUrl(_getThemeName(theme)))
   }
 
+  return giscusScript
+}
+
+// MARK: MAIN
+
+/**
+ * Initialize Giscus comments on the page
+ */
+function setupComments() {
+  const giscusContainer = document.querySelector(".giscus") as GiscusElement
+  if (!giscusContainer) {
+    return
+  }
+
+  const giscusScript = _createGiscusScript(giscusContainer)
   giscusContainer.appendChild(giscusScript)
 
-  document.addEventListener("themechange", changeTheme)
-  window.addCleanup(() => document.removeEventListener("themechange", changeTheme))
-})
+  document.addEventListener("themechange", _changeTheme)
+  window.addCleanup(() => document.removeEventListener("themechange", _changeTheme))
+}
+
+document.addEventListener("nav", setupComments)

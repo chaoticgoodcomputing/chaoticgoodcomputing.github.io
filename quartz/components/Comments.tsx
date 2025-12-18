@@ -1,7 +1,7 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { classNames } from "../util/lang"
 // @ts-ignore
-import script from "./scripts/comments.inline"
+import script from "./scripts/Comments.inline"
 
 type Options = {
   provider: "giscus"

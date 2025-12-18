@@ -1,5 +1,5 @@
 // @ts-ignore
-import darkmodeScript from "./scripts/darkmode.inline"
+import darkmodeScript from "./scripts/DarkMode.inline"
 import styles from "./styles/darkmode.scss"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { i18n } from "../i18n"

@@ -2,7 +2,7 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import style from "./styles/fileExplorer.scss"
 
 // @ts-ignore
-import script from "./scripts/file-explorer.inline"
+import script from "./scripts/FileExplorer.inline"
 import { classNames } from "../util/lang"
 import { i18n } from "../i18n"
 import { FileTrieNode } from "../util/fileTrie"
