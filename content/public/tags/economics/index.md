@@ -1,3 +1,3 @@
 ---
-title: Homelab
+name: economics
 ---

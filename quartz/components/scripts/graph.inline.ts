@@ -405,7 +405,9 @@ function _constructGraphNodes(
 ): NodeData[] {
   return [...neighbourhood].map((url) => {
     if (url.startsWith("tags/")) {
-      const tagPath = url.substring(5)
+      // Remove trailing slash before processing to avoid empty segments
+      const normalizedUrl = url.endsWith("/") ? url.slice(0, -1) : url
+      const tagPath = normalizedUrl.substring(5)
       const parts = tagPath.split("/")
       // Display only the last segment for hierarchical tags
       const displayName = parts[parts.length - 1]
