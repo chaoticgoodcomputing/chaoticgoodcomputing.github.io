@@ -2,12 +2,38 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			// Main task: Starts development server and opens browser automatically
 			"label": "site:serve",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"_serve-server",
+				"_open-browser"
+			],
+			"problemMatcher": [ ],
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			// Helper task: Starts the Quartz dev server in background
+			// Uses zsh interactive shell to ensure proper environment (nvm, PATH)
+			// Monitors for "Started a Quartz server listening at" to signal ready
+			"label": "_serve-server",
 			"type": "shell",
 			"command": "nx run site:serve",
 			"isBackground": true,
 			"options": {
-				"shell": { "executable": "zsh", "args": [ "-i", "-c" ] }
+				"shell": {
+					"executable": "zsh",
+					"args": [
+						"-i",
+						"-c"
+					]
+				}
 			},
 			"problemMatcher": {
 				"pattern": {
@@ -26,10 +52,21 @@
 			}
 		},
 		{
-			"label": "curl-test",
-			"type": "shell",
-			"command": "curl -s http://localhost:8080 | head -20",
-			"group": "test"
+			// Helper task: Opens VS Code's Simple Browser to localhost:8080
+			// References the "openSimpleBrowser" input defined below
+			"label": "_open-browser",
+			"command": "${input:openSimpleBrowser}",
+			"problemMatcher": [ ]
+		},
+	],
+	"inputs": [
+		{
+			// Command to open Simple Browser at localhost:8080
+			// Used by "_open-browser" task
+			"id": "openSimpleBrowser",
+			"type": "command",
+			"command": "simpleBrowser.show",
+			"args": [ "http://localhost:8080" ]
 		}
 	]
 }

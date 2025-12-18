@@ -37,9 +37,14 @@ Layouts compose `QuartzComponent` arrays into page zones. See `quartz/cfg.ts` fo
 ## Development
 
 ```bash
-nx build:docs # Dev server with hot reload at localhost:8080
-nx quartz build  # Production build to public/
+nx run site:serve  # Dev server with hot reload at localhost:8080 (auto-opens Simple Browser)
+nx run site:build  # Production build to public/
 ```
+
+The `site:serve` task automatically:
+- Starts the dev server at `localhost:8080`
+- Opens VS Code's Simple Browser once the server is ready
+- Runs on workspace open (configured via `runOptions.runOn: "folderOpen"`)
 
 Hot reload watches two scopes:
 1. **Source changes** (`.ts`, `.tsx`, `.scss`): Full rebuild via esbuild
@@ -116,9 +121,9 @@ Use `i18n(cfg.locale).components.{component}.{key}` for localized strings. Add n
 
 ## Debugging Workflow
 
-### Development Server + curl Testing
+### Development Server + Testing
 
-The `site:serve` task runs a development server with hot reload at `localhost:8080`. Combine with `curl` for efficient debugging:
+The `site:serve` task automatically starts the dev server with hot reload at `localhost:8080` and opens the Simple Browser. Use `curl` for efficient data layer debugging:
 
 **Data Layer Verification:**
 ```bash
@@ -173,13 +178,13 @@ curl -s http://localhost:8080 | grep -A 10 '<script>'
 - ✅ Browser DevTools (console errors, network tab)
 - ✅ Verifying `fetchData` promise resolution
 
-**Key Insight:** `curl` shows what the build emitted, Simple Browser shows what actually works at runtime.
+**Key Insight:** `curl` shows what the build emitted, Simple Browser shows what actually works at runtime. The Simple Browser automatically opens when you run `site:serve`.
 
 ### Common Debugging Pattern
 
 1. **Verify data layer** with curl (contentIndex structure, component rendering)
-2. **If data looks good but UI broken** → use Simple Browser + DevTools
-3. **For CSS/visual issues** → must use Simple Browser
+2. **If data looks good but UI broken** → check Simple Browser + DevTools (already open from `site:serve`)
+3. **For CSS/visual issues** → check Simple Browser (already open from `site:serve`)
 4. **For build/config issues** → curl is sufficient
 
 ### Example: Client-Side Script Issues
