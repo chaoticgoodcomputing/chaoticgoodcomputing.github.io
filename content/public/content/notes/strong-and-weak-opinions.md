@@ -4,8 +4,7 @@ date: 2024-03-05
 updated: 2024-03-05
 tags:
   - engineering
-  - notes
-  - economics/project-management
+  - horticulture
 draft: false
 ---
 > This note ended up having a lot of front-loaded context — feel free to skip to [[content/notes/strong-and-weak-opinions#The Point|the point]]

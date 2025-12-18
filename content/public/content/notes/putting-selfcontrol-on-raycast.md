@@ -5,8 +5,7 @@ updated: 2024-02-28
 tags:
   - horticulture
   - engineering
-  - mentoring/tutorials
-  - notes
+  - articles
 draft: false
 ---
 > I talk a lot in this post. You may want to skip to [[content/notes/putting-selfcontrol-on-raycast#The Useful Part|the useful part]].

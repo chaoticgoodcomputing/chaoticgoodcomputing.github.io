@@ -4,7 +4,7 @@ date: 2024-03-17
 updated: 2024-03-17
 tags:
   - consulting
-  - economics/market-design
+  - economics/markets
   - annotations
   - projects/cgc/economics-of-open-source
 draft: false

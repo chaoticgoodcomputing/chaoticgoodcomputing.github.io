@@ -3,7 +3,7 @@ title: "Annotation: College Admissions and the Stability of Marriage"
 date: 2024-03-14
 updated: 2024-03-14
 tags:
-  - economics/market-design
+  - economics/markets
   - consulting
   - annotations
 draft: false

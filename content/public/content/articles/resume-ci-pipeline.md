@@ -2,7 +2,7 @@
 title: Job Applications are a Waking Nightmare - Let Tech Do It For You
 date: 2021-07-29
 tags:
-  - mentoring/tutorials
+  - articles/tutorials
   - engineering/devops
   - articles
 ---

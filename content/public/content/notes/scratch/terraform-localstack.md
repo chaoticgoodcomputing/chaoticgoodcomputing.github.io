@@ -3,8 +3,6 @@ title: Terraform LocalStack Testing
 date: 2024-04-18
 tags:
   - engineering/devops
-  - projects/dayjob/terraform-testing
-  - notes/scratch
 draft: false
 ---
 ## Primary Takeaways

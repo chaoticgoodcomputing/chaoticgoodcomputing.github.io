@@ -3,9 +3,8 @@ title: College Admissions and the Stability of Marriage
 date: 2020-11-01
 tags:
   - engineering/python
-  - economics/market-design
-  - viz/doodles
-  - notes
+  - economics/markets
+  - engineering/data
 ---
 In college, my area of focus during [[content/notes/qamo|my economics degree]] was **non-market environments**, which encompass the areas of economics where money isn't used for moral or practical reasons.
 

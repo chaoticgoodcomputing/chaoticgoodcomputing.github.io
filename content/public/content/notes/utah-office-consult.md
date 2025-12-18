@@ -4,10 +4,8 @@ date: 2021-03-01
 tags:
   - engineering/python
   - economics/strategy
-  - data/analytics
-  - viz
-  - notes
-  - consulting
+  - engineering/data
+  - projects/college
 updated: 2024-02-27
 ---
 <iframe src="https://docs.google.com/gview?url=https://chaoticgood.computer/assets/utah_office_update.pdf&embedded=true"></iframe>

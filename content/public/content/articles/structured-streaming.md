@@ -2,24 +2,23 @@
 title: "Don't Double Down: Using Spark Structured Streaming to Wrangle Growing Data"
 date: 2022-07-14
 tags:
-  - data
+  - engineering/data
   - engineering/devops
   - engineering/python
-  - mentoring/tutorials
-  - viz/doodles
+  - articles/tutorials
+  - engineering/data
   - economics/finance
-  - articles
 ---
 > This post was written during my time as a software engineer at M Science as a joint project with Databricks. You can view the original post [here](https://www.databricks.com/blog/2022/07/14/using-spark-structured-streaming-to-scale-your-analytics.html)
 
 Let's say that _you_, a ✨ _humble data plumber_ ✨ of the Big Data era, have been tasked to create an analytics solution for [an online retail dataset](https://github.com/databricks/Spark-The-Definitive-Guide/blob/master/data/retail-data/all/online-retail-dataset.csv):
 
-| InvoiceNo | StockCode | Description          | Quantity | InvoiceDate | UnitPrice  | CustomerID | Country        |
-| :-------- | :-------- | :------------------- | -------: | :---------- | ---------: | :--------- | :------------- |
-| 536365    | 85123A    | WHITE HANGING HEA... | 6        | 2012-01-10  | $2.55      | 17850      | United Kingdom |
-| 536365    | 71053     | WHITE METAL LANTERN  | 6        | 2012-01-10  | $3.39      | 17850      | United Kingdom |
-| 536365    | 84406B    | CREAM CUPID HEART... | 8        | 2012-01-10  | $2.75      | 17850      | United Kingdom |
-| ...       | ...       | ...                  | ...      | ...         | ...        | ...        | ...            |
+| InvoiceNo | StockCode | Description          | Quantity | InvoiceDate | UnitPrice | CustomerID | Country        |
+| :-------- | :-------- | :------------------- | -------: | :---------- | --------: | :--------- | :------------- |
+| 536365    | 85123A    | WHITE HANGING HEA... |        6 | 2012-01-10  |     $2.55 | 17850      | United Kingdom |
+| 536365    | 71053     | WHITE METAL LANTERN  |        6 | 2012-01-10  |     $3.39 | 17850      | United Kingdom |
+| 536365    | 84406B    | CREAM CUPID HEART... |        8 | 2012-01-10  |     $2.75 | 17850      | United Kingdom |
+| ...       | ...       | ...                  |      ... | ...         |       ... | ...        | ...            |
 
 The analysis you've been asked for is simple - an aggregation of the number of dollars, units sold, and unique users for each day, and across each stock code. With just a few lines of PySpark, we can transform our raw data into a usable aggregate:
 

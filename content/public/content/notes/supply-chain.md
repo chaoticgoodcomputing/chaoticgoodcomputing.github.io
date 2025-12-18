@@ -4,8 +4,7 @@ date: 2019-07-01
 tags:
   - economics/finance
   - engineering/python
-  - viz
-  - notes
+  - engineering/data
 updated: 2024-02-27
 ---
 Below, you'll find some graphs. These are what is known in the field of [[tags/engineering/data/index|data visualization]] as "bad."
