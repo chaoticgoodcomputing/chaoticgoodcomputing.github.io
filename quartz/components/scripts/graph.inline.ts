@@ -28,6 +28,9 @@ type GraphicsInfo = {
   active: boolean
 }
 
+/** Link type classification */
+type LinkType = "tag-tag" | "tag-post" | "post-post"
+
 /** Node data for graph simulation */
 type NodeData = {
   id: SimpleSlug
@@ -39,12 +42,14 @@ type NodeData = {
 type SimpleLinkData = {
   source: SimpleSlug
   target: SimpleSlug
+  type: LinkType
 }
 
 /** Link data for graph simulation */
 type LinkData = {
   source: NodeData
   target: NodeData
+  type: LinkType
 } & SimulationLinkDatum<NodeData>
 
 /** Link rendering data including graphics info */
@@ -114,6 +119,28 @@ async function _fetchAndTransformData(): Promise<Map<SimpleSlug, ContentDetails>
 }
 
 /**
+ * Split a hierarchical tag into parent and child parts.
+ * @param tag - Tag slug (e.g., "tags/engineering/typescript")
+ * @returns Object with parent and leaf slugs, or null if not hierarchical
+ */
+function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: SimpleSlug } | null {
+  const tagPath = tag.replace(/^tags\//, "")
+  const parts = tagPath.split("/")
+  
+  if (parts.length < 2) {
+    return null
+  }
+  
+  // For "engineering/typescript", return:
+  // parent: "tags/engineering", leaf: "tags/engineering/typescript"
+  const parentPath = parts.slice(0, -1).join("/")
+  return {
+    parent: `tags/${parentPath}` as SimpleSlug,
+    leaf: tag,
+  }
+}
+
+/**
  * Build links array and collect tags from content data.
  * @param data - The content data map
  * @param showTags - Whether to include tags in the graph
@@ -128,13 +155,14 @@ function _buildLinksAndTags(
   const links: SimpleLinkData[] = []
   const tags: SimpleSlug[] = []
   const validLinks = new Set(data.keys())
+  const parentChildPairs = new Set<string>() // Track unique parent-child connections
 
   for (const [source, details] of data.entries()) {
     const outgoing = details.links ?? []
 
     for (const dest of outgoing) {
       if (validLinks.has(dest)) {
-        links.push({ source: source, target: dest })
+        links.push({ source: source, target: dest, type: "post-post" })
       }
     }
 
@@ -143,10 +171,34 @@ function _buildLinksAndTags(
         .filter((tag) => !removeTags.includes(tag))
         .map((tag) => simplifySlug(("tags/" + tag) as FullSlug))
 
-      tags.push(...localTags.filter((tag) => !tags.includes(tag)))
-
       for (const tag of localTags) {
-        links.push({ source: source, target: tag })
+        // Add the leaf tag node if not already present
+        if (!tags.includes(tag)) {
+          tags.push(tag)
+        }
+
+        // Check if this is a hierarchical tag
+        const splitTag = _splitHierarchicalTag(tag)
+        
+        if (splitTag) {
+          // Add parent tag node if not already present
+          if (!tags.includes(splitTag.parent)) {
+            tags.push(splitTag.parent)
+          }
+
+          // Create strong connection between parent and child nodes
+          const pairKey = `${splitTag.parent}→${splitTag.leaf}`
+          if (!parentChildPairs.has(pairKey)) {
+            links.push({ source: splitTag.parent, target: splitTag.leaf, type: "tag-tag" })
+            parentChildPairs.add(pairKey)
+          }
+
+          // Posts connect to the LEAF node, not the parent
+          links.push({ source: source, target: splitTag.leaf, type: "tag-post" })
+        } else {
+          // Non-hierarchical tag: post connects directly to tag
+          links.push({ source: source, target: tag, type: "tag-post" })
+        }
       }
     }
   }
@@ -209,11 +261,22 @@ function _constructGraphNodes(
   data: Map<SimpleSlug, ContentDetails>,
 ): NodeData[] {
   return [...neighbourhood].map((url) => {
-    const text = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
-    return {
-      id: url,
-      text,
-      tags: data.get(url)?.tags ?? [],
+    if (url.startsWith("tags/")) {
+      const tagPath = url.substring(5)
+      const parts = tagPath.split("/")
+      // Display only the last segment for hierarchical tags
+      const displayName = parts[parts.length - 1]
+      return {
+        id: url,
+        text: "#" + displayName,
+        tags: data.get(url)?.tags ?? [],
+      }
+    } else {
+      return {
+        id: url,
+        text: data.get(url)?.title ?? url,
+        tags: data.get(url)?.tags ?? [],
+      }
     }
   })
 }
@@ -237,6 +300,7 @@ function _constructGraphData(
       .map((l) => ({
         source: nodes.find((n) => n.id === l.source)!,
         target: nodes.find((n) => n.id === l.target)!,
+        type: l.type,
       })),
   }
 }
@@ -246,15 +310,60 @@ function _constructGraphData(
 // ============================================================================
 
 /**
+ * Get all descendant tag nodes for a given parent tag.
+ * @param parentTag - Parent tag slug (e.g., "tags/engineering")
+ * @param allNodes - All nodes in the graph
+ * @returns Array of descendant tag node IDs
+ */
+function _getDescendantTags(parentTag: SimpleSlug, allNodes: NodeData[]): SimpleSlug[] {
+  const parentPath = parentTag.substring(5) // Remove "tags/" prefix
+  return allNodes
+    .filter((n) => {
+      if (!n.id.startsWith("tags/")) return false
+      const nodePath = n.id.substring(5)
+      // Check if this node is a descendant (starts with parent path + "/")
+      return nodePath.startsWith(parentPath + "/")
+    })
+    .map((n) => n.id)
+}
+
+/**
  * Create node radius calculation function based on link count.
+ * For parent tag nodes, aggregate connections from all descendant tags.
  * @param graphData - The graph data structure
  * @returns Function that calculates radius for a given node
  */
 function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkData[] }) {
   return (d: NodeData): number => {
-    const numLinks = graphData.links.filter(
+    let numLinks = graphData.links.filter(
       (l) => l.source.id === d.id || l.target.id === d.id,
     ).length
+
+    // If this is a tag node, check if it has descendants
+    if (d.id.startsWith("tags/")) {
+      const descendants = _getDescendantTags(d.id, graphData.nodes)
+      
+      // Add connections from all descendants, excluding parent-child links
+      for (const descendantId of descendants) {
+        const descendantLinks = graphData.links.filter(
+          (l) => {
+            const isDescendantLink = l.source.id === descendantId || l.target.id === descendantId
+            // Don't count the parent-child connection itself
+            const isParentChildLink = 
+              (l.source.id === d.id && l.target.id === descendantId) ||
+              (l.source.id === descendantId && l.target.id === d.id)
+            // Don't count links between descendants
+            const isDescendantToDescendantLink =
+              descendants.includes(l.source.id) && descendants.includes(l.target.id)
+            
+            return isDescendantLink && !isParentChildLink && !isDescendantToDescendantLink
+          }
+        ).length
+        
+        numLinks += descendantLinks
+      }
+    }
+
     return 2 + Math.sqrt(numLinks)
   }
 }
@@ -264,6 +373,7 @@ function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkDa
  * @param graphData - Graph data with nodes and links
  * @param nodeRadius - Function to calculate node radius
  * @param config - Force configuration values
+ * @param linkStrength - Link strength configuration by type
  * @param enableRadial - Whether to enable radial force
  * @param width - Graph width
  * @param height - Graph height
@@ -273,6 +383,7 @@ function _setupSimulation(
   graphData: { nodes: NodeData[]; links: LinkData[] },
   nodeRadius: (d: NodeData) => number,
   config: { repelForce: number; centerForce: number; linkDistance: number },
+  linkStrength: { tagTag: number; tagPost: number; postPost: number },
   enableRadial: boolean,
   width: number,
   height: number,
@@ -280,7 +391,24 @@ function _setupSimulation(
   const simulation = forceSimulation<NodeData>(graphData.nodes)
     .force("charge", forceManyBody().strength(-100 * config.repelForce))
     .force("center", forceCenter().strength(config.centerForce))
-    .force("link", forceLink(graphData.links).distance(config.linkDistance))
+    .force(
+      "link",
+      forceLink(graphData.links)
+        .distance(config.linkDistance)
+        .strength((link) => {
+          const l = link as LinkData
+          switch (l.type) {
+            case "tag-tag":
+              return linkStrength.tagTag
+            case "tag-post":
+              return linkStrength.tagPost
+            case "post-post":
+              return linkStrength.postPost
+            default:
+              return 1.0
+          }
+        }),
+    )
     .force("collide", forceCollide<NodeData>(nodeRadius).iterations(3))
 
   if (enableRadial) {
@@ -595,7 +723,6 @@ function _setupDragBehavior(
   hoverState: HoverState,
   simulation: Simulation<NodeData, LinkData>,
   fullSlug: FullSlug,
-  nodeRenderData: NodeRenderData[],
 ) {
   let currentTransform = zoomIdentity
 
@@ -782,7 +909,15 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     showTags,
     focusOnHover,
     enableRadial,
+    linkStrength,
   } = _parseGraphConfig(graph)
+
+  // Use default link strengths if not provided
+  const linkStrengthConfig = {
+    tagTag: linkStrength?.tagTag ?? 2.0,
+    tagPost: linkStrength?.tagPost ?? 1.0,
+    postPost: linkStrength?.postPost ?? 1.0,
+  }
 
   // Fetch and transform data
   const data = await _fetchAndTransformData()
@@ -807,6 +942,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     graphData,
     nodeRadius,
     { repelForce, centerForce, linkDistance },
+    linkStrengthConfig,
     enableRadial ?? false,
     width,
     height,
@@ -936,7 +1072,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
   // Setup interaction behaviors
   if (enableDrag) {
-    _setupDragBehavior(app.canvas, graphData, hoverState, simulation, fullSlug, nodeRenderData)
+    _setupDragBehavior(app.canvas, graphData, hoverState, simulation, fullSlug)
   } else {
     _setupClickBehavior(nodeRenderData, fullSlug)
   }

@@ -19,6 +19,11 @@ export interface D3Config {
   showTags: boolean
   focusOnHover?: boolean
   enableRadial?: boolean
+  linkStrength?: {
+    tagTag?: number      // Parent-child tag connections
+    tagPost?: number     // Tag-to-post connections
+    postPost?: number    // Post-to-post connections
+  }
 }
 
 interface GraphOptions {
@@ -41,6 +46,11 @@ const defaultOptions: GraphOptions = {
     removeTags: [],
     focusOnHover: false,
     enableRadial: false,
+    linkStrength: {
+      tagTag: 2.0,     // Strong connections between parent-child tags
+      tagPost: 1.0,    // Normal connections between tags and posts
+      postPost: 1.0,   // Normal connections between posts
+    },
   },
   globalGraph: {
     drag: true,
@@ -56,6 +66,11 @@ const defaultOptions: GraphOptions = {
     removeTags: [],
     focusOnHover: true,
     enableRadial: true,
+    linkStrength: {
+      tagTag: 2.0,     // Strong connections between parent-child tags
+      tagPost: 1.0,    // Normal connections between tags and posts
+      postPost: 1.0,   // Normal connections between posts
+    },
   },
 }
 

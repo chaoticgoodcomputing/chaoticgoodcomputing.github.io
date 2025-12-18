@@ -48,7 +48,22 @@ export const defaultContentPageLayout: PageLayout = {
     }),
   ],
   right: [
-    Component.Graph(),
+    Component.Graph({
+      localGraph: {
+        linkStrength: {
+          tagTag: 0.2,
+          tagPost: 0.1,
+          postPost: 0.05
+        }
+      },
+      globalGraph: {
+        linkStrength: {
+          tagTag: 0.2,
+          tagPost: 0.1,
+          postPost: 0.05
+        }
+      }
+    }),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
