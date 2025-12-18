@@ -140,6 +140,149 @@ function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: Sim
   }
 }
 
+// ============================================================================
+// COLOR UTILITIES
+// ============================================================================
+
+/**
+ * Convert hex color to RGB components.
+ * @param hex - Hex color string (e.g., "#FF5733")
+ * @returns RGB components [r, g, b] in range [0, 255]
+ */
+function _hexToRgb(hex: string): [number, number, number] {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
+    : [0, 0, 0]
+}
+
+/**
+ * Convert RGB components to hex color string.
+ * @param r - Red component [0, 255]
+ * @param g - Green component [0, 255]
+ * @param b - Blue component [0, 255]
+ * @returns Hex color string
+ */
+function _rgbToHex(r: number, g: number, b: number): string {
+  return "#" + [r, g, b].map((x) => {
+    const hex = Math.round(x).toString(16)
+    return hex.length === 1 ? "0" + hex : hex
+  }).join("")
+}
+
+/**
+ * Interpolate between multiple colors using a gradient.
+ * @param colors - Array of hex color strings defining the gradient
+ * @param t - Position in gradient [0, 1]
+ * @returns Interpolated hex color
+ */
+function _lerpGradient(colors: string[], t: number): string {
+  if (colors.length === 0) return "#888888"
+  if (colors.length === 1) return colors[0]
+  
+  // Clamp t to [0, 1]
+  t = Math.max(0, Math.min(1, t))
+  
+  // Find which two colors to interpolate between
+  const scaledT = t * (colors.length - 1)
+  const index = Math.floor(scaledT)
+  const localT = scaledT - index
+  
+  // Handle edge case where t = 1
+  if (index >= colors.length - 1) {
+    return colors[colors.length - 1]
+  }
+  
+  // Interpolate between the two colors
+  const color1 = _hexToRgb(colors[index])
+  const color2 = _hexToRgb(colors[index + 1])
+  
+  const r = color1[0] + (color2[0] - color1[0]) * localT
+  const g = color1[1] + (color2[1] - color1[1]) * localT
+  const b = color1[2] + (color2[2] - color1[2]) * localT
+  
+  return _rgbToHex(r, g, b)
+}
+
+/**
+ * Get the top-level tag from a tag slug.
+ * @param tag - Tag slug (e.g., "tags/engineering/typescript")
+ * @returns Top-level tag (e.g., "tags/engineering")
+ */
+function _getTopLevelTag(tag: SimpleSlug): SimpleSlug {
+  const tagPath = tag.replace(/^tags\//, "")
+  const parts = tagPath.split("/")
+  return `tags/${parts[0]}` as SimpleSlug
+}
+
+/**
+ * Build a mapping from tags to their assigned gradient colors.
+ * @param tags - All tag slugs in the graph
+ * @param gradient - Array of hex colors defining the gradient
+ * @returns Map from tag slug to color
+ */
+function _buildTagColorMap(tags: SimpleSlug[], gradient: string[]): Map<SimpleSlug, string> {
+  const colorMap = new Map<SimpleSlug, string>()
+  
+  // Find all top-level tags and sort alphabetically
+  const topLevelTags = [...new Set(tags.map(_getTopLevelTag))].sort((a, b) => {
+    const aPath = a.replace(/^tags\//, "")
+    const bPath = b.replace(/^tags\//, "")
+    return aPath.localeCompare(bPath, undefined, { numeric: true, sensitivity: "base" })
+  })
+  
+  // Assign colors to top-level tags based on gradient position
+  for (let i = 0; i < topLevelTags.length; i++) {
+    const t = topLevelTags.length === 1 ? 0.5 : i / (topLevelTags.length - 1)
+    const color = _lerpGradient(gradient, t)
+    colorMap.set(topLevelTags[i], color)
+  }
+  
+  // Assign colors to all descendant tags based on their top-level parent
+  for (const tag of tags) {
+    if (!colorMap.has(tag)) {
+      const topLevel = _getTopLevelTag(tag)
+      const color = colorMap.get(topLevel)
+      if (color) {
+        colorMap.set(tag, color)
+      }
+    }
+  }
+  
+  return colorMap
+}
+
+/**
+ * Calculate edge opacity based on distance from target linkDistance.
+ * @param actualDistance - Current distance between nodes
+ * @param targetDistance - Target link distance
+ * @param minOpacity - Minimum opacity at 2x target distance
+ * @param maxOpacity - Maximum opacity at 0.5x target distance
+ * @returns Opacity value [minOpacity, maxOpacity]
+ */
+function _calculateEdgeOpacity(
+  actualDistance: number,
+  targetDistance: number,
+  minOpacity: number,
+  maxOpacity: number,
+): number {
+  // At 0.5x targetDistance: max opacity
+  // At 1.0x targetDistance: midpoint opacity
+  // At 2.0x targetDistance: min opacity
+  
+  const minDist = targetDistance * 0.5
+  const maxDist = targetDistance * 2.0
+  
+  // Clamp distance to our range
+  const clampedDist = Math.max(minDist, Math.min(maxDist, actualDistance))
+  
+  // Normalize to [0, 1] where 0 = minDist, 1 = maxDist
+  const t = (clampedDist - minDist) / (maxDist - minDist)
+  
+  // Interpolate opacity (inverse: closer = more opaque)
+  return maxOpacity - t * (maxOpacity - minOpacity)
+}
+
 /**
  * Build links array and collect tags from content data.
  * @param data - The content data map
@@ -450,18 +593,23 @@ function _getComputedStyleMap(): Record<string, string> {
  * @param slug - Current page slug
  * @param visited - Set of visited page slugs
  * @param styleMap - Computed CSS variable values
+ * @param tagColorMap - Map from tag slug to gradient color
  * @returns Function that calculates color for a given node
  */
 function _createColorFunction(
   slug: SimpleSlug,
   visited: Set<SimpleSlug>,
   styleMap: Record<string, string>,
+  tagColorMap: Map<SimpleSlug, string>,
 ) {
   return (d: NodeData): string => {
     const isCurrent = d.id === slug
     if (isCurrent) {
       return styleMap["--secondary"]
-    } else if (visited.has(d.id) || d.id.startsWith("tags/")) {
+    } else if (d.id.startsWith("tags/")) {
+      // Use gradient color for tag nodes
+      return tagColorMap.get(d.id) ?? styleMap["--tertiary"]
+    } else if (visited.has(d.id)) {
       return styleMap["--tertiary"]
     } else {
       return styleMap["--gray"]
@@ -685,7 +833,7 @@ async function _createPixiApp(width: number, height: number): Promise<Applicatio
     autoStart: false,
     autoDensity: true,
     backgroundAlpha: 0,
-    preference: "webgpu",
+    preference: "webgl",
     resolution: window.devicePixelRatio,
     eventMode: "static",
   })
@@ -839,6 +987,8 @@ function _setupZoomBehavior(
  * @param stage - Pixi stage
  * @param width - Canvas width
  * @param height - Canvas height
+ * @param linkDistance - Target link distance for opacity calculation
+ * @param edgeOpacity - Min/max opacity configuration
  * @returns Cleanup function to stop animation
  */
 function _startAnimationLoop(
@@ -849,6 +999,8 @@ function _startAnimationLoop(
   stage: Container,
   width: number,
   height: number,
+  linkDistance: number,
+  edgeOpacity: { min: number; max: number },
 ): () => void {
   let stopAnimation = false
 
@@ -865,14 +1017,30 @@ function _startAnimationLoop(
       }
     }
 
-    // Update link positions
+    // Update link positions and calculate distance-based opacity
     for (const l of linkRenderData) {
       const linkData = l.simulationData
+      const sx = linkData.source.x! + width / 2
+      const sy = linkData.source.y! + height / 2
+      const tx = linkData.target.x! + width / 2
+      const ty = linkData.target.y! + height / 2
+      
+      // Calculate actual distance between nodes
+      const dx = tx - sx
+      const dy = ty - sy
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      
+      // Calculate opacity based on distance
+      const baseOpacity = _calculateEdgeOpacity(distance, linkDistance, edgeOpacity.min, edgeOpacity.max)
+      
+      // Apply both base opacity and current alpha (for hover effects)
+      const finalAlpha = baseOpacity * l.alpha
+      
       l.gfx.clear()
-      l.gfx.moveTo(linkData.source.x! + width / 2, linkData.source.y! + height / 2)
+      l.gfx.moveTo(sx, sy)
       l.gfx
-        .lineTo(linkData.target.x! + width / 2, linkData.target.y! + height / 2)
-        .stroke({ alpha: l.alpha, width: 1, color: l.color })
+        .lineTo(tx, ty)
+        .stroke({ alpha: finalAlpha, width: 1, color: l.color })
     }
 
     // Update tweens and render
@@ -910,6 +1078,8 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     focusOnHover,
     enableRadial,
     linkStrength,
+    tagColorGradient,
+    edgeOpacity,
   } = _parseGraphConfig(graph)
 
   // Use default link strengths if not provided
@@ -917,6 +1087,15 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     tagTag: linkStrength?.tagTag ?? 2.0,
     tagPost: linkStrength?.tagPost ?? 1.0,
     postPost: linkStrength?.postPost ?? 1.0,
+  }
+
+  // Use default gradient if not provided
+  const gradient = tagColorGradient ?? ["#4CAF50", "#2196F3", "#9C27B0", "#FF9800"]
+  
+  // Use default edge opacity if not provided
+  const edgeOpacityConfig = {
+    min: edgeOpacity?.min ?? 0.2,
+    max: edgeOpacity?.max ?? 1.0,
   }
 
   // Fetch and transform data
@@ -934,6 +1113,9 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const nodes = _constructGraphNodes(neighbourhood, data)
   const graphData = _constructGraphData(nodes, links, neighbourhood)
 
+  // Build tag color mapping from gradient
+  const tagColorMap = _buildTagColorMap(tags, gradient)
+
   // Setup dimensions and simulation
   const width = graph.offsetWidth
   const height = Math.max(graph.offsetHeight, 250)
@@ -950,7 +1132,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
   // Precompute CSS variables for Pixi rendering
   const computedStyleMap = _getComputedStyleMap()
-  const color = _createColorFunction(slug, visited, computedStyleMap)
+  const color = _createColorFunction(slug, visited, computedStyleMap, tagColorMap)
 
   // Initialize hover state
   const hoverState: HoverState = {
@@ -1012,6 +1194,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
     let oldLabelOpacity = 0
     const isTagNode = nodeId.startsWith("tags/")
+    const nodeColor = color(n)
     const gfx = new Graphics({
       interactive: true,
       label: nodeId,
@@ -1020,7 +1203,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       cursor: "pointer",
     })
       .circle(0, 0, nodeRadius(n))
-      .fill({ color: isTagNode ? computedStyleMap["--light"] : color(n) })
+      .fill({ color: isTagNode ? computedStyleMap["--light"] : nodeColor })
       .on("pointerover", (e) => {
         updateHoverInfo(e.target.label)
         oldLabelOpacity = label.alpha
@@ -1037,7 +1220,8 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       })
 
     if (isTagNode) {
-      gfx.stroke({ width: 2, color: computedStyleMap["--tertiary"] })
+      // Use the gradient color for the stroke (border)
+      gfx.stroke({ width: 2, color: nodeColor })
     }
 
     nodesContainer.addChild(gfx)
@@ -1047,7 +1231,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       simulationData: n,
       gfx,
       label,
-      color: color(n),
+      color: nodeColor,
       alpha: 1,
       active: false,
     }
@@ -1090,7 +1274,17 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   }
 
   // Start animation loop
-  return _startAnimationLoop(nodeRenderData, linkRenderData, tweens, app, stage, width, height)
+  return _startAnimationLoop(
+    nodeRenderData,
+    linkRenderData,
+    tweens,
+    app,
+    stage,
+    width,
+    height,
+    linkDistance,
+    edgeOpacityConfig,
+  )
 }
 
 /**

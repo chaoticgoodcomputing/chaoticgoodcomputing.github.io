@@ -24,6 +24,11 @@ export interface D3Config {
     tagPost?: number     // Tag-to-post connections
     postPost?: number    // Post-to-post connections
   }
+  tagColorGradient?: string[]  // Array of hex colors for tag gradient
+  edgeOpacity?: {
+    min?: number    // Minimum opacity at 2x linkDistance
+    max?: number    // Maximum opacity at 0.5x linkDistance
+  }
 }
 
 interface GraphOptions {
@@ -51,6 +56,11 @@ const defaultOptions: GraphOptions = {
       tagPost: 1.0,    // Normal connections between tags and posts
       postPost: 1.0,   // Normal connections between posts
     },
+    tagColorGradient: ["#FF0000", "#00FF00", "#0000FF"],
+    edgeOpacity: {
+      min: 0.2,   // Minimum opacity at 2x linkDistance
+      max: 1.0,   // Maximum opacity at 0.5x linkDistance
+    },
   },
   globalGraph: {
     drag: true,
@@ -70,6 +80,11 @@ const defaultOptions: GraphOptions = {
       tagTag: 2.0,     // Strong connections between parent-child tags
       tagPost: 1.0,    // Normal connections between tags and posts
       postPost: 1.0,   // Normal connections between posts
+    },
+    tagColorGradient: ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"],  // Rainbow: Red, Orange, Yellow, Green, Blue, Indigo, Violet
+    edgeOpacity: {
+      min: 0.2,   // Minimum opacity at 2x linkDistance
+      max: 1.0,   // Maximum opacity at 0.5x linkDistance
     },
   },
 }

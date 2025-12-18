@@ -1,5 +1,6 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
+import { D3Config } from "./quartz/components/Graph"
 
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
@@ -13,6 +14,31 @@ export const sharedPageComponents: SharedLayout = {
     },
   }),
 }
+
+const graphOptions = {
+  scale: 2,
+  linkStrength: {
+    tagTag: 2,
+    tagPost: 0.5,
+    postPost: 0.1
+  },
+  edgeOpacity: {
+    min: 0,
+    max: 1
+  },
+  repelForce: 0.5,
+  centerForce: 1,
+  linkDistance: 100,
+  tagColorGradient: [
+    "#FF0000",
+    "#FF7F00",
+    "#FFFF00",
+    "#00FF00",
+    "#0000FF",
+    "#4B0082",
+    "#9400D3"
+  ],
+} as Partial<D3Config>
 
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
@@ -49,20 +75,8 @@ export const defaultContentPageLayout: PageLayout = {
   ],
   right: [
     Component.Graph({
-      localGraph: {
-        linkStrength: {
-          tagTag: 0.2,
-          tagPost: 0.1,
-          postPost: 0.05
-        }
-      },
-      globalGraph: {
-        linkStrength: {
-          tagTag: 0.2,
-          tagPost: 0.1,
-          postPost: 0.05
-        }
-      }
+      localGraph: graphOptions,
+      globalGraph: graphOptions
     }),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
