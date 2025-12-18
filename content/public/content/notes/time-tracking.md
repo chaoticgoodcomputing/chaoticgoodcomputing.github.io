@@ -1,7 +1,6 @@
 ---
 title: Some initial thoughts about time tracking
 date: 2024-02-27
-updated: 2024-02-27
 tags:
   - horticulture
 draft: false

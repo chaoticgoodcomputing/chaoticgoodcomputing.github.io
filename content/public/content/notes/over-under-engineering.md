@@ -1,7 +1,6 @@
 ---
 title: The Over/Unders of Over- and Under-Engineering
 date: 2024-02-25
-updated: 2024-02-25
 tags:
   - horticulture
   - engineering

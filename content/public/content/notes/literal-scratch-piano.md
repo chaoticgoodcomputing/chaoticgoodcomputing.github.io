@@ -1,7 +1,6 @@
 ---
 title: "From the Archive: Scratch Piano Application"
 date: 2018-07-18
-updated: 2024-03-02
 tags:
   - engineering/scratch
 draft: false

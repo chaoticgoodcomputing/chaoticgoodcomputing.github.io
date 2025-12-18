@@ -1,7 +1,6 @@
 ---
 title: The Quest to Slay The Goblin
 date: 2024-02-27
-updated: 2024-02-27
 tags:
   - horticulture
 draft: false

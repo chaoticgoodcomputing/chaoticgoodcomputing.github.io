@@ -1,7 +1,6 @@
 ---
 title: Entries to SOME 1
 date: 2024-02-27
-updated: 2024-02-27
 tags:
   - engineering/python
   - engineering/data

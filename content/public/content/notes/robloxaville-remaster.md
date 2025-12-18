@@ -1,7 +1,6 @@
 ---
 title: Thoughts on the bad 2017 Robloxaville Remaster
 date: 2024-02-25
-updated: 2024-02-25
 tags:
   - projects/roblox
   - engineering/lua

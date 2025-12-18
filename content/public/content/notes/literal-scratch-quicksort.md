@@ -1,7 +1,6 @@
 ---
 title: "From The Archive: Scratch Quicksort"
 date: 2018-07-18
-updated: 2024-03-03
 tags:
   - engineering/scratch
 draft: false

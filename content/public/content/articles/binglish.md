@@ -1,7 +1,6 @@
 ---
 title: "GPTinglish: The New Normal"
 date: 2024-03-01
-updated: 2024-03-01
 tags:
   - economics
   - horticulture

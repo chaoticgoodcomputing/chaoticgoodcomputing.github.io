@@ -1,7 +1,6 @@
 ---
 title: Quantitative Analysis of Markets & Organizations
 date: 2024-02-26
-updated: 2024-02-26
 tags:
   - economics
 draft: false
