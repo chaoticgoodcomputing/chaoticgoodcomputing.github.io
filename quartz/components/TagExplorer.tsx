@@ -5,7 +5,6 @@ import style from "./styles/tagExplorer.scss"
 import script from "./scripts/tag-explorer.inline"
 import { classNames } from "../util/lang"
 import { i18n } from "../i18n"
-import { TagIconMap } from "../util/tagIcons"
 import OverflowListFactory from "./OverflowList"
 import { concatenateResources } from "../util/resources"
 
@@ -37,10 +36,6 @@ export interface Options {
   // Display
   showFileCount: boolean
   expandCurrentFileTags: boolean
-
-  // Icons
-  tagIcons: TagIconMap
-  defaultTagIcon: string
 }
 
 const defaultOptions: Options = {
@@ -52,8 +47,6 @@ const defaultOptions: Options = {
   excludeTags: [],
   showFileCount: true,
   expandCurrentFileTags: true,
-  tagIcons: {},
-  defaultTagIcon: "📁",
 }
 
 export type TagState = {
@@ -82,8 +75,6 @@ export default ((userOpts?: Partial<Options>) => {
           showFileCount: opts.showFileCount,
           expandCurrentFileTags: opts.expandCurrentFileTags,
         })}
-        data-icons={JSON.stringify(opts.tagIcons)}
-        data-default-icon={opts.defaultTagIcon}
       >
         <button
           type="button"
@@ -148,7 +139,6 @@ export default ((userOpts?: Partial<Options>) => {
               >
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
-              <span class="tag-icon"></span>
               <div>
                 <button class="tag-button">
                   <span class="tag-title"></span>

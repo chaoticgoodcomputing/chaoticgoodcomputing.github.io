@@ -5,6 +5,7 @@ interface FileTrieData {
   slug: string
   title: string
   filePath: string
+  tags?: string[]
 }
 
 /**
@@ -87,7 +88,7 @@ export class TagTrieNode<T extends FileTrieData = ContentDetails> {
     const root = new TagTrieNode<T>([], "")
 
     for (const [_, content] of entries) {
-      const tags = ((content as any).tags ?? []) as string[]
+      const tags = content.tags ?? []
 
       // Skip files that have any excluded tags
       const hasExcludedTag = tags.some((tag) => excludeTags.includes(tag))

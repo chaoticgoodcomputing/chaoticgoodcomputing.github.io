@@ -45,13 +45,6 @@ export const defaultContentPageLayout: PageLayout = {
       showFileCount: true,              // Show (200) counts
       folderDefaultState: "collapsed",
       folderClickBehavior: "link",      // Tags link to /tags/{path}
-      tagIcons: {
-        "engineering/typescript": "🔷",
-        "engineering/python": "🐍",
-        "notes": "📝",
-        "projects": "🚀",
-      },
-      defaultTagIcon: "📁",
     }),
   ],
   right: [
@@ -83,13 +76,6 @@ export const defaultListPageLayout: PageLayout = {
       showFileCount: true,              // Show (200) counts
       folderDefaultState: "collapsed",
       folderClickBehavior: "link",      // Tags link to /tags/{path}
-      tagIcons: {
-        "engineering/typescript": "🔷",
-        "engineering/python": "🐍",
-        "notes": "📝",
-        "projects": "🚀",
-      },
-      defaultTagIcon: "📁",
     }),
   ],
   right: [],

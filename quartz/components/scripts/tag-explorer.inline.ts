@@ -1,5 +1,4 @@
 import { TagTrieNode } from "../../util/tagTrie"
-import { TagIconService } from "../../util/tagIcons"
 import { FullSlug, resolveRelative } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 
@@ -102,7 +101,6 @@ function createTagNode(
   currentSlug: FullSlug,
   node: TagTrieNode,
   opts: ParsedOptions,
-  iconService: TagIconService,
 ): HTMLLIElement {
   const template = document.getElementById("template-tag-node") as HTMLTemplateElement
   const clone = template.content.cloneNode(true) as DocumentFragment
@@ -115,10 +113,6 @@ function createTagNode(
   const tagPath = node.fullTagPath
   tagContainer.dataset.tagpath = tagPath
 
-  // Set icon
-  const iconSpan = tagContainer.querySelector(".tag-icon") as HTMLElement
-  iconSpan.textContent = iconService.getIcon(tagPath)
-
   if (opts.folderClickBehavior === "link") {
     // Replace button with link for link behavior
     const button = titleContainer.querySelector(".tag-button") as HTMLElement
@@ -129,8 +123,7 @@ function createTagNode(
 
     const titleSpan = document.createElement("span")
     titleSpan.className = "tag-title"
-    titleSpan.textContent = node.tagSegment
-
+    titleSpan.textContent = `#${node.tagSegment}`
     a.appendChild(titleSpan)
 
     if (opts.showFileCount) {
@@ -143,7 +136,7 @@ function createTagNode(
     button.replaceWith(a)
   } else {
     const titleSpan = titleContainer.querySelector(".tag-title") as HTMLElement
-    titleSpan.textContent = node.tagSegment
+    titleSpan.textContent = `#${node.tagSegment}`
 
     if (opts.showFileCount) {
       const countSpan = titleContainer.querySelector(".tag-count") as HTMLElement
@@ -169,7 +162,7 @@ function createTagNode(
 
   // Render children: tags first (sorted), then files (sorted)
   for (const child of node.children) {
-    const childNode = createTagNode(currentSlug, child, opts, iconService)
+    const childNode = createTagNode(currentSlug, child, opts)
     ul.appendChild(childNode)
   }
 
@@ -249,10 +242,6 @@ async function setupTagExplorer(currentSlug: FullSlug) {
       useSavedState: explorer.dataset.savestate === "true",
     }
 
-    const iconMap = JSON.parse(explorer.dataset.icons || "{}")
-    const defaultIcon = explorer.dataset.defaultIcon || "📁"
-    const iconService = new TagIconService(iconMap, defaultIcon)
-
     // Get tag state from local storage
     const storageTree = localStorage.getItem("tagTree")
     const serializedExplorerState = storageTree && opts.useSavedState ? JSON.parse(storageTree) : []
@@ -291,7 +280,7 @@ async function setupTagExplorer(currentSlug: FullSlug) {
     // Create and insert new content
     const fragment = document.createDocumentFragment()
     for (const child of tagTrie.children) {
-      const node = createTagNode(currentSlug, child, opts, iconService)
+      const node = createTagNode(currentSlug, child, opts)
       fragment.appendChild(node)
     }
     explorerUl.insertBefore(fragment, explorerUl.firstChild)
