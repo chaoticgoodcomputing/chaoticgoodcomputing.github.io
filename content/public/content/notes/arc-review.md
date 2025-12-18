@@ -3,7 +3,7 @@ title: "Arc Browser: Kicking off the Season of Rhythm"
 date: 2024-02-28
 updated: 2024-02-28
 tags:
-  - goblin-slaying
+  - horticulture
   - notes
 draft: false
 ---

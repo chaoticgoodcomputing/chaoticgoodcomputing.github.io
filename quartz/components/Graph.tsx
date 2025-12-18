@@ -12,7 +12,11 @@ export interface D3Config {
   scale: number
   repelForce: number
   centerForce: number
-  linkDistance: number
+  linkDistance: number | {
+    tagTag?: number      // Distance for parent-child tag connections
+    tagPost?: number     // Distance for tag-to-post connections
+    postPost?: number    // Distance for post-to-post connections
+  }
   fontSize: number
   opacityScale: number
   removeTags: string[]
@@ -29,6 +33,10 @@ export interface D3Config {
     min?: number    // Minimum opacity at 2x linkDistance
     max?: number    // Maximum opacity at 0.5x linkDistance
   }
+  baseSize?: number | {
+    tags?: number    // Base size for tag nodes
+    posts?: number   // Base size for post nodes
+  }
 }
 
 interface GraphOptions {
@@ -44,7 +52,11 @@ const defaultOptions: GraphOptions = {
     scale: 1.1,
     repelForce: 0.5,
     centerForce: 0.3,
-    linkDistance: 30,
+    linkDistance: {
+      tagTag: 20,      // Shorter distance for parent-child tags (keep them close)
+      tagPost: 30,     // Normal distance for tag-to-post connections
+      postPost: 50,    // Longer distance for post-to-post connections
+    },
     fontSize: 0.6,
     opacityScale: 1,
     showTags: true,
@@ -61,6 +73,10 @@ const defaultOptions: GraphOptions = {
       min: 0.2,   // Minimum opacity at 2x linkDistance
       max: 1.0,   // Maximum opacity at 0.5x linkDistance
     },
+    baseSize: {
+      tags: 4,
+      posts: 2,
+    },
   },
   globalGraph: {
     drag: true,
@@ -69,7 +85,11 @@ const defaultOptions: GraphOptions = {
     scale: 0.9,
     repelForce: 0.5,
     centerForce: 0.2,
-    linkDistance: 30,
+    linkDistance: {
+      tagTag: 20,      // Shorter distance for parent-child tags (keep them close)
+      tagPost: 30,     // Normal distance for tag-to-post connections
+      postPost: 50,    // Longer distance for post-to-post connections
+    },
     fontSize: 0.6,
     opacityScale: 1,
     showTags: true,
@@ -85,6 +105,10 @@ const defaultOptions: GraphOptions = {
     edgeOpacity: {
       min: 0.2,   // Minimum opacity at 2x linkDistance
       max: 1.0,   // Maximum opacity at 0.5x linkDistance
+    },
+    baseSize: {
+      tags: 4,
+      posts: 2,
     },
   },
 }

@@ -20,4 +20,4 @@ This note originally contained the following links:
 
 - [tags/economics/index](tags/economics/index)
 - [the goblin](content/notes/the-quest-to-slay-the-goblin)
-- [the season of rhythm](tags/seasons/rhythm)
+- [the season of rhythm](tags/seasons/rhythm/index)

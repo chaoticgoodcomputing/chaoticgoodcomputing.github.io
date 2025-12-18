@@ -2,7 +2,7 @@
 title: Kicking off a Digital Garden with Quartz
 date: 2024-02-25
 tags:
-  - goblin-slaying
+  - horticulture
   - horticulture
   - engineering/typescript
   - notes

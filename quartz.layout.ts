@@ -16,9 +16,9 @@ export const sharedPageComponents: SharedLayout = {
 }
 
 const graphOptions = {
-  scale: 2,
+  scale: 1,
   linkStrength: {
-    tagTag: 2,
+    tagTag: 1,
     tagPost: 0.5,
     postPost: 0.1
   },
@@ -26,9 +26,17 @@ const graphOptions = {
     min: 0,
     max: 1
   },
-  repelForce: 0.5,
+  repelForce: 0.25,
   centerForce: 1,
-  linkDistance: 100,
+  linkDistance: {
+    tagTag: 50,
+    tagPost: 50,
+    postPost: 100
+  },
+  baseSize: {
+    tags: 3,
+    posts: 1
+  },
   tagColorGradient: [
     "#FF0000",
     "#FF7F00",

@@ -474,9 +474,13 @@ function _getDescendantTags(parentTag: SimpleSlug, allNodes: NodeData[]): Simple
  * Create node radius calculation function based on link count.
  * For parent tag nodes, aggregate connections from all descendant tags.
  * @param graphData - The graph data structure
+ * @param baseSize - Base size configuration for tags and posts
  * @returns Function that calculates radius for a given node
  */
-function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkData[] }) {
+function _createNodeRadiusFunction(
+  graphData: { nodes: NodeData[]; links: LinkData[] },
+  baseSize: { tags: number; posts: number },
+) {
   return (d: NodeData): number => {
     let numLinks = graphData.links.filter(
       (l) => l.source.id === d.id || l.target.id === d.id,
@@ -507,7 +511,9 @@ function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkDa
       }
     }
 
-    return 2 + Math.sqrt(numLinks)
+    // Use different base size for tags vs posts
+    const base = d.id.startsWith("tags/") ? baseSize.tags : baseSize.posts
+    return base + Math.sqrt(numLinks)
   }
 }
 
@@ -516,6 +522,7 @@ function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkDa
  * @param graphData - Graph data with nodes and links
  * @param nodeRadius - Function to calculate node radius
  * @param config - Force configuration values
+ * @param linkDistance - Link distance configuration by type
  * @param linkStrength - Link strength configuration by type
  * @param enableRadial - Whether to enable radial force
  * @param width - Graph width
@@ -525,7 +532,8 @@ function _createNodeRadiusFunction(graphData: { nodes: NodeData[]; links: LinkDa
 function _setupSimulation(
   graphData: { nodes: NodeData[]; links: LinkData[] },
   nodeRadius: (d: NodeData) => number,
-  config: { repelForce: number; centerForce: number; linkDistance: number },
+  config: { repelForce: number; centerForce: number },
+  linkDistance: { tagTag: number; tagPost: number; postPost: number },
   linkStrength: { tagTag: number; tagPost: number; postPost: number },
   enableRadial: boolean,
   width: number,
@@ -537,7 +545,19 @@ function _setupSimulation(
     .force(
       "link",
       forceLink(graphData.links)
-        .distance(config.linkDistance)
+        .distance((link) => {
+          const l = link as LinkData
+          switch (l.type) {
+            case "tag-tag":
+              return linkDistance.tagTag
+            case "tag-post":
+              return linkDistance.tagPost
+            case "post-post":
+              return linkDistance.postPost
+            default:
+              return 30
+          }
+        })
         .strength((link) => {
           const l = link as LinkData
           switch (l.type) {
@@ -987,7 +1007,7 @@ function _setupZoomBehavior(
  * @param stage - Pixi stage
  * @param width - Canvas width
  * @param height - Canvas height
- * @param linkDistance - Target link distance for opacity calculation
+ * @param linkDistanceConfig - Link distance configuration by type
  * @param edgeOpacity - Min/max opacity configuration
  * @returns Cleanup function to stop animation
  */
@@ -999,7 +1019,7 @@ function _startAnimationLoop(
   stage: Container,
   width: number,
   height: number,
-  linkDistance: number,
+  linkDistanceConfig: { tagTag: number; tagPost: number; postPost: number },
   edgeOpacity: { min: number; max: number },
 ): () => void {
   let stopAnimation = false
@@ -1030,8 +1050,14 @@ function _startAnimationLoop(
       const dy = ty - sy
       const distance = Math.sqrt(dx * dx + dy * dy)
       
+      // Get target distance for this link type
+      const targetDistance = 
+        linkData.type === "tag-tag" ? linkDistanceConfig.tagTag :
+        linkData.type === "tag-post" ? linkDistanceConfig.tagPost :
+        linkDistanceConfig.postPost
+      
       // Calculate opacity based on distance
-      const baseOpacity = _calculateEdgeOpacity(distance, linkDistance, edgeOpacity.min, edgeOpacity.max)
+      const baseOpacity = _calculateEdgeOpacity(distance, targetDistance, edgeOpacity.min, edgeOpacity.max)
       
       // Apply both base opacity and current alpha (for hover effects)
       const finalAlpha = baseOpacity * l.alpha
@@ -1080,7 +1106,17 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     linkStrength,
     tagColorGradient,
     edgeOpacity,
+    baseSize,
   } = _parseGraphConfig(graph)
+
+  // Parse linkDistance configuration (supports both number and object format)
+  const linkDistanceConfig = typeof linkDistance === "number" 
+    ? { tagTag: linkDistance, tagPost: linkDistance, postPost: linkDistance }
+    : {
+        tagTag: linkDistance?.tagTag ?? 30,
+        tagPost: linkDistance?.tagPost ?? 30,
+        postPost: linkDistance?.postPost ?? 30,
+      }
 
   // Use default link strengths if not provided
   const linkStrengthConfig = {
@@ -1097,6 +1133,14 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     min: edgeOpacity?.min ?? 0.2,
     max: edgeOpacity?.max ?? 1.0,
   }
+
+  // Parse baseSize configuration (supports both number and object format)
+  const baseSizeConfig = typeof baseSize === "number"
+    ? { tags: baseSize, posts: baseSize }
+    : {
+        tags: baseSize?.tags ?? 4,
+        posts: baseSize?.posts ?? 2,
+      }
 
   // Fetch and transform data
   const data = await _fetchAndTransformData()
@@ -1119,11 +1163,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   // Setup dimensions and simulation
   const width = graph.offsetWidth
   const height = Math.max(graph.offsetHeight, 250)
-  const nodeRadius = _createNodeRadiusFunction(graphData)
+  const nodeRadius = _createNodeRadiusFunction(graphData, baseSizeConfig)
   const simulation = _setupSimulation(
     graphData,
     nodeRadius,
-    { repelForce, centerForce, linkDistance },
+    { repelForce, centerForce },
+    linkDistanceConfig,
     linkStrengthConfig,
     enableRadial ?? false,
     width,
@@ -1282,7 +1327,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     stage,
     width,
     height,
-    linkDistance,
+    linkDistanceConfig,
     edgeOpacityConfig,
   )
 }
