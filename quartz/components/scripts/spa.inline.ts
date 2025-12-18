@@ -171,7 +171,7 @@ async function _fetchPage(url: URL): Promise<string | undefined> {
       window.location.assign(url)
     })
 
-  return contents
+  return contents!
 }
 
 /**
