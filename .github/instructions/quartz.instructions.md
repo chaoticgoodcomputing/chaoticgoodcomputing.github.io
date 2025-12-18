@@ -113,3 +113,81 @@ CSS is global—use specific class selectors to scope styles.
 ## i18n
 
 Use `i18n(cfg.locale).components.{component}.{key}` for localized strings. Add new keys to `quartz/i18n/locales/definition.ts` and all locale files.
+
+## Debugging Workflow
+
+### Development Server + curl Testing
+
+The `site:serve` task runs a development server with hot reload at `localhost:8080`. Combine with `curl` for efficient debugging:
+
+**Data Layer Verification:**
+```bash
+# Check content index structure (token-efficient)
+curl -s http://localhost:8080/static/contentIndex.json | jq 'keys | length'
+curl -s http://localhost:8080/static/contentIndex.json | jq 'to_entries | .[0:2]'  # Sample first 2 entries
+
+# Verify tag/metadata availability
+curl -s http://localhost:8080/static/contentIndex.json | jq 'to_entries | map(.value.tags) | flatten | unique | sort'
+
+# Find specific entries (most efficient - targets single item)
+curl -s http://localhost:8080/static/contentIndex.json | jq '.["path/to/file"]'
+
+# Count and sample, don't dump entire datasets
+curl -s http://localhost:8080/static/contentIndex.json | jq '[to_entries[] | select(.value.tags | length > 0)] | length'
+curl -s http://localhost:8080/static/contentIndex.json | jq 'to_entries[] | select(.value.tags | length > 0) | limit(2; .)'
+```
+
+**Token-Efficient Exploration:**
+- Use `jq` filters to sample (`.[0:2]`, `limit(n; .)`) instead of dumping full JSON
+- Count first (`length`), then sample selectively
+- Use direct key access (`.["key"]`) instead of filtering all entries when possible
+- For HTML inspection, use `grep -A N` to limit context lines or `head -n` to cap output
+
+**Build Output Verification:**
+```bash
+# Confirm components rendered
+curl -s http://localhost:8080 | grep -o 'class="component-name"'
+
+# Check data attributes
+curl -s http://localhost:8080 | grep 'data-opts'
+
+# Verify inline scripts
+curl -s http://localhost:8080 | grep -A 10 '<script>'
+```
+
+### What curl Can and Cannot Tell You
+
+**Use curl for (server-side rendered data):**
+- ✅ Static data structures (contentIndex.json, sitemap.xml)
+- ✅ Initial HTML structure and component rendering
+- ✅ Build-time configuration (data attributes)
+- ✅ Metadata (titles, descriptions, meta tags)
+- ✅ Scriptable testing and CI/CD integration
+- ✅ Fast iteration without browser
+
+**Use Simple Browser for (client-side behavior):**
+- ✅ JavaScript execution and DOM manipulation
+- ✅ Visual rendering and CSS application
+- ✅ Interactive behavior (clicks, expand/collapse)
+- ✅ Runtime state (localStorage, sessionStorage)
+- ✅ Browser DevTools (console errors, network tab)
+- ✅ Verifying `fetchData` promise resolution
+
+**Key Insight:** `curl` shows what the build emitted, Simple Browser shows what actually works at runtime.
+
+### Common Debugging Pattern
+
+1. **Verify data layer** with curl (contentIndex structure, component rendering)
+2. **If data looks good but UI broken** → use Simple Browser + DevTools
+3. **For CSS/visual issues** → must use Simple Browser
+4. **For build/config issues** → curl is sufficient
+
+### Example: Client-Side Script Issues
+
+A component may render correctly in HTML (visible via curl) but fail at runtime if:
+- Inline script references wrong data structure (e.g., `content.frontmatter.tags` vs `content.tags`)
+- `fetchData` promise fails or returns unexpected format
+- Event handlers don't attach properly
+- Browser console has JavaScript errors
+
+Always check both: `curl` for build output, Simple Browser for runtime behavior.

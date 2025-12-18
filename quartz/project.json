@@ -5,6 +5,18 @@
   "sourceRoot": "quartz",
   "projectType": "application",
   "targets": {
+    "clean": {
+      "//": "Cleans quartz cache files",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rm -rf public",
+          "rm -rf quartz/.quartz-cache"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": true
+      }
+    },
     "serve": {
       "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
       "executor": "nx:run-commands",
@@ -43,7 +55,7 @@
       },
       "defaultConfiguration": "site",
       "outputs": [ "{workspaceRoot}/public" ],
-      "dependsOn": [ "vault:sync" ]
+      "dependsOn": [ "vault:sync", "site:clean" ]
     },
     "check": {
       "//": "Type checking and formatting validation",

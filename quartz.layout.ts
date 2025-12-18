@@ -38,7 +38,21 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.TagExplorer({
+      tagNodeSort: "count-desc",        // Most popular tags first
+      fileNodeSort: "date-desc",        // Newest files first
+      excludeTags: ["private"],         // Hide private content
+      showFileCount: true,              // Show (200) counts
+      folderDefaultState: "collapsed",
+      folderClickBehavior: "link",      // Tags link to /tags/{path}
+      tagIcons: {
+        "engineering/typescript": "🔷",
+        "engineering/python": "🐍",
+        "notes": "📝",
+        "projects": "🚀",
+      },
+      defaultTagIcon: "📁",
+    }),
   ],
   right: [
     Component.Graph(),
@@ -62,7 +76,21 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.TagExplorer({
+      tagNodeSort: "count-desc",        // Most popular tags first
+      fileNodeSort: "date-desc",        // Newest files first
+      excludeTags: ["private"],         // Hide private content
+      showFileCount: true,              // Show (200) counts
+      folderDefaultState: "collapsed",
+      folderClickBehavior: "link",      // Tags link to /tags/{path}
+      tagIcons: {
+        "engineering/typescript": "🔷",
+        "engineering/python": "🐍",
+        "notes": "📝",
+        "projects": "🚀",
+      },
+      defaultTagIcon: "📁",
+    }),
   ],
   right: [],
 }
