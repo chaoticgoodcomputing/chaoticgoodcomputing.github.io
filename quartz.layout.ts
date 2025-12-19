@@ -16,27 +16,27 @@ export const sharedPageComponents: SharedLayout = {
 }
 
 const graphOptions = {
-  scale: 1,
+  scale: 0.75,
   linkStrength: {
-    tagTag: 1,
-    tagPost: 0.5,
-    postPost: 0.1
+    tagTag: 1.5,
+    tagPost: 1,
+    postPost: 0.5
   },
   edgeOpacity: {
-    tagTag: { min: 0.5, max: 1.0 },
-    tagPost: { min: 0.05, max: 0.5 },
-    postPost: { min: 0.03, max: 0.5 }
+    tagTag: { min: 1, max: 1.0 },
+    tagPost: { min: 0.05, max: 1.0 },
+    postPost: { min: 0.03, max: 1.0 }
   },
-  repelForce: 0.25,
-  centerForce: 1,
+  repelForce: 2,
+  centerForce: 1.5,
   linkDistance: {
-    tagTag: 50,
-    tagPost: 50,
-    postPost: 100
+    tagTag: 30,
+    tagPost: 60,
+    postPost: 90
   },
   baseSize: {
-    tags: 3,
-    posts: 1
+    tags: 4,
+    posts: 3
   },
   tagColorGradient: [
     "#FF0000",
@@ -77,6 +77,10 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
+    Component.Graph({
+      localGraph: graphOptions,
+      globalGraph: graphOptions
+    }),
     Component.TagExplorer({
       tagNodeSort: "count-desc",        // Most popular tags first
       fileNodeSort: "date-desc",        // Newest files first
@@ -87,10 +91,6 @@ export const defaultContentPageLayout: PageLayout = {
     }),
   ],
   right: [
-    Component.Graph({
-      localGraph: graphOptions,
-      globalGraph: graphOptions
-    }),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
@@ -110,6 +110,10 @@ export const defaultListPageLayout: PageLayout = {
         },
         { Component: Component.Darkmode() },
       ],
+    }),
+    Component.Graph({
+      localGraph: graphOptions,
+      globalGraph: graphOptions
     }),
     Component.TagExplorer({
       tagNodeSort: "count-desc",        // Most popular tags first

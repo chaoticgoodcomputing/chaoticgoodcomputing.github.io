@@ -3,6 +3,8 @@ title: "From The Archive: Scratch Quicksort"
 date: 2018-07-18
 tags:
   - engineering/scratch
+  - projects/teaching
+  - projects/college
 draft: false
 ---
 As an addendum to the [[content/notes/literal-scratch-piano|Scratch Piano Application]], I also around the same time cooked up an implementation of QuickSort. At my partner's recent swim meet I sat next to [[content/notes/periodic/daily/2024-03-02|a couple kids who've been learning Scratch]] and they were showing off some games they'd made.

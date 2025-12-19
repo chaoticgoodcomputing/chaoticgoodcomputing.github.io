@@ -1,4 +1,8 @@
 {
-	"servers": { },
-	"inputs": [ ]
+	"servers": {
+		"chrome-devtools": {
+			"command": "npx",
+			"args": [ "-y", "chrome-devtools-mcp@latest" ]
+		}
+	}
 }

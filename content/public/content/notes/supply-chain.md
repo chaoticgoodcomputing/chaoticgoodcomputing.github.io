@@ -1,10 +1,11 @@
 ---
-title: 'From the Archive: "What *are* Supply Chains, Anyway?"'
+title: 'What *are* Supply Chains, Anyway?'
 date: 2019-07-01
 tags:
   - economics/finance
   - engineering/python
   - engineering/data
+  - projects/college
 ---
 Below, you'll find some graphs. These are what is known in the field of [[tags/engineering/data/index|data visualization]] as "bad."
 

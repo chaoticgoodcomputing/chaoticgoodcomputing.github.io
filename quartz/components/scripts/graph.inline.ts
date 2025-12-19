@@ -17,7 +17,7 @@ import {
 import { Text, Graphics, Application, Container, Circle } from "pixi.js"
 import { Group as TweenGroup, Tween as Tweened } from "@tweenjs/tween.js"
 import { registerEscapeHandler, removeAllChildren } from "./util"
-import { FullSlug, SimpleSlug, getFullSlug, resolveRelative, simplifySlug } from "../../util/path"
+import { FullSlug, SimpleSlug, getFullSlug, simplifySlug } from "../../util/path"
 import { D3Config } from "../Graph"
 
 /** Graphics rendering information for nodes and links */
@@ -911,14 +911,12 @@ function _setupPixiContainers(stage: Container) {
  * @param graphData - Graph data with nodes
  * @param hoverState - Hover state object
  * @param simulation - D3 simulation
- * @param fullSlug - Full page slug for navigation
  */
 function _setupDragBehavior(
   canvas: HTMLCanvasElement,
   graphData: { nodes: NodeData[]; links: LinkData[] },
   hoverState: HoverState,
   simulation: Simulation<NodeData, LinkData>,
-  fullSlug: FullSlug,
 ) {
   let currentTransform = zoomIdentity
 
@@ -953,7 +951,8 @@ function _setupDragBehavior(
         // if the time between mousedown and mouseup is short, we consider it a click
         if (Date.now() - hoverState.dragStartTime < 500) {
           const node = graphData.nodes.find((n) => n.id === event.subject.id) as NodeData
-          const targ = resolveRelative(fullSlug, node.id)
+          // Use absolute path to avoid double-prefix issue on tag pages
+          const targ = "/" + node.id
           window.spaNavigate(new URL(targ, window.location.toString()))
         }
       }),
@@ -965,12 +964,12 @@ function _setupDragBehavior(
 /**
  * Setup click behavior when drag is disabled.
  * @param nodeRenderData - Array of node render data
- * @param fullSlug - Full page slug for navigation
  */
-function _setupClickBehavior(nodeRenderData: NodeRenderData[], fullSlug: FullSlug) {
+function _setupClickBehavior(nodeRenderData: NodeRenderData[]) {
   for (const node of nodeRenderData) {
     node.gfx.on("click", () => {
-      const targ = resolveRelative(fullSlug, node.simulationData.id)
+      // Use absolute path to avoid double-prefix issue on tag pages
+      const targ = "/" + node.simulationData.id
       window.spaNavigate(new URL(targ, window.location.toString()))
     })
   }
@@ -985,6 +984,7 @@ function _setupClickBehavior(nodeRenderData: NodeRenderData[], fullSlug: FullSlu
  * @param opacityScale - Scale factor for label opacity
  * @param labelsContainer - Container with label elements
  * @param nodeRenderData - Array of node render data
+ * @param currentPageSlug - Slug of the current page being viewed
  * @returns Object with mutable currentTransform reference
  */
 function _setupZoomBehavior(
@@ -995,6 +995,7 @@ function _setupZoomBehavior(
   opacityScale: number,
   labelsContainer: Container<Text>,
   nodeRenderData: NodeRenderData[],
+  currentPageSlug: SimpleSlug,
 ) {
   let currentTransform = zoomIdentity
 
@@ -1017,12 +1018,13 @@ function _setupZoomBehavior(
 
         for (const label of labelsContainer.children) {
           if (!activeNodes.includes(label)) {
-            // Find the corresponding node data to check if it's a tag
+            // Find the corresponding node data to check if it's a tag or current page
             const nodeData = nodeRenderData.find((n) => n.label === label)
             const isTagNode = nodeData?.simulationData.id.startsWith("tags/")
+            const isCurrentPage = nodeData?.simulationData.id === currentPageSlug
             
-            // Tag labels stay opaque, post labels fade with zoom
-            label.alpha = isTagNode ? 1 : scaleOpacity
+            // Tag labels and current page label stay opaque, post labels fade with zoom
+            label.alpha = (isTagNode || isCurrentPage) ? 1 : scaleOpacity
           }
         }
       }),
@@ -1126,7 +1128,13 @@ function _startAnimationLoop(
 }
 
 async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
-  const slug = simplifySlug(fullSlug)
+  let slug = simplifySlug(fullSlug)
+  
+  // For tag pages, ensure slug has trailing slash to match tag node format
+  if (fullSlug.startsWith("tags/") && !slug.endsWith("/")) {
+    slug = (slug + "/") as SimpleSlug
+  }
+  
   const visited = _getVisited()
   removeAllChildren(graph)
 
@@ -1314,9 +1322,11 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     const nodeId = n.id
 
     const isTagNode = nodeId.startsWith("tags/")
+    const isCurrentPage = nodeId === slug
     
     // Calculate initial label opacity based on node type and zoom scale
-    const initialOpacity = isTagNode ? 1 : Math.max((scale * opacityScale - 1) / 3.75, 0)
+    // Keep current page and tag nodes always visible
+    const initialOpacity = (isTagNode || isCurrentPage) ? 1 : Math.max((scale * opacityScale - 1) / 3.75, 0)
     
     // Calculate label y-anchor based on node radius to prevent overlap
     const radius = nodeRadius(n)
@@ -1401,9 +1411,9 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
   // Setup interaction behaviors
   if (enableDrag) {
-    _setupDragBehavior(app.canvas, graphData, hoverState, simulation, fullSlug)
+    _setupDragBehavior(app.canvas, graphData, hoverState, simulation)
   } else {
-    _setupClickBehavior(nodeRenderData, fullSlug)
+    _setupClickBehavior(nodeRenderData)
   }
 
   if (enableZoom) {
@@ -1415,6 +1425,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       opacityScale,
       labelsContainer,
       nodeRenderData,
+      slug,
     )
   }
 
@@ -1459,7 +1470,13 @@ function _cleanupGlobalGraphs() {
  */
 document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   const slug = e.detail.url
-  _addToVisited(simplifySlug(slug))
+  
+  // Normalize slug for visited tracking - tag pages need trailing slash
+  let normalizedSlug = simplifySlug(slug)
+  if (slug.startsWith("tags/") && !normalizedSlug.endsWith("/")) {
+    normalizedSlug = (normalizedSlug + "/") as SimpleSlug
+  }
+  _addToVisited(normalizedSlug)
 
   async function renderLocalGraph() {
     _cleanupLocalGraphs()

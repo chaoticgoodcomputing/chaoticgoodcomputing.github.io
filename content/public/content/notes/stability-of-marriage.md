@@ -5,6 +5,7 @@ tags:
   - engineering/python
   - economics/markets
   - engineering/data
+  - projects/college
 ---
 In college, my area of focus during [[content/notes/qamo|my economics degree]] was **non-market environments**, which encompass the areas of economics where money isn't used for moral or practical reasons.
 
