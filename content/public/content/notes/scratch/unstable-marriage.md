@@ -2,7 +2,7 @@
 title: Unstable Marriage
 date: 2024-02-27
 tags:
-  - data
+  - engineering/data
   - economics/markets
 draft: false
 ---

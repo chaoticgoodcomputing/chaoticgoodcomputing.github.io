@@ -2,7 +2,6 @@
 title: Hello, Blog!
 date: 2021-07-28
 tags:
-  - data
   - engineering/python
   - articles
 ---

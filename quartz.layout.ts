@@ -23,8 +23,9 @@ const graphOptions = {
     postPost: 0.1
   },
   edgeOpacity: {
-    min: 0,
-    max: 1
+    tagTag: { min: 0.5, max: 1.0 },
+    tagPost: { min: 0.05, max: 0.5 },
+    postPost: { min: 0.03, max: 0.5 }
   },
   repelForce: 0.25,
   centerForce: 1,
@@ -46,6 +47,10 @@ const graphOptions = {
     "#4B0082",
     "#9400D3"
   ],
+  labelAnchor: {
+    baseY: 1.2,
+    scaleFactor: 0.1
+  },
 } as Partial<D3Config>
 
 // components for pages that display a single page (e.g. a single note)

@@ -208,6 +208,58 @@ function _lerpGradient(colors: string[], t: number): string {
 }
 
 /**
+ * Build a map of tag file counts, where parent tags include counts from descendant tags.
+ * This mirrors the totalFileCount logic from TagTrieNode.
+ * @param data - Content data map
+ * @param tags - All tag slugs in the graph
+ * @returns Map from tag slug to total file count (including descendants)
+ */
+function _buildTagFileCountMap(
+  data: Map<SimpleSlug, ContentDetails>,
+  tags: SimpleSlug[],
+): Map<SimpleSlug, number> {
+  const fileCountMap = new Map<SimpleSlug, number>()
+  
+  // First, count direct file associations for each tag
+  for (const tag of tags) {
+    let count = 0
+    
+    // Count files that have this exact tag
+    for (const [_, details] of data.entries()) {
+      const fileTags = (details.tags ?? []).map((t) => {
+        const slug = simplifySlug(("tags/" + t) as FullSlug)
+        return slug.endsWith("/") ? slug : (slug + "/") as SimpleSlug
+      })
+      
+      if (fileTags.includes(tag)) {
+        count++
+      }
+    }
+    
+    fileCountMap.set(tag, count)
+  }
+  
+  // Then, aggregate counts from descendants into parents
+  // Sort tags by depth (deeper first) to ensure we process children before parents
+  const sortedTags = [...tags].sort((a, b) => {
+    const depthA = (a.match(/\//g) || []).length
+    const depthB = (b.match(/\//g) || []).length
+    return depthB - depthA
+  })
+  
+  for (const tag of sortedTags) {
+    const splitTag = _splitHierarchicalTag(tag)
+    if (splitTag) {
+      const childCount = fileCountMap.get(tag) || 0
+      const parentCount = fileCountMap.get(splitTag.parent) || 0
+      fileCountMap.set(splitTag.parent, parentCount + childCount)
+    }
+  }
+  
+  return fileCountMap
+}
+
+/**
  * Get the top-level tag from a tag slug.
  * @param tag - Tag slug (e.g., "tags/engineering/typescript")
  * @returns Top-level tag (e.g., "tags/engineering")
@@ -463,66 +515,32 @@ function _constructGraphData(
 // ============================================================================
 
 /**
- * Get all descendant tag nodes for a given parent tag.
- * @param parentTag - Parent tag slug (e.g., "tags/engineering")
- * @param allNodes - All nodes in the graph
- * @returns Array of descendant tag node IDs
- */
-function _getDescendantTags(parentTag: SimpleSlug, allNodes: NodeData[]): SimpleSlug[] {
-  const parentPath = parentTag.substring(5) // Remove "tags/" prefix
-  return allNodes
-    .filter((n) => {
-      if (!n.id.startsWith("tags/")) return false
-      const nodePath = n.id.substring(5)
-      // Check if this node is a descendant (starts with parent path + "/")
-      return nodePath.startsWith(parentPath + "/")
-    })
-    .map((n) => n.id)
-}
-
-/**
  * Create node radius calculation function based on link count.
  * For parent tag nodes, aggregate connections from all descendant tags.
  * @param graphData - The graph data structure
  * @param baseSize - Base size configuration for tags and posts
+ * @param tagFileCountMap - Map of tag slugs to their total file counts (including descendants)
  * @returns Function that calculates radius for a given node
  */
 function _createNodeRadiusFunction(
   graphData: { nodes: NodeData[]; links: LinkData[] },
   baseSize: { tags: number; posts: number },
+  tagFileCountMap: Map<SimpleSlug, number>,
 ) {
   return (d: NodeData): number => {
-    let numLinks = graphData.links.filter(
-      (l) => l.source.id === d.id || l.target.id === d.id,
-    ).length
-
-    // If this is a tag node, check if it has descendants
-    if (d.id.startsWith("tags/")) {
-      const descendants = _getDescendantTags(d.id, graphData.nodes)
-      
-      // Add connections from all descendants, excluding parent-child links
-      for (const descendantId of descendants) {
-        const descendantLinks = graphData.links.filter(
-          (l) => {
-            const isDescendantLink = l.source.id === descendantId || l.target.id === descendantId
-            // Don't count the parent-child connection itself
-            const isParentChildLink = 
-              (l.source.id === d.id && l.target.id === descendantId) ||
-              (l.source.id === descendantId && l.target.id === d.id)
-            // Don't count links between descendants
-            const isDescendantToDescendantLink =
-              descendants.includes(l.source.id) && descendants.includes(l.target.id)
-            
-            return isDescendantLink && !isParentChildLink && !isDescendantToDescendantLink
-          }
-        ).length
-        
-        numLinks += descendantLinks
-      }
-    }
-
     // Use different base size for tags vs posts
     const base = d.id.startsWith("tags/") ? baseSize.tags : baseSize.posts
+    
+    // For tag nodes, use file count (including descendants)
+    if (d.id.startsWith("tags/")) {
+      const fileCount = tagFileCountMap.get(d.id) || 0
+      return base + Math.sqrt(fileCount)
+    }
+    
+    // For post nodes, use link count
+    const numLinks = graphData.links.filter(
+      (l) => l.source.id === d.id || l.target.id === d.id,
+    ).length
     return base + Math.sqrt(numLinks)
   }
 }
@@ -999,7 +1017,12 @@ function _setupZoomBehavior(
 
         for (const label of labelsContainer.children) {
           if (!activeNodes.includes(label)) {
-            label.alpha = scaleOpacity
+            // Find the corresponding node data to check if it's a tag
+            const nodeData = nodeRenderData.find((n) => n.label === label)
+            const isTagNode = nodeData?.simulationData.id.startsWith("tags/")
+            
+            // Tag labels stay opaque, post labels fade with zoom
+            label.alpha = isTagNode ? 1 : scaleOpacity
           }
         }
       }),
@@ -1018,7 +1041,7 @@ function _setupZoomBehavior(
  * @param width - Canvas width
  * @param height - Canvas height
  * @param linkDistanceConfig - Link distance configuration by type
- * @param edgeOpacity - Min/max opacity configuration
+ * @param edgeOpacityConfig - Min/max opacity configuration by link type
  * @returns Cleanup function to stop animation
  */
 function _startAnimationLoop(
@@ -1030,7 +1053,11 @@ function _startAnimationLoop(
   width: number,
   height: number,
   linkDistanceConfig: { tagTag: number; tagPost: number; postPost: number },
-  edgeOpacity: { min: number; max: number },
+  edgeOpacityConfig: {
+    tagTag: { min: number; max: number };
+    tagPost: { min: number; max: number };
+    postPost: { min: number; max: number };
+  },
 ): () => void {
   let stopAnimation = false
 
@@ -1060,14 +1087,19 @@ function _startAnimationLoop(
       const dy = ty - sy
       const distance = Math.sqrt(dx * dx + dy * dy)
       
-      // Get target distance for this link type
+      // Get target distance and opacity config for this link type
       const targetDistance = 
         linkData.type === "tag-tag" ? linkDistanceConfig.tagTag :
         linkData.type === "tag-post" ? linkDistanceConfig.tagPost :
         linkDistanceConfig.postPost
       
+      const opacityConfig = 
+        linkData.type === "tag-tag" ? edgeOpacityConfig.tagTag :
+        linkData.type === "tag-post" ? edgeOpacityConfig.tagPost :
+        edgeOpacityConfig.postPost
+      
       // Calculate opacity based on distance
-      const baseOpacity = _calculateEdgeOpacity(distance, targetDistance, edgeOpacity.min, edgeOpacity.max)
+      const baseOpacity = _calculateEdgeOpacity(distance, targetDistance, opacityConfig.min, opacityConfig.max)
       
       // Apply both base opacity and current alpha (for hover effects)
       const finalAlpha = baseOpacity * l.alpha
@@ -1117,6 +1149,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     tagColorGradient,
     edgeOpacity,
     baseSize,
+    labelAnchor,
   } = _parseGraphConfig(graph)
 
   // Parse linkDistance configuration (supports both number and object format)
@@ -1138,11 +1171,50 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   // Use default gradient if not provided
   const gradient = tagColorGradient ?? ["#4CAF50", "#2196F3", "#9C27B0", "#FF9800"]
   
-  // Use default edge opacity if not provided
-  const edgeOpacityConfig = {
-    min: edgeOpacity?.min ?? 0.2,
-    max: edgeOpacity?.max ?? 1.0,
-  }
+  // Parse edge opacity configuration (supports both per-type and legacy format)
+  const edgeOpacityConfig = (() => {
+    if (!edgeOpacity) {
+      // Default values if nothing provided
+      return {
+        tagTag: { min: 0.3, max: 1.0 },
+        tagPost: { min: 0.2, max: 1.0 },
+        postPost: { min: 0.1, max: 0.8 },
+      }
+    }
+    
+    // Check if this is the new per-type format
+    if ('tagTag' in edgeOpacity || 'tagPost' in edgeOpacity || 'postPost' in edgeOpacity) {
+      const perTypeConfig = edgeOpacity as {
+        tagTag?: { min?: number; max?: number }
+        tagPost?: { min?: number; max?: number }
+        postPost?: { min?: number; max?: number }
+      }
+      return {
+        tagTag: { 
+          min: perTypeConfig.tagTag?.min ?? 0.3, 
+          max: perTypeConfig.tagTag?.max ?? 1.0 
+        },
+        tagPost: { 
+          min: perTypeConfig.tagPost?.min ?? 0.2, 
+          max: perTypeConfig.tagPost?.max ?? 1.0 
+        },
+        postPost: { 
+          min: perTypeConfig.postPost?.min ?? 0.1, 
+          max: perTypeConfig.postPost?.max ?? 0.8 
+        },
+      }
+    }
+    
+    // Legacy format: apply same values to all link types
+    const legacyConfig = edgeOpacity as { min?: number; max?: number }
+    const legacyMin = legacyConfig.min ?? 0.2
+    const legacyMax = legacyConfig.max ?? 1.0
+    return {
+      tagTag: { min: legacyMin, max: legacyMax },
+      tagPost: { min: legacyMin, max: legacyMax },
+      postPost: { min: legacyMin, max: legacyMax },
+    }
+  })()
 
   // Parse baseSize configuration (supports both number and object format)
   const baseSizeConfig = typeof baseSize === "number"
@@ -1151,6 +1223,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         tags: baseSize?.tags ?? 4,
         posts: baseSize?.posts ?? 2,
       }
+
+  // Parse labelAnchor configuration
+  const labelAnchorConfig = {
+    baseY: labelAnchor?.baseY ?? 1.2,
+    scaleFactor: labelAnchor?.scaleFactor ?? 0.05,
+  }
 
   // Fetch and transform data
   const data = await _fetchAndTransformData()
@@ -1167,13 +1245,16 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const nodes = _constructGraphNodes(neighbourhood, data)
   const graphData = _constructGraphData(nodes, links, neighbourhood)
 
+  // Build tag file count map (includes descendant counts for parent tags)
+  const tagFileCountMap = _buildTagFileCountMap(data, tags)
+
   // Build tag color mapping from gradient
   const tagColorMap = _buildTagColorMap(tags, gradient)
 
   // Setup dimensions and simulation
   const width = graph.offsetWidth
   const height = Math.max(graph.offsetHeight, 250)
-  const nodeRadius = _createNodeRadiusFunction(graphData, baseSizeConfig)
+  const nodeRadius = _createNodeRadiusFunction(graphData, baseSizeConfig, tagFileCountMap)
   const simulation = _setupSimulation(
     graphData,
     nodeRadius,
@@ -1232,12 +1313,22 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   for (const n of graphData.nodes) {
     const nodeId = n.id
 
+    const isTagNode = nodeId.startsWith("tags/")
+    
+    // Calculate initial label opacity based on node type and zoom scale
+    const initialOpacity = isTagNode ? 1 : Math.max((scale * opacityScale - 1) / 3.75, 0)
+    
+    // Calculate label y-anchor based on node radius to prevent overlap
+    const radius = nodeRadius(n)
+    // Scale the anchor adjustment with node size (larger nodes push label further down)
+    const yAnchor = labelAnchorConfig.baseY + (radius - 2) * labelAnchorConfig.scaleFactor
+    
     const label = new Text({
       interactive: false,
       eventMode: "none",
       text: n.text,
-      alpha: 0,
-      anchor: { x: 0.5, y: 1.2 },
+      alpha: initialOpacity,
+      anchor: { x: 0.5, y: yAnchor },
       style: {
         fontSize: fontSize * 15,
         fill: computedStyleMap["--dark"],
@@ -1247,17 +1338,16 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     })
     label.scale.set(1 / scale)
 
-    let oldLabelOpacity = 0
-    const isTagNode = nodeId.startsWith("tags/")
+    let oldLabelOpacity = initialOpacity
     const nodeColor = color(n)
     const gfx = new Graphics({
       interactive: true,
       label: nodeId,
       eventMode: "static",
-      hitArea: new Circle(0, 0, nodeRadius(n)),
+      hitArea: new Circle(0, 0, radius),
       cursor: "pointer",
     })
-      .circle(0, 0, nodeRadius(n))
+      .circle(0, 0, radius)
       .fill({ color: isTagNode ? computedStyleMap["--light"] : nodeColor })
       .on("pointerover", (e) => {
         updateHoverInfo(e.target.label)

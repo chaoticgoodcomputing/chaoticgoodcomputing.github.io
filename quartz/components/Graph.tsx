@@ -30,12 +30,20 @@ export interface D3Config {
   }
   tagColorGradient?: string[]  // Array of hex colors for tag gradient
   edgeOpacity?: {
-    min?: number    // Minimum opacity at 2x linkDistance
-    max?: number    // Maximum opacity at 0.5x linkDistance
+    tagTag?: { min?: number; max?: number }    // Opacity for parent-child tag connections
+    tagPost?: { min?: number; max?: number }   // Opacity for tag-to-post connections
+    postPost?: { min?: number; max?: number }  // Opacity for post-to-post connections
+  } | {
+    min?: number    // Legacy: Minimum opacity at 2x linkDistance (applies to all)
+    max?: number    // Legacy: Maximum opacity at 0.5x linkDistance (applies to all)
   }
   baseSize?: number | {
     tags?: number    // Base size for tag nodes
     posts?: number   // Base size for post nodes
+  }
+  labelAnchor?: {
+    baseY?: number         // Base y-anchor position (default: 1.2)
+    scaleFactor?: number   // How much node size affects label position (default: 0.05)
   }
 }
 
@@ -70,12 +78,17 @@ const defaultOptions: GraphOptions = {
     },
     tagColorGradient: ["#FF0000", "#00FF00", "#0000FF"],
     edgeOpacity: {
-      min: 0.2,   // Minimum opacity at 2x linkDistance
-      max: 1.0,   // Maximum opacity at 0.5x linkDistance
+      tagTag: { min: 0.3, max: 1.0 },   // Parent-child tags: more visible
+      tagPost: { min: 0.2, max: 1.0 },  // Tag-post connections: standard
+      postPost: { min: 0.1, max: 0.8 }, // Post-post connections: more subtle
     },
     baseSize: {
       tags: 4,
       posts: 2,
+    },
+    labelAnchor: {
+      baseY: 1.2,
+      scaleFactor: 0.05,
     },
   },
   globalGraph: {
@@ -103,12 +116,17 @@ const defaultOptions: GraphOptions = {
     },
     tagColorGradient: ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"],  // Rainbow: Red, Orange, Yellow, Green, Blue, Indigo, Violet
     edgeOpacity: {
-      min: 0.2,   // Minimum opacity at 2x linkDistance
-      max: 1.0,   // Maximum opacity at 0.5x linkDistance
+      tagTag: { min: 0.3, max: 1.0 },   // Parent-child tags: more visible
+      tagPost: { min: 0.2, max: 1.0 },  // Tag-post connections: standard
+      postPost: { min: 0.1, max: 0.8 }, // Post-post connections: more subtle
     },
     baseSize: {
       tags: 4,
       posts: 2,
+    },
+    labelAnchor: {
+      baseY: 1.2,
+      scaleFactor: 0.05,
     },
   },
 }
