@@ -2,13 +2,58 @@
 
 import { globby } from "globby"
 import matter from "gray-matter"
-import { mkdir, readFile, writeFile } from "fs/promises"
+import { mkdir, readFile, writeFile, unlink } from "fs/promises"
 import { dirname, relative, join } from "path"
 import { existsSync } from "fs"
 
 const PRIVATE_DIR = "private"
 const PUBLIC_DIR = "public"
 const PRIVATE_BODY_FILE = "public/assets/PRIVATE_FILE_BODY.md"
+
+/**
+ * Remove all public markdown files that have the "private" tag.
+ * This ensures deleted private files are cleaned up during sync.
+ * 
+ * @returns {Promise<number>} Number of files deleted
+ */
+async function cleanupPrivateTaggedFiles() {
+  console.log("🧹 Cleaning up existing private-tagged files...")
+
+  const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
+    ignore: ["**/node_modules/**", "**/.git/**"],
+  })
+
+  let deleted = 0
+
+  for (const publicFilePath of publicFiles) {
+    try {
+      const content = await readFile(publicFilePath, "utf-8")
+      const { data: frontmatter } = matter(content)
+
+      // Check if the file has the "private" tag
+      const tags = Array.isArray(frontmatter.tags)
+        ? frontmatter.tags
+        : frontmatter.tags
+          ? [frontmatter.tags]
+          : []
+
+      if (tags.includes("private")) {
+        await unlink(publicFilePath)
+        const relativePath = relative(PUBLIC_DIR, publicFilePath)
+        console.log(`  🗑️  Deleted ${relativePath}`)
+        deleted++
+      }
+    } catch (error) {
+      // Ignore read errors - file might have been deleted already
+      if (error.code !== "ENOENT") {
+        console.error(`  ⚠️  Error checking ${publicFilePath}:`, error instanceof Error ? error.message : error)
+      }
+    }
+  }
+
+  console.log(`🧹 Removed ${deleted} private-tagged file(s)\n`)
+  return deleted
+}
 
 /**
  * Extract wikilinks and markdown links from content
@@ -59,6 +104,9 @@ function extractLinks(content) {
  */
 async function extractPrivateMetadata() {
   console.log("🔍 Scanning for private markdown files...")
+
+  // Clean up existing private-tagged files first
+  await cleanupPrivateTaggedFiles()
 
   // Read the private file body template
   let privateBodyContent = "*This is a private note. Only metadata is publicly available.*\n"

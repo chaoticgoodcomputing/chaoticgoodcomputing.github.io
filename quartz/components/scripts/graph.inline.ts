@@ -124,7 +124,9 @@ async function _fetchAndTransformData(): Promise<Map<SimpleSlug, ContentDetails>
  * @returns Object with parent and leaf slugs, or null if not hierarchical
  */
 function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: SimpleSlug } | null {
-  const tagPath = tag.replace(/^tags\//, "")
+  // Strip trailing slash to avoid empty parts when splitting
+  const normalizedTag = tag.endsWith("/") ? tag.slice(0, -1) : tag
+  const tagPath = normalizedTag.replace(/^tags\//, "")
   const parts = tagPath.split("/")
   
   if (parts.length < 2) {
@@ -132,10 +134,11 @@ function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: Sim
   }
   
   // For "engineering/typescript", return:
-  // parent: "tags/engineering", leaf: "tags/engineering/typescript"
+  // parent: "tags/engineering/", leaf: "tags/engineering/typescript/"
+  // Both get trailing slashes to match simplified tag page format
   const parentPath = parts.slice(0, -1).join("/")
   return {
-    parent: `tags/${parentPath}` as SimpleSlug,
+    parent: `tags/${parentPath}/` as SimpleSlug,
     leaf: tag,
   }
 }
@@ -312,7 +315,12 @@ function _buildLinksAndTags(
     if (showTags) {
       const localTags = (details.tags ?? [])
         .filter((tag) => !removeTags.includes(tag))
-        .map((tag) => simplifySlug(("tags/" + tag) as FullSlug))
+        .map((tag) => {
+          // Convert tag to slug format: "engineering" -> "tags/engineering/"
+          // Add trailing slash to match format of simplified tag page slugs
+          const slug = simplifySlug(("tags/" + tag) as FullSlug)
+          return slug.endsWith("/") ? slug : (slug + "/") as SimpleSlug
+        })
 
       for (const tag of localTags) {
         // Add the leaf tag node if not already present
