@@ -68,4 +68,4 @@ GROUP BY file.link
 
 N/A
 
-[^1]: [[public/content/notes/caveat-lector|caveat lector]] — This is a daily note! I don't actively maintain any information in daily notes, so please be cautious in following any advice here.
+[^1]: [[content/notes/caveat-lector|caveat lector]] — This is a daily note! I don't actively maintain any information in daily notes, so please be cautious in following any advice here.

@@ -1,5 +1,5 @@
 ---
-title: "From the Archive: Scratch Piano Application"
+title: "Scratch Piano Application"
 date: 2018-07-18
 tags:
   - engineering/scratch

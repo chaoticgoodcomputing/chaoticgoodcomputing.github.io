@@ -14,10 +14,12 @@ import {
   drag,
   zoom,
 } from "d3"
-import { Text, Graphics, Application, Container, Circle } from "pixi.js"
+import { Text, Graphics, Application, Container, Circle, Sprite, Texture } from "pixi.js"
 import { Group as TweenGroup, Tween as Tweened } from "@tweenjs/tween.js"
 import { registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, SimpleSlug, getFullSlug, simplifySlug } from "../../util/path"
+import { IconService } from "../../util/iconService"
+import { getIconForTags, getIconForTag, getAllConfiguredIcons } from "../../util/iconHelpers"
 import { D3Config } from "../Graph"
 
 /** Graphics rendering information for nodes and links */
@@ -61,6 +63,7 @@ type LinkRenderData = GraphicsInfo & {
 type NodeRenderData = GraphicsInfo & {
   simulationData: NodeData
   label: Text
+  iconSprite?: Sprite
 }
 
 /** Tween animation node */
@@ -146,6 +149,34 @@ function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: Sim
 // ============================================================================
 // COLOR UTILITIES
 // ============================================================================
+
+/**
+ * Convert CSS color string to Pixi hex number.
+ * Handles both hex strings (#RRGGBB) and rgb/rgba strings.
+ * @param color - CSS color string (e.g., "#2b2b2b" or "rgb(43, 43, 43)")
+ * @returns Pixi hex number (e.g., 0x2b2b2b)
+ */
+function _cssColorToPixiHex(color: string): number {
+  color = color.trim()
+  
+  // Handle hex colors
+  if (color.startsWith('#')) {
+    return parseInt(color.substring(1), 16)
+  }
+  
+  // Handle rgb/rgba colors
+  const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1])
+    const g = parseInt(rgbMatch[2])
+    const b = parseInt(rgbMatch[3])
+    return (r << 16) | (g << 8) | b
+  }
+  
+  // Fallback to white if parsing fails
+  console.warn(`Failed to parse color: ${color}, using white`)
+  return 0xffffff
+}
 
 /**
  * Convert hex color to RGB components.
@@ -608,6 +639,31 @@ function _setupSimulation(
   }
 
   return simulation
+}
+
+/**
+ * Create a Pixi texture from an icon data URI.
+ * @param dataUri - Base64 encoded SVG data URI
+ * @returns Promise resolving to Pixi texture, or null on error
+ */
+async function _createIconTexture(dataUri: string): Promise<Texture | null> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      try {
+        const texture = Texture.from(img)
+        resolve(texture)
+      } catch (error) {
+        console.warn("Failed to create texture from icon:", error)
+        resolve(null)
+      }
+    }
+    img.onerror = (error) => {
+      console.warn("Failed to load icon image:", error)
+      resolve(null)
+    }
+    img.src = dataUri
+  })
 }
 
 /**
@@ -1137,6 +1193,9 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   
   const visited = _getVisited()
   removeAllChildren(graph)
+  
+  // Preload all configured icons and wait for them to be ready
+  await IconService.preloadIcons(getAllConfiguredIcons())
 
   // Parse configuration
   const {
@@ -1350,6 +1409,8 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
     let oldLabelOpacity = initialOpacity
     const nodeColor = color(n)
+    // Tag nodes use gray fill like post nodes, but keep gradient color for stroke
+    const fillColor = isTagNode ? computedStyleMap["--gray"] : nodeColor
     const gfx = new Graphics({
       interactive: true,
       label: nodeId,
@@ -1358,7 +1419,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       cursor: "pointer",
     })
       .circle(0, 0, radius)
-      .fill({ color: isTagNode ? computedStyleMap["--light"] : nodeColor })
+      .fill({ color: fillColor })
       .on("pointerover", (e) => {
         updateHoverInfo(e.target.label)
         oldLabelOpacity = label.alpha
@@ -1375,7 +1436,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       })
 
     if (isTagNode) {
-      // Use the gradient color for the stroke (border)
+      // Add gradient color stroke for tag nodes
       gfx.stroke({ width: 2, color: nodeColor })
     }
 
@@ -1392,6 +1453,51 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     }
 
     nodeRenderData.push(nodeRenderDatum)
+    
+    // Load icon asynchronously after node is added (icons are cached from preload)
+    // For tag nodes, extract tag from node ID; for post nodes, use tags array
+    // Capture isTagNode in closure scope for async icon loading
+    const nodeIsTag = isTagNode
+    let iconId: string | null = null
+    if (nodeIsTag) {
+      // Tag node ID format: "tags/engineering/" or "tags/engineering/python/"
+      // Extract everything after "tags/" and remove trailing slash
+      let tag = nodeId.substring(5) // Remove "tags/" prefix
+      if (tag.endsWith("/")) {
+        tag = tag.substring(0, tag.length - 1) // Remove trailing slash
+      }
+      iconId = getIconForTag(tag)
+    } else {
+      // Post node: use tags array
+      iconId = getIconForTags(n.tags)
+    }
+    
+    if (iconId) {
+      IconService.getIcon(iconId).then((iconData) => {
+        if (iconData) {
+          _createIconTexture(iconData.dataUri).then((texture) => {
+            if (texture) {
+              const iconSprite = new Sprite({
+                texture,
+                anchor: { x: 0.5, y: 0.5 },
+                eventMode: "none",
+                interactive: false,
+              })
+              // Size icon to fit within node circle (70% of diameter)
+              const iconSize = radius * 1.4
+              iconSprite.width = iconSize
+              iconSprite.height = iconSize
+              
+              // Set all icons to white for contrast on colored node backgrounds
+              iconSprite.tint = 0xffffff
+              
+              gfx.addChild(iconSprite)
+              nodeRenderDatum.iconSprite = iconSprite
+            }
+          })
+        }
+      })
+    }
   }
 
   for (const l of graphData.links) {

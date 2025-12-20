@@ -1,5 +1,5 @@
 ---
-title: "From The Archive: Scratch Quicksort"
+title: "Scratch Quicksort"
 date: 2018-07-18
 tags:
   - engineering/scratch

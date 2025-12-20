@@ -1,5 +1,5 @@
 ---
-title: 'From the Archive: "Utah Office Consult"'
+title: 'Utah Office Consult'
 date: 2021-03-01
 tags:
   - engineering/python

@@ -18,25 +18,25 @@ export const sharedPageComponents: SharedLayout = {
 const graphOptions = {
   scale: 0.75,
   linkStrength: {
-    tagTag: 0.375,
+    tagTag: 0.5,
     tagPost: 0.25,
-    postPost: 0.125
+    postPost: 0.15
   },
   edgeOpacity: {
     tagTag: { min: 1, max: 1.0 },
-    tagPost: { min: 0.05, max: 1.0 },
+    tagPost: { min: 0.30, max: 0.6 },
     postPost: { min: 0.03, max: 1.0 }
   },
-  repelForce: 0.5,
-  centerForce: 0.375,
+  repelForce: 0.6,
+  centerForce: 1,
   linkDistance: {
     tagTag: 45,
     tagPost: 90,
     postPost: 135
   },
   baseSize: {
-    tags: 4,
-    posts: 3
+    tags: 8,
+    posts: 5
   },
   tagColorGradient: [
     "#FF0000",
@@ -44,8 +44,8 @@ const graphOptions = {
     "#FFFF00",
     "#00FF00",
     "#0000FF",
-    "#4B0082",
-    "#9400D3"
+    "#B301FF",
+    "#FF0000"
   ],
   labelAnchor: {
     baseY: 1.2,
@@ -78,7 +78,17 @@ export const defaultContentPageLayout: PageLayout = {
       ],
     }),
     Component.Graph({
-      localGraph: graphOptions,
+      localGraph: {
+        ...graphOptions,
+        // Override specific settings for local graph on content pages
+        depth: 1,
+        scale: 0.75,
+        linkDistance: {
+          tagTag: 50,
+          tagPost: 35,
+          postPost: 75
+        },
+      },
       globalGraph: graphOptions
     }),
     Component.TagExplorer({
@@ -112,7 +122,17 @@ export const defaultListPageLayout: PageLayout = {
       ],
     }),
     Component.Graph({
-      localGraph: graphOptions,
+      localGraph: {
+        ...graphOptions,
+        // Override specific settings for local graph on content pages
+        depth: 1,
+        scale: 0.75,
+        linkDistance: {
+          tagTag: 50,
+          tagPost: 35,
+          postPost: 75
+        },
+      },
       globalGraph: graphOptions
     }),
     Component.TagExplorer({
