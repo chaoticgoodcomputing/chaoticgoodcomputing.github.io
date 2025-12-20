@@ -18,21 +18,21 @@ export const sharedPageComponents: SharedLayout = {
 const graphOptions = {
   scale: 0.75,
   linkStrength: {
-    tagTag: 1.5,
-    tagPost: 1,
-    postPost: 0.5
+    tagTag: 0.375,
+    tagPost: 0.25,
+    postPost: 0.125
   },
   edgeOpacity: {
     tagTag: { min: 1, max: 1.0 },
     tagPost: { min: 0.05, max: 1.0 },
     postPost: { min: 0.03, max: 1.0 }
   },
-  repelForce: 2,
-  centerForce: 1.5,
+  repelForce: 0.5,
+  centerForce: 0.375,
   linkDistance: {
-    tagTag: 30,
-    tagPost: 60,
-    postPost: 90
+    tagTag: 45,
+    tagPost: 90,
+    postPost: 135
   },
   baseSize: {
     tags: 4,
