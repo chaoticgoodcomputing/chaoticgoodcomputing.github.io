@@ -2,7 +2,7 @@
 title: College Admissions and the Stability of Marriage
 date: 2020-11-01
 tags:
-  - engineering/python
+  - engineering/languages/python
   - economics/markets
   - engineering/data
   - projects/college

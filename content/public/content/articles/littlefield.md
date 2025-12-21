@@ -2,7 +2,7 @@
 title: Zen, and the Art of Laziness
 date: 2021-08-28
 tags:
-  - engineering/python
+  - engineering/languages/python
   - engineering/data
   - economics/strategy
   - projects/college

@@ -5,9 +5,9 @@ export type TagIconMap = Record<string, string>
  * Supports exact matches and parent path fallback.
  * 
  * Example:
- *   iconMap = { "engineering": "🔧", "engineering/typescript": "🔷" }
- *   getIcon("engineering/typescript") => "🔷"
- *   getIcon("engineering/python") => "🔧" (falls back to parent)
+ *   iconMap = { "engineering": "🔧", "engineering/languages/typescript": "🔷" }
+ *   getIcon("engineering/languages/typescript") => "🔷"
+ *   getIcon("engineering/languages/python") => "🔧" (falls back to parent)
  *   getIcon("notes") => "📁" (default)
  */
 export class TagIconService {
@@ -28,7 +28,7 @@ export class TagIconService {
       return this.iconMap[tagPath]
     }
 
-    // Check parent paths (engineering/typescript -> engineering)
+    // Check parent paths (engineering/languages/typescript -> engineering)
     const segments = tagPath.split("/")
     for (let i = segments.length - 1; i > 0; i--) {
       const parentPath = segments.slice(0, i).join("/")

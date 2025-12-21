@@ -2,7 +2,7 @@
 title: Hello, Blog!
 date: 2021-07-28
 tags:
-  - engineering/python
+  - engineering/languages/python
   - articles
 ---
 

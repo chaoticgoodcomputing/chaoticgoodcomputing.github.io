@@ -16,7 +16,7 @@
  */
 
 export interface TagIconConfig {
-  /** Tag name (matches frontmatter tags, e.g., "private", "engineering/python") */
+  /** Tag name (matches frontmatter tags, e.g., "private", "engineering/languages/python") */
   tag: string
   /** Icon identifier in format "provider:icon-name" */
   icon: string
@@ -31,12 +31,13 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "private", icon: "mdi:lock" },
   
   // Programming Languages & Technologies
-  { tag: "engineering/python", icon: "mdi:language-python" },
-  { tag: "engineering/typescript", icon: "mdi:language-typescript" },
-  { tag: "engineering/csharp", icon: "mdi:language-csharp" },
-  { tag: "engineering/lua", icon: "mdi:language-lua" },
-  { tag: "engineering/scratch", icon: "mdi:cat" },
+  { tag: "engineering/languages/python", icon: "mdi:language-python" },
+  { tag: "engineering/languages/typescript", icon: "mdi:language-typescript" },
+  { tag: "engineering/languages/csharp", icon: "mdi:language-csharp" },
+  { tag: "engineering/languages/lua", icon: "mdi:language-lua" },
+  { tag: "engineering/languages/scratch", icon: "mdi:cat" },
 
+  { tag: "engineering/languages", icon: "mdi:code-braces" },
   { tag: "engineering/data", icon: "mdi:database" },
   { tag: "engineering/devops", icon: "mdi:truck" },
   { tag: "engineering/frontend", icon: "mdi:palette" },

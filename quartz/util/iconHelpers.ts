@@ -14,20 +14,20 @@ import { TAG_ICON_CONFIG, getTagIconMap } from "./iconConfig"
  * TAG_ICON_CONFIG array that appears in the provided tags will be used.
  * This respects the priority order defined in the configuration.
  * 
- * @param tags - Array of tag strings (e.g., ["private", "engineering/python"])
+ * @param tags - Array of tag strings (e.g., ["private", "engineering/languages/python"])
  * @returns Icon identifier (e.g., "mdi:lock"), or null if no icon configured
  * 
  * @example
  * ```ts
  * // Given TAG_ICON_CONFIG = [
  * //   { tag: "private", icon: "mdi:lock" },
- * //   { tag: "engineering/python", icon: "mdi:language-python" }
+ * //   { tag: "engineering/languages/python", icon: "mdi:language-python" }
  * // ]
  * 
- * getIconForTags(["engineering/python", "private"])
+ * getIconForTags(["engineering/languages/python", "private"])
  * // Returns: "mdi:lock" (private has higher priority)
  * 
- * getIconForTags(["engineering/python"])
+ * getIconForTags(["engineering/languages/python"])
  * // Returns: "mdi:language-python"
  * 
  * getIconForTags(["untagged"])

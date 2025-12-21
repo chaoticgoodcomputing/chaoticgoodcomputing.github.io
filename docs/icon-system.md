@@ -17,7 +17,7 @@ Edit `quartz/util/iconConfig.ts` to add or modify icon mappings:
 ```typescript
 export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "private", icon: "mdi:lock" },
-  { tag: "engineering/python", icon: "mdi:language-python" },
+  { tag: "engineering/languages/python", icon: "mdi:language-python" },
   // Add more mappings here...
 ]
 ```
@@ -27,7 +27,7 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
 - Icon format: `"provider:icon-name"`
   - `mdi:icon-name` for Material Design Icons (via CDN)
   - `custom:icon-name` for custom SVG files in `quartz/static/icons/`
-- Tag names match frontmatter tags exactly (e.g., `"engineering/python"` for hierarchical tags)
+- Tag names match frontmatter tags exactly (e.g., `"engineering/languages/python"` for hierarchical tags)
 
 ### Adding Custom Icons
 
@@ -53,7 +53,7 @@ import { IconService } from "../../util/iconService"
 import { getIconForTags } from "../../util/iconHelpers"
 
 // Get icon identifier for tags
-const tags = ["private", "engineering/python"]
+const tags = ["private", "engineering/languages/python"]
 const iconId = getIconForTags(tags) // Returns "mdi:lock" (private has higher priority)
 
 // Fetch icon data

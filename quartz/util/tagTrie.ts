@@ -12,7 +12,7 @@ interface FileTrieData {
  * Tag-based trie structure for organizing content by tags.
  * Unlike FileTrieNode, files appear at leaf tag nodes only (not at intermediate levels).
  * 
- * Example structure for file with tags ["notes", "engineering/typescript"]:
+ * Example structure for file with tags ["notes", "engineering/languages/typescript"]:
  *   Root
  *   ├── notes
  *   │   └── [file]
@@ -22,7 +22,7 @@ interface FileTrieData {
  */
 export class TagTrieNode<T extends FileTrieData = ContentDetails> {
   tagSegment: string              // Current segment: "typescript"
-  fullTagPath: string             // Full path: "engineering/typescript"
+  fullTagPath: string             // Full path: "engineering/languages/typescript"
   files: T[]                      // Files with this exact tag
   children: TagTrieNode<T>[]      // Sub-tags
 

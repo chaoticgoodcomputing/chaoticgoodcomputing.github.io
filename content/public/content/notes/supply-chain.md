@@ -3,7 +3,7 @@ title: 'What *are* Supply Chains, Anyway?'
 date: 2019-07-01
 tags:
   - economics/finance
-  - engineering/python
+  - engineering/languages/python
   - engineering/data
   - projects/college
 ---

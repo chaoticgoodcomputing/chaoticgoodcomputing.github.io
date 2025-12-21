@@ -2,7 +2,7 @@
 title: "Scratch Quicksort"
 date: 2018-07-18
 tags:
-  - engineering/scratch
+  - engineering/languages/scratch
   - projects/teaching
   - projects/college
 draft: false

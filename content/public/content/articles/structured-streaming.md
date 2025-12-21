@@ -4,7 +4,7 @@ date: 2022-07-14
 tags:
   - engineering/data
   - engineering/devops
-  - engineering/python
+  - engineering/languages/python
   - articles/tutorials
   - engineering/data
   - economics/finance

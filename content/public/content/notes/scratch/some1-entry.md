@@ -2,7 +2,7 @@
 title: Entries to SOME 1
 date: 2024-02-27
 tags:
-  - engineering/python
+  - engineering/languages/python
   - engineering/data
   - economics/markets
 draft: false

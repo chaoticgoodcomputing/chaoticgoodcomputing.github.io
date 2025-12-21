@@ -123,7 +123,7 @@ async function _fetchAndTransformData(): Promise<Map<SimpleSlug, ContentDetails>
 
 /**
  * Split a hierarchical tag into parent and child parts.
- * @param tag - Tag slug (e.g., "tags/engineering/typescript")
+ * @param tag - Tag slug (e.g., "tags/engineering/languages/typescript")
  * @returns Object with parent and leaf slugs, or null if not hierarchical
  */
 function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: SimpleSlug } | null {
@@ -136,8 +136,8 @@ function _splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: Sim
     return null
   }
   
-  // For "engineering/typescript", return:
-  // parent: "tags/engineering/", leaf: "tags/engineering/typescript/"
+  // For "engineering/languages/typescript", return:
+  // parent: "tags/engineering/", leaf: "tags/engineering/languages/typescript/"
   // Both get trailing slashes to match simplified tag page format
   const parentPath = parts.slice(0, -1).join("/")
   return {
@@ -292,7 +292,7 @@ function _buildTagFileCountMap(
 
 /**
  * Get the top-level tag from a tag slug.
- * @param tag - Tag slug (e.g., "tags/engineering/typescript")
+ * @param tag - Tag slug (e.g., "tags/engineering/languages/typescript")
  * @returns Top-level tag (e.g., "tags/engineering")
  */
 function _getTopLevelTag(tag: SimpleSlug): SimpleSlug {
@@ -411,28 +411,33 @@ function _buildLinksAndTags(
           tags.push(tag)
         }
 
-        // Check if this is a hierarchical tag
-        const splitTag = _splitHierarchicalTag(tag)
-        
-        if (splitTag) {
+        // Build the complete hierarchy for this tag
+        // For "tags/engineering/languages/typescript/", this creates:
+        // - tags/engineering/ → tags/engineering/languages/
+        // - tags/engineering/languages/ → tags/engineering/languages/typescript/
+        let currentTag = tag
+        while (true) {
+          const splitTag = _splitHierarchicalTag(currentTag)
+          if (!splitTag) break
+
           // Add parent tag node if not already present
           if (!tags.includes(splitTag.parent)) {
             tags.push(splitTag.parent)
           }
 
-          // Create strong connection between parent and child nodes
+          // Create connection between parent and child nodes
           const pairKey = `${splitTag.parent}→${splitTag.leaf}`
           if (!parentChildPairs.has(pairKey)) {
             links.push({ source: splitTag.parent, target: splitTag.leaf, type: "tag-tag" })
             parentChildPairs.add(pairKey)
           }
 
-          // Posts connect to the LEAF node, not the parent
-          links.push({ source: source, target: splitTag.leaf, type: "tag-post" })
-        } else {
-          // Non-hierarchical tag: post connects directly to tag
-          links.push({ source: source, target: tag, type: "tag-post" })
+          // Move up the hierarchy
+          currentTag = splitTag.parent
         }
+
+        // Posts connect to the LEAF node (the deepest tag in the hierarchy)
+        links.push({ source: source, target: tag, type: "tag-post" })
       }
     }
   }
@@ -1460,7 +1465,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     const nodeIsTag = isTagNode
     let iconId: string | null = null
     if (nodeIsTag) {
-      // Tag node ID format: "tags/engineering/" or "tags/engineering/python/"
+      // Tag node ID format: "tags/engineering/" or "tags/engineering/languages/python/"
       // Extract everything after "tags/" and remove trailing slash
       let tag = nodeId.substring(5) // Remove "tags/" prefix
       if (tag.endsWith("/")) {

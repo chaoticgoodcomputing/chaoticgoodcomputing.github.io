@@ -3,7 +3,7 @@ title: The Unbearable Weight of ROBLOX Celebrity
 date: 2021-08-05
 tags:
   - projects/roblox
-  - engineering/lua
+  - engineering/languages/lua
   - articles
 ---
 Guilty confession: I've had a ROBLOX account for 14 years. At 23 years old, that's *more than half my life.* After picking up development again in 2021, I've had quite the walk through memory lane.
