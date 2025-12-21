@@ -4,7 +4,7 @@ import { QuartzEmitterPlugin } from "../types"
 // @ts-ignore
 import spaRouterScript from "../../components/scripts/Spa.inline"
 // @ts-ignore
-import popoverScript from "../../components/scripts/Popover.inline"
+import popoverScript from "../../components/scripts/popover/main.inline"
 import styles from "../../styles/custom.scss"
 import popoverStyle from "../../components/styles/popover.scss"
 import { BuildCtx } from "../../util/ctx"
