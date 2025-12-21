@@ -53,6 +53,7 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "articles/tutorials", icon: "mdi:information" },
 
   { tag: "seasons/rhythm", icon: "mdi:music-note-sixteenth" },
+  { tag: "seasons/systems", icon: "mdi:robot" },
   
   // General Categories
   { tag: "seasons", icon: "mdi:weather-sunny" },

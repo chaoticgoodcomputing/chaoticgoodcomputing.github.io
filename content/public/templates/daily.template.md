@@ -1,8 +1,8 @@
 <%*
 // Set folder you want to get latest file for here
-const folder = "tags/seasons";
+const folder = "public/tags/seasons";
 
-// Get frontmatter keys of interest
+// Get front matter keys of interest
 const createdAtKey = "date";
 const titleKey = "title";
 
@@ -12,11 +12,11 @@ const latestFileInFolder = app.vault.getMarkdownFiles().reduce((acc, file) => {
     return acc;
   }
 
-  // Get time file was created from frontmatter
+  // Get time file was created from front matter
   const createdAt = app.metadataCache.getFileCache(file)?.frontmatter?.[createdAtKey];
   const noteTitle = app.metadataCache.getFileCache(file)?.frontmatter?.[titleKey];
 
-  // If file has created at frontmatter and if that file was created more recently than the currently found most recently created file, then set most recently created file to file
+  // If file has created at front matter and if that file was created more recently than the currently found most recently created file, then set most recently created file to file
   if (
     createdAt &&
     (!acc || new Date(createdAt).getTime() > new Date(acc.createdAt).getTime()))
