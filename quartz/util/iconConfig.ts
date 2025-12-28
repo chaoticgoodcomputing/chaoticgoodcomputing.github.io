@@ -37,6 +37,7 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "engineering/languages/lua", icon: "mdi:language-lua" },
   { tag: "engineering/languages/scratch", icon: "mdi:cat" },
 
+  { tag: "engineering/bio", icon: "mdi:molecule" },
   { tag: "engineering/languages", icon: "mdi:code-braces" },
   { tag: "engineering/data", icon: "mdi:database" },
   { tag: "engineering/devops", icon: "mdi:truck" },
@@ -46,6 +47,9 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "projects/homelab", icon: "mdi:flask-outline" },
   { tag: "projects/college", icon: "mdi:school" },
   { tag: "projects/teaching", icon: "mdi:school" },
+
+  { tag: "projects/flowthru", icon: "mdi:graph-outline" },
+  { tag: "projects/magic-atlas", icon: "mdi:cards-outline" },
 
   { tag: "economics/strategy", icon: "mdi:arrow-decision" },
   { tag: "economics/finance", icon: "mdi:currency-usd" },
