@@ -1,7 +1,7 @@
 <%*
 // Configuration
-const SEASONS_FOLDER = "public/tags/seasons";
-const DAILY_NOTES_FOLDER = "public/content/notes/periodic/daily";
+const SEASONS_FOLDER = "tags/seasons";
+const DAILY_NOTES_FOLDER = "content/notes/periodic/daily";
 
 // Find the most recent season by date
 const latestSeason = app.vault.getMarkdownFiles()
@@ -16,7 +16,7 @@ const latestSeason = app.vault.getMarkdownFiles()
     return latest;
   }, null);
 
-// Extract season directory name (e.g., "public/tags/seasons/systems/index.md" -> "systems")
+// Extract season directory name (e.g., "tags/seasons/systems/index.md" -> "systems")
 const seasonName = latestSeason.file.path.split('/').slice(-2)[0];
 const seasonTag = `seasons/${seasonName}`;
 
@@ -48,7 +48,7 @@ tags:
 draft: false
 ---
 
-⇐ [[public/notes/periodic/daily/<% previousLink %>]]
+⇐ [[notes/periodic/daily/<% previousLink %>]]
 
 ## Up Front
 

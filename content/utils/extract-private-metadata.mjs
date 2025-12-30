@@ -189,8 +189,8 @@ async function extractPrivateMetadata() {
         }
       }
 
-      // Rewrite links from private/ to public/ paths
-      cleanedContent = cleanedContent.replace(/private\/([\w\-\/\.]+)/g, '$1')
+      // Strip private/ and public/ prefixes from all links
+      cleanedContent = cleanedContent.replace(/\b(?:private|public)\/([-\w\/\.]+)/g, '$1')
 
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })
@@ -217,7 +217,7 @@ async function extractPrivateMetadata() {
 }
 
 /**
- * Fix links in public markdown files that point to private/ paths
+ * Fix links in public markdown files by stripping private/ and public/ prefixes
  */
 async function fixLinksInPublicFiles() {
   console.log(`\n🔗 Fixing links in public markdown files...`)
@@ -233,8 +233,8 @@ async function fixLinksInPublicFiles() {
       let content = await readFile(publicFilePath, "utf-8")
       const originalContent = content
 
-      // Replace private/ links with public/ links
-      content = content.replace(/private\/([\w\-\/\.]+)/g, 'public/$1')
+      // Strip private/ and public/ prefixes from all links
+      content = content.replace(/\b(?:private|public)\/([-\w\/\.]+)/g, '$1')
 
       // Only write if changes were made
       if (content !== originalContent) {

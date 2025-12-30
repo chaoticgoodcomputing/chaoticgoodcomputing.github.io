@@ -9,13 +9,13 @@ Letting the vault go stale for a year and a half feels less like falling off the
 
 I remember, growing up, seeing my dad come home from work every day. Like clockwork, he'd always put his keys in the same place. It varied from house to house, but it's the most atomic example of a person with a system that I can think of: `At X, do Y`.
 
-I'm still working out, in my own mind, how this season will differ from [[public/tags/seasons/rhythm/index|rhythm]] — which has a [[public/content/notes/season-of-rhythm-in-review|review pending]], I'll get around to that sometime soon. The distinguishing factor in my mind, at the moment, is to review and restructure the way I operate, both personally and productively.
+I'm still working out, in my own mind, how this season will differ from [[tags/seasons/rhythm/index|rhythm]] — which has a [[content/notes/season-of-rhythm-in-review|review pending]], I'll get around to that sometime soon. The distinguishing factor in my mind, at the moment, is to review and restructure the way I operate, both personally and productively.
 
-Since the last post ([[public/content/notes/periodic/daily/2024-04-21|in April of last year]] — never has 16 months felt longer), a whole lot has changed. I think that I, along with a lot of people in my own (or similar) positions, have suffered a bit of whiplash with how quickly the systems that grew over the course of decades shifted under our feet.
+Since the last post ([[content/notes/periodic/daily/2024-04-21|in April of last year]] — never has 16 months felt longer), a whole lot has changed. I think that I, along with a lot of people in my own (or similar) positions, have suffered a bit of whiplash with how quickly the systems that grew over the course of decades shifted under our feet.
 
 ## Agentic Models
 
-Generative AI has come quite a long way from simple [[public/content/articles/binglish|chat interfaces]]. At that point, I think that folks (including myself) thought the primary shift would be what we, now, call AI slop. That's still absolutely the case, but I find myself at the center of where AI, specifically [AI agents](https://cloud.google.com/discover/what-are-ai-agents) seems to have found its most solid footing — [[public/tags/engineering/index|software engineering]] and white-collar work. As these systems become more competent, it's been a rapid rush to find what the human role in their use becomes.
+Generative AI has come quite a long way from simple [[content/articles/binglish|chat interfaces]]. At that point, I think that folks (including myself) thought the primary shift would be what we, now, call AI slop. That's still absolutely the case, but I find myself at the center of where AI, specifically [AI agents](https://cloud.google.com/discover/what-are-ai-agents) seems to have found its most solid footing — [[tags/engineering/index|software engineering]] and white-collar work. As these systems become more competent, it's been a rapid rush to find what the human role in their use becomes.
 
 My thoughts on this are... complicated, to say the least. There's a lot at play, but within specifically those spaces I do find that it's a net benefit.[^1] I've had this conversation with enough people at this point (family, friends, coworkers) that it's almost canned at this point:
 
