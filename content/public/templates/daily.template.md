@@ -1,71 +1,63 @@
 <%*
-// Set folder you want to get latest file for here
-const folder = "public/tags/seasons";
+// Configuration
+const SEASONS_FOLDER = "public/tags/seasons";
+const DAILY_NOTES_FOLDER = "public/content/notes/periodic/daily";
 
-// Get front matter keys of interest
-const createdAtKey = "date";
-const titleKey = "title";
+// Find the most recent season by date
+const latestSeason = app.vault.getMarkdownFiles()
+  .filter(file => file.path.startsWith(SEASONS_FOLDER))
+  .reduce((latest, file) => {
+    const createdAt = app.metadataCache.getFileCache(file)?.frontmatter?.date;
+    if (!createdAt) return latest;
+    
+    if (!latest || new Date(createdAt) > new Date(latest.createdAt)) {
+      return { file, createdAt };
+    }
+    return latest;
+  }, null);
 
-const latestFileInFolder = app.vault.getMarkdownFiles().reduce((acc, file) => {
-  // Skip files not in folder
-  if (!file.path.startsWith(folder)) {
-    return acc;
-  }
+// Extract season directory name (e.g., "public/tags/seasons/systems/index.md" -> "systems")
+const seasonName = latestSeason.file.path.split('/').slice(-2)[0];
+const seasonTag = `seasons/${seasonName}`;
 
-  // Get time file was created from front matter
-  const createdAt = app.metadataCache.getFileCache(file)?.frontmatter?.[createdAtKey];
-  const noteTitle = app.metadataCache.getFileCache(file)?.frontmatter?.[titleKey];
+// Calculate day number within season
+const daysSinceSeason = moment().diff(moment(latestSeason.createdAt), 'days', true);
+const dayNumber = Math.ceil(daysSinceSeason);
 
-  // If file has created at front matter and if that file was created more recently than the currently found most recently created file, then set most recently created file to file
-  if (
-    createdAt &&
-    (!acc || new Date(createdAt).getTime() > new Date(acc.createdAt).getTime()))
-  {
-    acc = { file, noteTitle, createdAt };
-  }
+// Build title with capitalized season name
+const seasonTitle = seasonName.charAt(0).toUpperCase() + seasonName.slice(1);
+const title = `${seasonTitle}: Day ${dayNumber}`;
 
-  return acc;
-}, null);
+// Find most recent daily note before today
+const today = tp.date.now("YYYY-MM-DD");
+const previousNote = app.vault.getMarkdownFiles()
+  .filter(file => {
+    if (!file.path.startsWith(DAILY_NOTES_FOLDER)) return false;
+    // Match YYYY-MM-DD pattern and ensure it's before today
+    return file.basename.match(/^\d{4}-\d{2}-\d{2}$/) && file.basename < today;
+  })
+  .sort((a, b) => b.basename.localeCompare(a.basename))[0];
 
-let latestFileSeasonTag = `seasons/${latestFileInFolder.file.basename}`
-
-let startDate = moment(latestFileInFolder.createdAt);
-let now = moment();
-
-let days = now.diff(startDate, 'days', true);
-let roundedDays = Math.ceil(days);
-
-let sanitizedTag = latestFileInFolder.file.basename
-sanitizedTag = sanitizedTag.charAt(0).toUpperCase() + sanitizedTag.slice(1)
-let title = `${sanitizedTag}: Day ${roundedDays}`
+const previousLink = previousNote ? previousNote.basename : tp.date.now("YYYY-MM-DD", -1);
 
 -%>---
 title: "<% title %>"
 date: <% tp.date.now() %>
 tags:
-  - <% latestFileSeasonTag %>
+  - <% seasonTag %>
 draft: false
 ---
 
-⇐ [[writing/notes/!periodic/dailies/<% tp.date.now("YYYY-MM-DD", -1) %>]] | [[writing/notes/!periodic/dailies/<% tp.date.now("YYYY-MM-DD", +1) %>]] ⇒
+⇐ [[public/notes/periodic/daily/<% previousLink %>]]
 
-```dataview
-TASK
-WHERE !completed
-  AND typeof(due) = "date"
-  AND due <= date("<% tp.date.now() %>") + dur(2 days)
-SORT date ASC
-GROUP BY file.link
-```
+## Up Front
 
-## Today's Plan
+Today:
 
+- 
 
+## In Review
 
-## Today's Report
+In review:
 
-> To have the full intended experience, please listen to the [Pikmin 2 "Today's Report" theme](https://www.youtube.com/watch?v=l1fCmKZnq3U&list=PLwyW5mbdZMGN8mGTqvDhsBs37SW4TkHcw&index=85) while reading
-
-N/A
-
-[^1]: [[content/notes/caveat-lector|caveat lector]] — This is a daily note! I don't actively maintain any information in daily notes, so please be cautious in following any advice here.
+- 

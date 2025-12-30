@@ -1,48 +1,37 @@
 <%*
-// Set folder you want to get latest file for here
-const folder = "tags/seasons";
+// Configuration
+const SEASONS_FOLDER = "tags/seasons";
 
-// Get frontmatter keys of interest
-const createdAtKey = "date";
-const titleKey = "title";
+// Find the most recent season by date
+const latestSeason = app.vault.getMarkdownFiles()
+  .filter(file => file.path.startsWith(SEASONS_FOLDER))
+  .reduce((latest, file) => {
+    const createdAt = app.metadataCache.getFileCache(file)?.frontmatter?.date;
+    const noteTitle = app.metadataCache.getFileCache(file)?.frontmatter?.title;
+    if (!createdAt) return latest;
+    
+    if (!latest || new Date(createdAt) > new Date(latest.createdAt)) {
+      return { file, noteTitle, createdAt };
+    }
+    return latest;
+  }, null);
 
-const latestFileInFolder = app.vault.getMarkdownFiles().reduce((acc, file) => {
-  // Skip files not in folder
-  if (!file.path.startsWith(folder)) {
-    return acc;
-  }
+// Extract season directory name (e.g., "tags/seasons/systems/index.md" -> "systems")
+const seasonName = latestSeason.file.path.split('/').slice(-2)[0];
+const seasonTag = `seasons/${seasonName}`;
 
-  // Get time file was created from frontmatter
-  const createdAt = app.metadataCache.getFileCache(file)?.frontmatter?.[createdAtKey];
-  const noteTitle = app.metadataCache.getFileCache(file)?.frontmatter?.[titleKey];
+// Calculate week number within season
+const weeksSinceSeason = moment().diff(moment(latestSeason.createdAt), 'weeks', true);
+const weekNumber = Math.ceil(weeksSinceSeason);
 
-  // If file has created at frontmatter and if that file was created more recently than the currently found most recently created file, then set most recently created file to file
-  if (
-    createdAt &&
-    (!acc || new Date(createdAt).getTime() > new Date(acc.createdAt).getTime()))
-  {
-    acc = { file, noteTitle, createdAt };
-  }
-
-  return acc;
-}, null);
-
-let latestFileTitle = latestFileInFolder.noteTitle;
-let latestFileSeasonTag = `seasons/${latestFileInFolder.file.basename}`
-
-let startDate = moment(latestFileInFolder.createdAt);
-let now = moment();
-
-let weeks = now.diff(startDate, 'weeks', true);
-let roundedWeeks = Math.ceil(weeks);
-
-let title = `${latestFileTitle}: Week ${roundedWeeks}`
+// Build title
+const title = `${latestSeason.noteTitle}: Week ${weekNumber}`;
 
 -%>---
 title: "<% title %>"
 date: <% tp.date.now() %>
 tags:
-  - <% latestFileSeasonTag %>
+  - <% seasonTag %>
   - notes/weekly
 draft: false
 ---
