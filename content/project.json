@@ -14,6 +14,17 @@
         "parallel": false,
         "cwd": "content"
       }
+    },
+    "generate-tag-indexes": {
+      "//": "Generate index.md files for all tags found in markdown frontmatter.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/generate-tag-indexes.mjs"
+        ],
+        "parallel": false,
+        "cwd": "content"
+      }
     }
   }
 }

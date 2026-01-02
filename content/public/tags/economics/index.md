@@ -1,3 +1,3 @@
 ---
-name: economics
+title: economics
 ---

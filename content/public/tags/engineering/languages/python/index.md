@@ -1,3 +1,3 @@
 ---
-name: python
+title: python
 ---

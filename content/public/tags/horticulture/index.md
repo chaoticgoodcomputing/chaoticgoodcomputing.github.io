@@ -1,3 +1,3 @@
 ---
-name: horticulture
+title: horticulture
 ---

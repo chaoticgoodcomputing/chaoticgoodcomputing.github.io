@@ -1,3 +1,3 @@
 ---
-name: devops
+title: devops
 ---

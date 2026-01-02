@@ -47,8 +47,7 @@ tags:
   - <% seasonTag %>
 draft: false
 ---
-
-⇐ [[notes/periodic/daily/<% previousLink %>]]
+⇐ [[notes/periodic/daily/<% previousLink %>|<% previousLink %>]]
 
 ## Up Front
 
