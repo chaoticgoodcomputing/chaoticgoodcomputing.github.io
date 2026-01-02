@@ -6,7 +6,9 @@ import BodyConstructor from "../../components/Body"
 import { pageResources, renderPage } from "../../components/renderPage"
 import { FullPageLayout } from "../../cfg"
 import { pathToRoot } from "../../util/path"
-import { defaultContentPageLayout, sharedPageComponents } from "../../../quartz.layout"
+import { sharedPageComponents } from "../../layouts/shared.layout"
+import { indexLayout } from "../../layouts/index.layout"
+import { notesLayout } from "../../layouts/notes.layout"
 import { Content } from "../../components"
 import { styleText } from "util"
 import { write } from "./helpers"
@@ -46,30 +48,35 @@ async function processContent(
 }
 
 export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOpts) => {
-  const opts: FullPageLayout = {
-    ...sharedPageComponents,
-    ...defaultContentPageLayout,
-    pageBody: Content(),
-    ...userOpts,
-  }
-
-  const { head: Head, header, beforeBody, pageBody, afterBody, left, right, footer: Footer } = opts
+  const { head: Head, header, footer: Footer } = sharedPageComponents
   const Header = HeaderConstructor()
   const Body = BodyConstructor()
 
   return {
     name: "ContentPage",
     getQuartzComponents() {
+      // Collect all unique components from both layouts
+      const indexComponents = [
+        ...(indexLayout.pageHeader || []),
+        ...indexLayout.beforeBody,
+        ...indexLayout.left,
+        ...indexLayout.right,
+      ]
+      const notesComponents = [
+        ...(notesLayout.pageHeader || []),
+        ...notesLayout.beforeBody,
+        ...notesLayout.left,
+        ...notesLayout.right,
+      ]
+
       return [
         Head,
         Header,
         Body,
         ...header,
-        ...beforeBody,
-        pageBody,
-        ...afterBody,
-        ...left,
-        ...right,
+        ...indexComponents,
+        ...notesComponents,
+        Content(),
         Footer,
       ]
     },
@@ -85,6 +92,16 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
 
         // only process home page, non-tag pages, and non-index pages
         if (slug.endsWith("/index") || slug.startsWith("tags/")) continue
+
+        // Select layout based on slug
+        const pageLayout = slug === "index" ? indexLayout : notesLayout
+        const opts: FullPageLayout = {
+          ...sharedPageComponents,
+          ...pageLayout,
+          pageBody: Content(),
+          ...userOpts,
+        }
+
         yield processContent(ctx, tree, file.data, allFiles, opts, resources)
       }
 
@@ -113,6 +130,15 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         const slug = file.data.slug!
         if (!changedSlugs.has(slug)) continue
         if (slug.endsWith("/index") || slug.startsWith("tags/")) continue
+
+        // Select layout based on slug
+        const pageLayout = slug === "index" ? indexLayout : notesLayout
+        const opts: FullPageLayout = {
+          ...sharedPageComponents,
+          ...pageLayout,
+          pageBody: Content(),
+          ...userOpts,
+        }
 
         yield processContent(ctx, tree, file.data, allFiles, opts, resources)
       }

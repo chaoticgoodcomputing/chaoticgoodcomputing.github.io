@@ -259,12 +259,25 @@ export function renderPage(
 
   const lang = componentData.fileData.frontmatter?.lang ?? cfg.locale?.split("-")[0] ?? "en"
   const direction = i18n(cfg.locale).direction ?? "ltr"
+
+  // Check if there are page-level header components (for index page)
+  // @ts-ignore - pageHeader is optionally added to RenderComponents
+  const pageHeaderComponents = components.pageHeader ?? []
+  const PageHeaderComponent = pageHeaderComponents.length > 0 ? (
+    <div class="page-level-header">
+      {pageHeaderComponents.map((HeaderComponent) => (
+        <HeaderComponent {...componentData} />
+      ))}
+    </div>
+  ) : null
+
   const doc = (
     <html lang={lang} dir={direction}>
       <Head {...componentData} />
       <body data-slug={slug}>
         <div id="quartz-root" class="page">
           <Body {...componentData}>
+            {PageHeaderComponent}
             {LeftComponent}
             <div class="center">
               <div class="page-header">

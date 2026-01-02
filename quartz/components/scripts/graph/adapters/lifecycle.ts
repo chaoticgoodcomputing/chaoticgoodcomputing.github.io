@@ -51,6 +51,25 @@ export async function handleGraphNav(e: CustomEventMap["nav"]) {
     document.removeEventListener("themechange", handleThemeChange)
   })
 
+  // Render full graph containers (always visible, used on index page)
+  async function renderFullGraphs() {
+    _cleanupGlobalGraphs()
+    const fullGraphContainers = document.getElementsByClassName("full-graph-container")
+    for (const container of fullGraphContainers) {
+      globalGraphCleanups.push(await renderGraph(container as HTMLElement, slug))
+    }
+  }
+
+  await renderFullGraphs()
+  const handleFullGraphThemeChange = () => {
+    void renderFullGraphs()
+  }
+
+  document.addEventListener("themechange", handleFullGraphThemeChange)
+  window.addCleanup(() => {
+    document.removeEventListener("themechange", handleFullGraphThemeChange)
+  })
+
   const containers = [...document.getElementsByClassName("global-graph-outer")] as HTMLElement[]
   async function renderGlobalGraph() {
     const slug = getFullSlug(window)

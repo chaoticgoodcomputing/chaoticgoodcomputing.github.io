@@ -7,6 +7,7 @@ import Darkmode from "./Darkmode"
 import ReaderMode from "./ReaderMode"
 import Head from "./Head"
 import PageTitle from "./PageTitle"
+import IndexTitle from "./IndexTitle"
 import ContentMeta from "./ContentMeta"
 import Spacer from "./Spacer"
 import TableOfContents from "./TableOfContents"
@@ -14,6 +15,7 @@ import FileExplorer from "./FileExplorer"
 import TagExplorer from "./TagExplorer"
 import TagList from "./TagList"
 import Graph from "./Graph"
+import FullGraph from "./FullGraph"
 import Backlinks from "./Backlinks"
 import Search from "./Search"
 import Footer from "./Footer"
@@ -34,6 +36,7 @@ export {
   ReaderMode,
   Head,
   PageTitle,
+  IndexTitle,
   ContentMeta,
   Spacer,
   TableOfContents,
@@ -41,6 +44,7 @@ export {
   TagExplorer,
   TagList,
   Graph,
+  FullGraph,
   Backlinks,
   Search,
   Footer,

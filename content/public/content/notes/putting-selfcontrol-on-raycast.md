@@ -3,8 +3,8 @@ title: Watering Down SelfControl into Self Restraint
 date: 2024-02-28
 tags:
   - horticulture
-  - engineering
-  - articles
+  - engineering/languages/typescript
+  - seasons/rhythm
 draft: false
 ---
 > I talk a lot in this post. You may want to skip to [[content/notes/putting-selfcontrol-on-raycast#The Useful Part|the useful part]].

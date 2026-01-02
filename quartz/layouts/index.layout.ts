@@ -1,0 +1,109 @@
+import { PageLayout } from "../cfg"
+import * as Component from "../components"
+import { D3Config } from "../components/Graph"
+
+/**
+ * Common graph configuration options shared across multiple page types.
+ * These can be overridden in individual layouts as needed.
+ */
+export const defaultGraphOptions: Partial<D3Config> = {
+  scale: 0.75,
+  linkStrength: {
+    tagTag: 0.5,
+    tagPost: 0.25,
+    postPost: 0.15,
+  },
+  edgeOpacity: {
+    tagTag: { min: 1, max: 1.0 },
+    tagPost: { min: 0.30, max: 0.6 },
+    postPost: { min: 0.03, max: 1.0 },
+  },
+  repelForce: 0.6,
+  centerForce: 1,
+  linkDistance: {
+    tagTag: 45,
+    tagPost: 90,
+    postPost: 135,
+  },
+  baseSize: {
+    tags: 8,
+    posts: 5,
+  },
+  tagColorGradient: [
+    "#FF0000",
+    "#FF7F00",
+    "#FFFF00",
+    "#00FF00",
+    "#0000FF",
+    "#B301FF",
+    "#FF0000",
+  ],
+  labelAnchor: {
+    baseY: 1.2,
+    scaleFactor: 0.1,
+  },
+}
+
+/**
+ * Local graph options optimized for content pages.
+ * Shows immediate connections with tighter spacing.
+ */
+export const defaultLocalGraphOptions: Partial<D3Config> = {
+  ...defaultGraphOptions,
+  depth: 1,
+  scale: 0.75,
+  linkDistance: {
+    tagTag: 50,
+    tagPost: 35,
+    postPost: 75,
+  },
+}
+
+/**
+ * Layout configuration for the site index/homepage.
+ * Can be customized to provide a unique landing page experience.
+ * 
+ * Customization options:
+ * - Adjust FullGraph height by changing the "height" property (e.g., "600px", "50vh")
+ * - Modify graph behavior by overriding defaultGraphOptions properties
+ */
+export const indexLayout: PageLayout = {
+  pageHeader: [
+    Component.IndexTitle(),
+    Component.FullGraph({
+      globalGraph: defaultGraphOptions,
+      height: "500px", // Adjust this value to change graph height
+    }),
+  ],
+  beforeBody: [
+    Component.ArticleTitle(),
+    Component.ContentMeta(),
+    Component.TagList(),
+  ],
+  left: [
+    Component.PageTitle(),
+    Component.MobileOnly(Component.Spacer()),
+    Component.Flex({
+      components: [
+        {
+          Component: Component.Search(),
+          grow: true,
+        },
+        { Component: Component.Darkmode() },
+        { Component: Component.ReaderMode() },
+      ],
+    }),
+    Component.TagExplorer({
+      tagNodeSort: "count-desc",
+      fileNodeSort: "date-desc",
+      excludeTags: ["private"],
+      showFileCount: true,
+      folderDefaultState: "collapsed",
+      folderClickBehavior: "link",
+    }),
+  ],
+  right: [
+    Component.DesktopOnly(Component.TableOfContents()),
+    Component.Backlinks(),
+  ],
+}
