@@ -9,19 +9,19 @@ import { D3Config } from "../components/Graph"
 export const defaultGraphOptions: Partial<D3Config> = {
   scale: 0.75,
   linkStrength: {
-    tagTag: 0.5,
-    tagPost: 0.25,
-    postPost: 0.15,
+    tagTag: 0.35,
+    tagPost: 0.15,
+    postPost: 0.075,
   },
   edgeOpacity: {
     tagTag: { min: 1, max: 1.0 },
     tagPost: { min: 0.30, max: 0.6 },
     postPost: { min: 0.03, max: 1.0 },
   },
-  repelForce: 0.7,
-  centerForce: 0.7,
+  repelForce: 0.5,
+  centerForce: 0.35,
   linkDistance: {
-    tagTag: 45,
+    tagTag: 90,
     tagPost: 90,
     postPost: 135,
   },

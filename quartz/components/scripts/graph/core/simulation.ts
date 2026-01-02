@@ -39,6 +39,23 @@ export function setupSimulation(
   width: number,
   height: number,
 ): Simulation<NodeData, LinkData> {
+  // Initialize nodes along the longest axis to better fit viewport
+  const useLongAxis = width > height ? 'x' : 'y'
+  const longAxisLength = Math.max(width, height)
+  const shortAxisLength = Math.min(width, height)
+  
+  graphData.nodes.forEach((node) => {
+    if (useLongAxis === 'x') {
+      // Spread along x-axis, random position on y
+      node.x = (Math.random() - 0.5) * longAxisLength * 0.8
+      node.y = (Math.random() - 0.5) * shortAxisLength * 0.3
+    } else {
+      // Spread along y-axis, random position on x
+      node.x = (Math.random() - 0.5) * shortAxisLength * 0.3
+      node.y = (Math.random() - 0.5) * longAxisLength * 0.8
+    }
+  })
+
   const simulation = forceSimulation<NodeData>(graphData.nodes)
     .force("charge", forceManyBody().strength(-100 * config.repelForce))
     .force("center", forceCenter().strength(config.centerForce))
