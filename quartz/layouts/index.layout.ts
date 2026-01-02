@@ -18,8 +18,8 @@ export const defaultGraphOptions: Partial<D3Config> = {
     tagPost: { min: 0.30, max: 0.6 },
     postPost: { min: 0.03, max: 1.0 },
   },
-  repelForce: 0.6,
-  centerForce: 1,
+  repelForce: 0.7,
+  centerForce: 0.7,
   linkDistance: {
     tagTag: 45,
     tagPost: 90,
@@ -82,7 +82,6 @@ export const indexLayout: PageLayout = {
   ],
   left: [
     Component.PageTitle(),
-    Component.MobileOnly(Component.Spacer()),
     Component.Flex({
       components: [
         {

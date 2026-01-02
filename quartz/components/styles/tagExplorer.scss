@@ -1,33 +1,5 @@
 @use "../../styles/variables.scss" as *;
 
-@media all and ($mobile) {
-  .page>#quartz-body {
-
-    // Shift page position when toggling TagExplorer on mobile.
-    &> :not(.sidebar.left:has(.tag-explorer)) {
-      transition: transform 300ms ease-in-out;
-    }
-
-    &.lock-scroll> :not(.sidebar.left:has(.tag-explorer)) {
-      transform: translateX(100dvw);
-      transition: transform 300ms ease-in-out;
-    }
-
-    // Sticky top bar (stays in place when scrolling down on mobile).
-    .sidebar.left:has(.tag-explorer) {
-      box-sizing: border-box;
-      position: sticky;
-      background-color: var(--light);
-      padding: 1rem 0 1rem 0;
-      margin: 0;
-    }
-
-    .hide-until-loaded~.tag-explorer-content {
-      display: none;
-    }
-  }
-}
-
 .tag-explorer {
   display: flex;
   flex-direction: column;
@@ -50,34 +22,6 @@
     opacity: 0.8;
   }
 
-  @media all and ($mobile) {
-    order: -1;
-    height: initial;
-    overflow: hidden;
-    flex-shrink: 0;
-    align-self: flex-start;
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-
-  button.mobile-tag-explorer {
-    display: none;
-  }
-
-  button.desktop-tag-explorer {
-    display: flex;
-  }
-
-  @media all and ($mobile) {
-    button.mobile-tag-explorer {
-      display: flex;
-    }
-
-    button.desktop-tag-explorer {
-      display: none;
-    }
-  }
-
   &.desktop-only {
     @media all and not ($mobile) {
       display: flex;
@@ -94,8 +38,7 @@
   }
 }
 
-button.mobile-tag-explorer,
-button.desktop-tag-explorer {
+button.tag-explorer-toggle {
   background-color: transparent;
   border: none;
   text-align: left;
@@ -232,63 +175,4 @@ li:has(> .tag-outer:not(.open))>.tag-container>.tag-fold-icon {
 
 .tag-fold-icon:hover {
   color: var(--tertiary);
-}
-
-.tag-explorer {
-  @media all and ($mobile) {
-    &.collapsed {
-      flex: 0 0 34px;
-
-      &>.tag-explorer-content {
-        transform: translateX(-100vw);
-        visibility: hidden;
-      }
-    }
-
-    &:not(.collapsed) {
-      flex: 0 0 34px;
-
-      &>.tag-explorer-content {
-        transform: translateX(0);
-        visibility: visible;
-      }
-    }
-
-    .tag-explorer-content {
-      box-sizing: border-box;
-      z-index: 100;
-      position: absolute;
-      top: 0;
-      left: 0;
-      margin-top: 0;
-      background-color: var(--light);
-      max-width: 100vw;
-      width: 100vw;
-      transform: translateX(-100vw);
-      transition:
-        transform 200ms ease,
-        visibility 200ms ease;
-      overflow: hidden;
-      padding: 4rem 0 2rem 0;
-      height: 100dvh;
-      max-height: 100dvh;
-      visibility: hidden;
-    }
-
-    .mobile-tag-explorer {
-      margin: 0;
-      padding: 5px;
-      z-index: 101;
-
-      .lucide-menu {
-        stroke: var(--darkgray);
-      }
-    }
-  }
-}
-
-.mobile-no-scroll {
-  @media all and ($mobile) {
-    overscroll-behavior: none;
-  }
 }

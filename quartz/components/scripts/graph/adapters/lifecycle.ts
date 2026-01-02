@@ -33,6 +33,14 @@ export async function handleGraphNav(e: CustomEventMap["nav"]) {
   }
   addToVisited(normalizedSlug)
 
+  // Portal global graph containers to document body to escape parent stacking contexts
+  const globalGraphContainers = document.querySelectorAll(".global-graph-outer")
+  globalGraphContainers.forEach((container) => {
+    if (container.parentElement !== document.body) {
+      document.body.appendChild(container)
+    }
+  })
+
   async function renderLocalGraph() {
     _cleanupLocalGraphs()
     const localGraphContainers = document.getElementsByClassName("graph-container")
@@ -75,10 +83,6 @@ export async function handleGraphNav(e: CustomEventMap["nav"]) {
     const slug = getFullSlug(window)
     for (const container of containers) {
       container.classList.add("active")
-      const sidebar = container.closest(".sidebar") as HTMLElement
-      if (sidebar) {
-        sidebar.style.zIndex = "1"
-      }
 
       const graphContainer = container.querySelector(".global-graph-container") as HTMLElement
       registerEscapeHandler(container, hideGlobalGraph)
@@ -92,10 +96,6 @@ export async function handleGraphNav(e: CustomEventMap["nav"]) {
     _cleanupGlobalGraphs()
     for (const container of containers) {
       container.classList.remove("active")
-      const sidebar = container.closest(".sidebar") as HTMLElement
-      if (sidebar) {
-        sidebar.style.zIndex = ""
-      }
     }
   }
 
