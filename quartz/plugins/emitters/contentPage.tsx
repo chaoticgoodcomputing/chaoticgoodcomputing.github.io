@@ -3,6 +3,7 @@ import { QuartzEmitterPlugin } from "../types"
 import { QuartzComponentProps } from "../../components/types"
 import HeaderConstructor from "../../components/Header"
 import BodyConstructor from "../../components/Body"
+import MobileSidebarMenuConstructor from "../../components/MobileSidebarMenu"
 import { pageResources, renderPage } from "../../components/renderPage"
 import { FullPageLayout } from "../../cfg"
 import { pathToRoot } from "../../util/path"
@@ -51,6 +52,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
   const { head: Head, header, footer: Footer } = sharedPageComponents
   const Header = HeaderConstructor()
   const Body = BodyConstructor()
+  const MobileSidebarMenu = MobileSidebarMenuConstructor()
 
   return {
     name: "ContentPage",
@@ -73,6 +75,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         Head,
         Header,
         Body,
+        MobileSidebarMenu,
         ...header,
         ...indexComponents,
         ...notesComponents,

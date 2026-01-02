@@ -1,0 +1,140 @@
+@use "../../styles/variables.scss" as *;
+
+/**
+ * Mobile Sidebar Menu Styles
+ * Provides a retractable off-canvas sidebar for mobile devices
+ */
+
+// Hamburger button (visible only on mobile)
+.mobile-sidebar-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background-color: var(--light);
+  border: 2px solid var(--lightgray);
+  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  padding: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: var(--lightgray);
+    border-color: var(--gray);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // Hamburger icon with three lines
+  .hamburger-icon {
+    width: 20px;
+    height: 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background-color: var(--darkgray);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+  }
+
+  // Animate hamburger to X when menu is open
+  &[aria-expanded="true"] .hamburger-icon {
+    span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  }
+
+  // Hide on desktop
+  @media all and not ($mobile) {
+    display: none;
+  }
+}
+
+// Backdrop overlay (darkens background when menu is open)
+.mobile-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  // Hide on desktop
+  @media all and not ($mobile) {
+    display: none !important;
+  }
+}
+
+// Mobile sidebar container
+.mobile-sidebar-container {
+
+  // On mobile: fixed off-canvas sidebar
+  @media all and ($mobile) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 80%;
+    max-width: 320px;
+    background-color: var(--light);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+
+    &.open {
+      transform: translateX(0);
+    }
+
+    // Style the left sidebar inside the container on mobile
+    .left.sidebar {
+      position: static !important;
+      height: 100% !important;
+      max-height: none !important;
+      padding: 5rem 1.5rem 2rem 1.5rem;
+      gap: 1.5rem;
+      flex-direction: column;
+      overflow-y: auto !important;
+      top: auto !important;
+    }
+  }
+
+  // On desktop: just pass through with no special styling
+  @media all and not ($mobile) {
+    // Container is invisible, just contains the sidebar
+    display: contents;
+  }
+}

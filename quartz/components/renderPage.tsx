@@ -2,6 +2,7 @@ import { render } from "preact-render-to-string"
 import { QuartzComponent, QuartzComponentProps } from "./types"
 import HeaderConstructor from "./Header"
 import BodyConstructor from "./Body"
+import MobileSidebarMenuConstructor from "./MobileSidebarMenu"
 import { JSResourceToScriptElement, StaticResources } from "../util/resources"
 import { FullSlug, RelativeURL, joinSegments, normalizeHastElement } from "../util/path"
 import { clone } from "../util/clone"
@@ -240,13 +241,16 @@ export function renderPage(
   } = components
   const Header = HeaderConstructor()
   const Body = BodyConstructor()
+  const MobileSidebarMenu = MobileSidebarMenuConstructor()
 
   const LeftComponent = (
-    <div class="left sidebar">
-      {left.map((BodyComponent) => (
-        <BodyComponent {...componentData} />
-      ))}
-    </div>
+    <MobileSidebarMenu {...componentData}>
+      <div class="left sidebar">
+        {left.map((BodyComponent) => (
+          <BodyComponent {...componentData} />
+        ))}
+      </div>
+    </MobileSidebarMenu>
   )
 
   const RightComponent = (
