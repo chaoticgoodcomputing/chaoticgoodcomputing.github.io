@@ -14,7 +14,7 @@ export default (() => {
       <>
         {/* Hamburger button - visible only on mobile */}
         <button
-          class="mobile-sidebar-toggle mobile-only"
+          class="mobile-sidebar-toggle mobile-only flex-component"
           id="mobile-sidebar-toggle"
           aria-label="Toggle sidebar menu"
           aria-expanded="false"
