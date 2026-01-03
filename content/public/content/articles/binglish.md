@@ -2,9 +2,9 @@
 title: "GPTinglish: The New Normal"
 date: 2024-03-01
 tags:
-  - economics
   - horticulture
   - articles
+  - engineering/ai
 draft: false
 ---
 ## GPTinglish

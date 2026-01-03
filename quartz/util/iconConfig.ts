@@ -42,6 +42,7 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "engineering/data", icon: "mdi:database" },
   { tag: "engineering/devops", icon: "mdi:truck" },
   { tag: "engineering/frontend", icon: "mdi:palette" },
+  { tag: "engineering/ai", icon: "mdi:robot" },
 
   { tag: "projects/roblox", icon: "custom:roblox" },
   { tag: "projects/homelab", icon: "mdi:flask-outline" },
