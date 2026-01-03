@@ -131,40 +131,9 @@ a {
   }
 }
 
+// Base utility for Flex component
 .flex-component {
   display: flex;
-}
-
-.desktop-only {
-  display: initial;
-
-  &.flex-component {
-    display: flex;
-  }
-
-  @media all and ($mobile) {
-    &.flex-component {
-      display: none;
-    }
-
-    display: none;
-  }
-}
-
-.mobile-only {
-  display: none;
-
-  &.flex-component {
-    display: none;
-  }
-
-  @media all and ($mobile) {
-    &.flex-component {
-      display: flex;
-    }
-
-    display: initial;
-  }
 }
 
 .page {

@@ -12,9 +12,9 @@ export default (() => {
   const MobileSidebarMenu: QuartzComponent = ({ children }: QuartzComponentProps) => {
     return (
       <>
-        {/* Hamburger button - visible only on mobile */}
+        {/* Hamburger button - self-contained responsive behavior in SCSS */}
         <button
-          class="mobile-sidebar-toggle mobile-only flex-component"
+          class="mobile-sidebar-toggle"
           id="mobile-sidebar-toggle"
           aria-label="Toggle sidebar menu"
           aria-expanded="false"
@@ -26,10 +26,10 @@ export default (() => {
           </div>
         </button>
 
-        {/* Backdrop overlay - visible only when menu is open on mobile */}
+        {/* Backdrop overlay - self-contained responsive behavior in SCSS */}
         <div class="mobile-sidebar-backdrop" id="mobile-sidebar-backdrop"></div>
 
-        {/* The actual sidebar container */}
+        {/* The actual sidebar container - self-contained responsive behavior in SCSS */}
         <div class="mobile-sidebar-container" id="mobile-sidebar-container">
           {children}
         </div>

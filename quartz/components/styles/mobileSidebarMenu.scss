@@ -2,12 +2,22 @@
 
 /**
  * Mobile Sidebar Menu Styles
- * Provides a retractable off-canvas sidebar for mobile devices
+ * 
+ * Provides a retractable off-canvas sidebar for mobile devices.
+ * On desktop/tablet, this component is invisible and passes through children.
+ * On mobile (< 800px), it renders a hamburger button and slide-out sidebar.
+ * 
+ * All responsive behavior is self-contained within this component.
  */
 
-
-// Hamburger button (visible only on mobile)
+/**
+ * Hamburger toggle button
+ * - Only visible on mobile viewports
+ * - Fixed position in top-left corner
+ * - Animates to X icon when menu is open
+ */
 .mobile-sidebar-toggle {
+  // Base styles (mobile)
   position: fixed;
   top: 1rem;
   left: 1rem;
@@ -25,9 +35,9 @@
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  // Hide on desktop/tablet (show only on mobile)
-  @media not ($mobile) {
-    display: none !important;
+  // Hide on non-mobile viewports
+  @media all and not ($mobile) {
+    display: none;
   }
 
   &:hover {
@@ -39,7 +49,7 @@
     transform: scale(0.95);
   }
 
-  // Hamburger icon with three lines
+  // Hamburger icon structure (three horizontal lines)
   .hamburger-icon {
     width: 20px;
     height: 14px;
@@ -75,7 +85,12 @@
   }
 }
 
-// Backdrop overlay (darkens background when menu is open)
+/**
+ * Backdrop overlay
+ * - Semi-transparent dark overlay that appears behind the sidebar
+ * - Only visible when menu is open on mobile
+ * - Click to close sidebar
+ */
 .mobile-sidebar-backdrop {
   display: none;
   position: fixed;
@@ -93,14 +108,26 @@
     opacity: 1;
   }
 
-  // Hide on desktop
+  // Only relevant on mobile viewports
   @media all and not ($mobile) {
-    display: none !important;
+    display: none;
   }
 }
 
-// Mobile sidebar container
+/**
+ * Mobile sidebar container
+ * - On desktop/tablet: Invisible passthrough container (display: contents)
+ * - On mobile: Fixed off-canvas sidebar that slides in from left
+ * 
+ * Note: This component now owns the mobile layout behavior for .sidebar.left
+ * that was previously defined in base.scss, eliminating the need for
+ * !important overrides.
+ */
 .mobile-sidebar-container {
+  // On desktop/tablet: just pass through with no visual presence
+  @media all and not ($mobile) {
+    display: contents;
+  }
 
   // On mobile: fixed off-canvas sidebar
   @media all and ($mobile) {
@@ -121,41 +148,39 @@
       transform: translateX(0);
     }
 
-    // Style the left sidebar inside the container on mobile
-    // Higher specificity to override base.scss mobile styles
-    .left.sidebar {
-      position: static !important;
-      height: 100% !important;
-      max-height: none !important;
-      padding: 5rem 1.5rem 2rem 1.5rem !important;
-      gap: 1.5rem !important;
-      flex-direction: column !important;
-      overflow-y: auto !important;
-      top: auto !important;
-      align-items: stretch !important;
-      display: flex !important;
+    /**
+     * Left sidebar styles when inside mobile container
+     * - Overrides base.scss .page>#quartz-body .sidebar.left styles for mobile viewport
+     * - Matches exact selector structure from base.scss for proper specificity
+     * - Full control over mobile sidebar layout
+     */
+    .page > #quartz-body & .left.sidebar {
+      position: static;
+      height: 100%;
+      max-height: none;
+      padding: 5rem 1.5rem 2rem 1.5rem;
+      gap: 1.5rem;
+      flex-direction: column;
+      overflow-y: auto;
+      top: auto;
+      align-items: stretch;
+      display: flex;
 
       // Ensure all direct children stack vertically
-      &>* {
+      & > * {
         width: 100%;
         flex-shrink: 0;
-        position: relative; // Create stacking context
-        z-index: 1; // Above backdrop
+        position: relative;
+        z-index: 1;
       }
 
       // Override spacer flex-grow behavior in mobile sidebar
-      &>.spacer {
-        flex-grow: 0 !important;
-        flex-shrink: 1 !important;
-        flex-basis: auto !important;
-        height: 1.5rem !important;
+      & > .spacer {
+        flex-grow: 0;
+        flex-shrink: 1;
+        flex-basis: auto;
+        height: 1.5rem;
       }
     }
-  }
-
-  // On desktop: just pass through with no special styling
-  @media all and not ($mobile) {
-    // Container is invisible, just contains the sidebar
-    display: contents;
   }
 }
