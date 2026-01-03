@@ -7,7 +7,7 @@ import * as Plugin from "./quartz/plugins"
 const config: QuartzConfig = {
   configuration: {
     pageTitle: "Chaotic Good Computing",
-    pageTitleSuffix: "test",
+    pageTitleSuffix: "| CGC",
     enableSPA: true,
     enablePopovers: true,
     analytics: {

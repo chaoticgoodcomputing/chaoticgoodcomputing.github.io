@@ -1,1 +1,5 @@
 * text=auto eol=lf
+
+# Include Markdown in language statistics
+*.md linguist-detectable=true
+*.md linguist-documentation=false

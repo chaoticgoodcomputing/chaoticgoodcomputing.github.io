@@ -55,7 +55,7 @@
       },
       "defaultConfiguration": "site",
       "outputs": [ "{workspaceRoot}/public" ],
-      "dependsOn": [ "vault:sync", "site:clean" ]
+      "dependsOn": [ "site:clean" ]
     },
     "check": {
       "//": "Type checking and formatting validation",
