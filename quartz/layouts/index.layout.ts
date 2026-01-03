@@ -26,8 +26,8 @@ export const defaultGraphOptions: Partial<D3Config> = {
     postPost: 100,
   },
   baseSize: {
-    tags: 20,
-    posts: 14,
+    tags: 16,
+    posts: 10,
   },
   tagColorGradient: [
     "#FF0000",

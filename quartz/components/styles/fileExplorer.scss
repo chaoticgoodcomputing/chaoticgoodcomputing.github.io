@@ -38,7 +38,7 @@
     pointer-events: all;
     transition: transform 0.35s ease;
 
-    & > polyline {
+    &>polyline {
       pointer-events: none;
     }
   }
