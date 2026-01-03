@@ -103,9 +103,7 @@ export default ((opts?: Partial<TagContentOptions>) => {
       }
       return (
         <div class="popover-hint">
-          <article class={classes}>
-            <p>{content}</p>
-          </article>
+          <article class={classes}>{content}</article>
           <p>{i18n(cfg.locale).pages.tagContent.totalTags({ count: tags.length })}</p>
           <div>
             {tags.map((tag) => {
@@ -241,7 +239,7 @@ export default ((opts?: Partial<TagContentOptions>) => {
                           </span>
                         </summary>
                         <div class="subtag-content">
-                          {childContent && <p>{childContent}</p>}
+                          {childContent && <article>{childContent}</article>}
                           <PageList limit={options.numPages} {...childListProps} sort={options?.sort} />
                         </div>
                       </details>

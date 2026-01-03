@@ -50,7 +50,12 @@ function computeTagInfo(
   for (const [tree, file] of content) {
     const slug = file.data.slug!
     if (slug.startsWith("tags/")) {
-      const tag = slug.slice("tags/".length)
+      let tag = slug.slice("tags/".length)
+      // Remove /index suffix if present
+      if (tag.endsWith("/index")) {
+        tag = tag.slice(0, -"/index".length)
+      }
+      console.log(`[tagPage] Found tag content file: ${slug}, normalized tag: ${tag}, tree children: ${tree.children.length}`)
       if (tags.has(tag)) {
         tagDescriptions[tag] = [tree, file]
         if (file.data.frontmatter?.title === tag) {
@@ -73,6 +78,7 @@ async function processTagPage(
 ) {
   const slug = joinSegments("tags", tag) as FullSlug
   const [tree, file] = tagContent
+  console.log(`[processTagPage] Processing tag: ${tag}, tree children: ${tree.children.length}, slug: ${file.data.slug}`)
   const cfg = ctx.cfg.configuration
   const externalResources = pageResources(pathToRoot(slug), resources)
   const componentData: QuartzComponentProps = {
