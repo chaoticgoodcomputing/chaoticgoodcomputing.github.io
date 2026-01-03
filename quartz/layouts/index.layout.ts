@@ -7,27 +7,27 @@ import { D3Config } from "../components/Graph"
  * These can be overridden in individual layouts as needed.
  */
 export const defaultGraphOptions: Partial<D3Config> = {
-  scale: 0.75,
+  scale: 0.5,
   linkStrength: {
-    tagTag: 0.35,
-    tagPost: 0.15,
-    postPost: 0.075,
+    tagTag: 1,
+    tagPost: 0.1,
+    postPost: 0.1,
   },
   edgeOpacity: {
     tagTag: { min: 1, max: 1.0 },
     tagPost: { min: 0.30, max: 0.6 },
     postPost: { min: 0.03, max: 1.0 },
   },
-  repelForce: 0.5,
-  centerForce: 0.35,
+  repelForce: 2,
+  centerForce: 0.25,
   linkDistance: {
-    tagTag: 90,
-    tagPost: 90,
-    postPost: 135,
+    tagTag: 100,
+    tagPost: 100,
+    postPost: 100,
   },
   baseSize: {
-    tags: 8,
-    posts: 5,
+    tags: 20,
+    posts: 14,
   },
   tagColorGradient: [
     "#FF0000",
@@ -40,7 +40,7 @@ export const defaultGraphOptions: Partial<D3Config> = {
   ],
   labelAnchor: {
     baseY: 1.2,
-    scaleFactor: 0.1,
+    scaleFactor: 0.05,
   },
 }
 
@@ -51,11 +51,15 @@ export const defaultGraphOptions: Partial<D3Config> = {
 export const defaultLocalGraphOptions: Partial<D3Config> = {
   ...defaultGraphOptions,
   depth: 1,
-  scale: 0.75,
+  scale: 0.5,
+  baseSize: {
+    tags: 12,
+    posts: 12,
+  },
   linkDistance: {
     tagTag: 50,
-    tagPost: 35,
-    postPost: 75,
+    tagPost: 50,
+    postPost: 50,
   },
 }
 

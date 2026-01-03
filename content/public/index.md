@@ -1,9 +1,6 @@
 ---
-title: Oh, Howdy!
+title: Welcome!
+tags:
+  - horticulture
 ---
-
-Est nisi eiusmod fugiat voluptate sint amet eu. Ea labore ipsum excepteur anim ex non nostrud duis adipisicing do consectetur id cupidatat aute. Ex cupidatat velit aute exercitation exercitation officia. Occaecat culpa aliqua ut minim sint in. Fugiat labore non id quis minim eu cupidatat ea ipsum sint. Minim id in mollit quis elit ullamco tempor sit cillum quis. Esse irure et mollit.
-
-Est nisi eiusmod fugiat voluptate sint amet eu. Ea labore ipsum excepteur anim ex non nostrud duis adipisicing do consectetur id cupidatat aute. Ex cupidatat velit aute exercitation exercitation officia. Occaecat culpa aliqua ut minim sint in. Fugiat labore non id quis minim eu cupidatat ea ipsum sint. Minim id in mollit quis elit ullamco tempor sit cillum quis. Esse irure et mollit.
-
-Est nisi eiusmod fugiat voluptate sint amet eu. Ea labore ipsum excepteur anim ex non nostrud duis adipisicing do consectetur id cupidatat aute. Ex cupidatat velit aute exercitation exercitation officia. Occaecat culpa aliqua ut minim sint in. Fugiat labore non id quis minim eu cupidatat ea ipsum sint. Minim id in mollit quis elit ullamco tempor sit cillum quis. Esse irure et mollit.
+This site is a dedicated [[content/notes/digital-gardening-with-quartz|digital garden]] for notes related to my personal work, as well as work I do through Chaotic Good Computing, a small company I run for consulting and OSS projects around [[tags/economics/index|economics]], [[tags/engineering/index|engineering]], and [[tags/projects/teaching/index|teaching]].
