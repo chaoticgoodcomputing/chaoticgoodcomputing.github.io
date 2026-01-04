@@ -20,7 +20,7 @@ export function createNodeRadiusFunction(
 
     if (d.id.startsWith("tags/")) {
       const fileCount = tagFileCountMap.get(d.id) || 0
-      return base + Math.sqrt(fileCount)
+      return base + 2 * Math.sqrt(fileCount)
     }
 
     const numLinks = graphData.links.filter((l) => l.source.id === d.id || l.target.id === d.id)

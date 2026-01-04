@@ -20,7 +20,7 @@ async function cleanupPrivateTaggedFiles() {
   console.log("🧹 Cleaning up existing private-tagged files...")
 
   const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
-    ignore: ["**/node_modules/**", "**/.git/**"],
+    ignore: ["**/node_modules/**", "**/.git/**", "**/templates/**"],
   })
 
   let deleted = 0
@@ -138,6 +138,12 @@ async function extractPrivateMetadata() {
       const relativePath = relative(PRIVATE_DIR, privateFilePath)
       const publicFilePath = join(PUBLIC_DIR, relativePath)
 
+      // Skip if target is in templates directory
+      if (publicFilePath.includes('/templates/')) {
+        skipped++
+        continue
+      }
+
       // Read the private file
       const content = await readFile(privateFilePath, "utf-8")
 
@@ -223,7 +229,7 @@ async function fixLinksInPublicFiles() {
   console.log(`\n🔗 Fixing links in public markdown files...`)
 
   const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
-    ignore: ["**/node_modules/**", "**/.git/**"],
+    ignore: ["**/node_modules/**", "**/.git/**", "**/templates/**"],
   })
 
   let fixed = 0

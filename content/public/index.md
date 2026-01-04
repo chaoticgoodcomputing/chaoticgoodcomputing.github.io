@@ -1,6 +1,9 @@
 ---
 title: Welcome!
+date: 2024-02-27
 tags:
+  - economics
+  - engineering
   - horticulture
 ---
-This site is a dedicated [[content/notes/digital-gardening-with-quartz|digital garden]] for notes related to my personal work, as well as work I do through Chaotic Good Computing, a small company I run for consulting and OSS projects around [[tags/economics/index|economics]], [[tags/engineering/index|engineering]], and [[tags/projects/teaching/index|teaching]].
+This site is a dedicated [[tags/horticulture/index|digital garden]] of articles, tutorials, and notes related to my personal life and work, as well as work I do through Chaotic Good Computing, a separate business I run for consulting and OSS projects around [[tags/economics/index|economics]], [[tags/engineering/index|engineering]], and [[tags/projects/teaching/index|teaching]].

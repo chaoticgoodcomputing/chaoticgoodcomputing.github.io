@@ -1,7 +1,7 @@
 <%*
 // Configuration
-const SEASONS_FOLDER = "tags/seasons";
-const DAILY_NOTES_FOLDER = "content/notes/periodic/daily";
+const SEASONS_FOLDER = "public/tags/seasons";
+const DAILY_NOTES_FOLDER = "private/content/notes/periodic/daily";
 
 // Find the most recent season by date
 const latestSeason = app.vault.getMarkdownFiles()
@@ -47,7 +47,7 @@ tags:
   - <% seasonTag %>
 draft: false
 ---
-⇐ [[notes/periodic/daily/<% previousLink %>|<% previousLink %>]]
+⇐ [[private/content/notes/periodic/daily/<% previousLink %>|<% previousLink %>]]
 
 ## Up Front
 
