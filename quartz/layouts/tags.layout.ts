@@ -11,10 +11,6 @@ export const tagsLayout: PageLayout = {
     Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
-    Component.PostListing({
-      excludeTags: ["private"],
-      showEmptyMessage: true,
-    }),
   ],
   left: [
     Component.PageTitle(),
@@ -41,4 +37,12 @@ export const tagsLayout: PageLayout = {
     }),
   ],
   right: [],
+  afterBody: [
+    Component.PostListing({
+      excludeTags: ["private"],
+      filterToCurrentTag: true,
+      collapsedItemCount: 10,
+      showEmptyMessage: true,
+    }),
+  ],
 }

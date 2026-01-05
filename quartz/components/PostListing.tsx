@@ -11,6 +11,12 @@ export interface PostListingOptions {
   limit?: number
 
   /**
+   * Number of posts to show before collapsing the rest into a details element.
+   * If undefined, all posts are shown without collapsing.
+   */
+  collapsedItemCount?: number
+
+  /**
    * Sorting function for posts. Defaults to byDateAndAlphabetical.
    */
   sort?: SortFn
@@ -22,8 +28,15 @@ export interface PostListingOptions {
   excludeTags?: string[]
 
   /**
+   * If true, filters posts to only those that have the current page's tag.
+   * Only works on tag pages (pages with slug starting with "tags/").
+   * Default: false
+   */
+  filterToCurrentTag?: boolean
+
+  /**
    * Filter function to determine which pages to include.
-   * Takes precedence over excludeTags if both are specified.
+   * Takes precedence over excludeTags and filterToCurrentTag if specified.
    */
   filter?: (file: QuartzPluginData) => boolean
 
@@ -75,12 +88,27 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
     if (opts.filter) {
       // Use custom filter if provided
       filteredFiles = filteredFiles.filter(opts.filter)
-    } else if (opts.excludeTags && opts.excludeTags.length > 0) {
-      // Use excludeTags filter
-      filteredFiles = filteredFiles.filter((file) => {
-        const tags = file.frontmatter?.tags ?? []
-        return !tags.some((tag) => opts.excludeTags!.includes(tag))
-      })
+    } else {
+      // Apply filterToCurrentTag if on a tag page
+      if (opts.filterToCurrentTag && fileData.slug?.startsWith("tags/")) {
+        // Extract tag from slug: "tags/horticulture/index" -> "horticulture"
+        const currentTag = fileData.slug
+          .replace(/^tags\//, "")
+          .replace(/\/index$/, "")
+          .replace(/\/$/, "")
+        filteredFiles = filteredFiles.filter((file) => {
+          const tags = file.frontmatter?.tags ?? []
+          return tags.includes(currentTag)
+        })
+      }
+
+      // Apply excludeTags filter
+      if (opts.excludeTags && opts.excludeTags.length > 0) {
+        filteredFiles = filteredFiles.filter((file) => {
+          const tags = file.frontmatter?.tags ?? []
+          return !tags.some((tag) => opts.excludeTags!.includes(tag))
+        })
+      }
     }
 
     // Apply sorting
@@ -96,47 +124,65 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
       return <p class="post-listing-empty">{opts.emptyMessage}</p>
     }
 
-    return (
-      <ul class="section-ul">
-        {list.map((page) => {
-          const title = page.frontmatter?.title
-          const tags = page.frontmatter?.tags ?? []
+    // Render list items
+    const renderListItems = (items: QuartzPluginData[]) =>
+      items.map((page) => {
+        const title = page.frontmatter?.title
+        const tags = page.frontmatter?.tags ?? []
 
-          return (
-            <li class="section-li">
-              <div class="section">
-                {opts.showDates && page.dates && (
-                  <p class="meta">
-                    <Date date={getDate(cfg, page)!} locale={cfg.locale} />
-                  </p>
-                )}
-                <div class="desc">
-                  <h3>
-                    <a href={resolveRelative(fileData.slug!, page.slug!)} class="internal">
-                      {title}
-                    </a>
-                  </h3>
-                </div>
-                {opts.showTags && tags.length > 0 && (
-                  <ul class="tags">
-                    {tags.map((tag) => (
-                      <li>
-                        <a
-                          class="internal tag-link"
-                          href={resolveRelative(fileData.slug!, `tags/${tag}` as FullSlug)}
-                        >
-                          {tag}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+        return (
+          <li class="section-li">
+            <div class="section">
+              {opts.showDates && page.dates && (
+                <p class="meta">
+                  <Date date={getDate(cfg, page)!} locale={cfg.locale} />
+                </p>
+              )}
+              <div class="desc">
+                <h3>
+                  <a href={resolveRelative(fileData.slug!, page.slug!)} class="internal">
+                    {title}
+                  </a>
+                </h3>
               </div>
-            </li>
-          )
-        })}
-      </ul>
-    )
+              {opts.showTags && tags.length > 0 && (
+                <ul class="tags">
+                  {tags.map((tag) => (
+                    <li>
+                      <a
+                        class="internal tag-link"
+                        href={resolveRelative(fileData.slug!, `tags/${tag}` as FullSlug)}
+                      >
+                        {tag}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </li>
+        )
+      })
+
+    // Handle collapsible list if collapsedItemCount is set
+    if (opts.collapsedItemCount && list.length > opts.collapsedItemCount) {
+      const visibleItems = list.slice(0, opts.collapsedItemCount)
+      const collapsedItems = list.slice(opts.collapsedItemCount)
+
+      return (
+        <div>
+          <ul class="section-ul">{renderListItems(visibleItems)}</ul>
+          <details class="post-listing-collapse">
+            <summary>
+              Show {collapsedItems.length} more {collapsedItems.length === 1 ? "post" : "posts"}
+            </summary>
+            <ul class="section-ul">{renderListItems(collapsedItems)}</ul>
+          </details>
+        </div>
+      )
+    }
+
+    return <ul class="section-ul">{renderListItems(list)}</ul>
   }
 
   PostListing.css = `
@@ -151,6 +197,25 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
 .post-listing-empty {
   color: var(--gray);
   font-style: italic;
+}
+
+.post-listing-collapse {
+  margin-top: 1rem;
+}
+
+.post-listing-collapse > summary {
+  cursor: pointer;
+  color: var(--secondary);
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
+.post-listing-collapse > summary:hover {
+  color: var(--tertiary);
+}
+
+.post-listing-collapse > .section-ul {
+  margin-top: 1rem;
 }
 `
 

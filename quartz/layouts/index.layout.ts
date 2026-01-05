@@ -83,10 +83,6 @@ export const indexLayout: PageLayout = {
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
-    Component.PostListing({
-      excludeTags: ["private"],
-      showEmptyMessage: false,
-    }),
   ],
   left: [
     Component.PageTitle(),
@@ -112,5 +108,12 @@ export const indexLayout: PageLayout = {
   right: [
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
+  ],
+  afterBody: [
+    Component.PostListing({
+      excludeTags: ["private"],
+      collapsedItemCount: 5,
+      showEmptyMessage: false,
+    }),
   ],
 }
