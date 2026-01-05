@@ -104,7 +104,7 @@ export const TagPage: QuartzEmitterPlugin<Partial<TagPageOptions>> = (userOpts) 
   const opts: FullPageLayout = {
     ...sharedPageComponents,
     ...tagsLayout,
-    pageBody: TagContent({ sort: userOpts?.sort }),
+    pageBody: TagContent(),
     ...userOpts,
   }
 

@@ -11,6 +11,10 @@ export const tagsLayout: PageLayout = {
     Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
+    Component.PostListing({
+      excludeTags: ["private"],
+      showEmptyMessage: true,
+    }),
   ],
   left: [
     Component.PageTitle(),

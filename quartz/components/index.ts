@@ -27,6 +27,7 @@ import Breadcrumbs from "./Breadcrumbs"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
+import PostListing from "./PostListing"
 
 export {
   ArticleTitle,
@@ -58,4 +59,5 @@ export {
   Comments,
   Flex,
   ConditionalRender,
+  PostListing,
 }

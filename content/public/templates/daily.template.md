@@ -45,7 +45,6 @@ title: "<% title %>"
 date: <% tp.date.now() %>
 tags:
   - <% seasonTag %>
-draft: false
 ---
 ⇐ [[private/content/notes/periodic/daily/<% previousLink %>|<% previousLink %>]]
 

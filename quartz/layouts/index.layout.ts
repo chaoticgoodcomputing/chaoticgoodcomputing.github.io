@@ -83,6 +83,10 @@ export const indexLayout: PageLayout = {
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
+    Component.PostListing({
+      excludeTags: ["private"],
+      showEmptyMessage: false,
+    }),
   ],
   left: [
     Component.PageTitle(),
