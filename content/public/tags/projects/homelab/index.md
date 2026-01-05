@@ -1,3 +1,3 @@
 ---
-title: homelab
+title: "#projects/homelab"
 ---

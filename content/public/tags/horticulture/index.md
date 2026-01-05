@@ -1,5 +1,5 @@
 ---
-title: horticulture
+title: "#horticulture"
 ---
 
 Horticulture is a term I started using during the [[tags/seasons/rhythm/index|Season of Rhythm]], specifically picked up from the term [[content/notes/digital-gardening-with-quartz|digital gardening.]]

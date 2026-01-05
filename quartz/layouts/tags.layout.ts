@@ -8,9 +8,9 @@ import { defaultGraphOptions, defaultLocalGraphOptions } from "./index.layout"
  */
 export const tagsLayout: PageLayout = {
   beforeBody: [
-    Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
+    Component.TagList({ showSubtags: true, showCount: true }),
   ],
   left: [
     Component.PageTitle(),

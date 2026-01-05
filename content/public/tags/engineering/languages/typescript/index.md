@@ -1,3 +1,3 @@
 ---
-title: typescript
+title: "#engineering/languages/typescript"
 ---

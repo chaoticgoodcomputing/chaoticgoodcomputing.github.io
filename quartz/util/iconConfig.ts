@@ -44,13 +44,16 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "engineering/frontend", icon: "mdi:palette" },
   { tag: "engineering/ai", icon: "mdi:robot" },
 
-  { tag: "projects/roblox", icon: "custom:roblox" },
+  { tag: "projects/games/roblox", icon: "custom:roblox" },
+
+  { tag: "projects/games", icon: "mdi:controller-classic" },
   { tag: "projects/homelab", icon: "mdi:flask-outline" },
   { tag: "projects/college", icon: "mdi:school" },
   { tag: "projects/teaching", icon: "mdi:school" },
+  { tag: "projects/dayjob", icon: "mdi:vote" },
 
   { tag: "projects/flowthru", icon: "mdi:graph-outline" },
-  { tag: "projects/magic-atlas", icon: "mdi:cards-outline" },
+  { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
 
   { tag: "economics/strategy", icon: "mdi:arrow-decision" },
   { tag: "economics/finance", icon: "mdi:currency-usd" },
@@ -58,8 +61,8 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
 
   { tag: "articles/tutorials", icon: "mdi:information" },
 
-  { tag: "seasons/rhythm", icon: "mdi:music-note-sixteenth" },
-  { tag: "seasons/systems", icon: "mdi:robot" },
+  { tag: "seasons/rhythm", icon: "mdi:music-note" },
+  { tag: "seasons/systems", icon: "mdi:transit-connection-variant" },
   
   // General Categories
   { tag: "seasons", icon: "mdi:weather-sunny" },

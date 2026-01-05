@@ -8,10 +8,6 @@ import { defaultGraphOptions, defaultLocalGraphOptions } from "./index.layout"
  */
 export const notesLayout: PageLayout = {
   beforeBody: [
-    Component.ConditionalRender({
-      component: Component.Breadcrumbs(),
-      condition: (page) => page.fileData.slug !== "index",
-    }),
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),

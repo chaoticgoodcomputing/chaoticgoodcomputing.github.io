@@ -1,5 +1,5 @@
 ---
-title: Season of Systems
+title: "#seasons/systems"
 date: 2025-12-20
 draft: false
 ---

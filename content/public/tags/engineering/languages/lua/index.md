@@ -1,4 +1,4 @@
 ---
-title: lua
+title: "#engineering/languages/lua"
 ---
 

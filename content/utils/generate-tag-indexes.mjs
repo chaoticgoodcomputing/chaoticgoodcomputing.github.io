@@ -33,7 +33,19 @@ async function collectTags() {
   }
 
   console.log(`Found ${tags.size} unique tags`)
-  return Array.from(tags).sort()
+
+  // Expand tags to include all intermediate paths
+  const allTags = new Set()
+  for (const tag of tags) {
+    const parts = tag.split("/")
+    // Add all intermediate paths (e.g., "projects" and "projects/teaching")
+    for (let i = 1; i <= parts.length; i++) {
+      allTags.add(parts.slice(0, i).join("/"))
+    }
+  }
+
+  console.log(`Expanded to ${allTags.size} total tag paths (including intermediates)`)
+  return Array.from(allTags).sort()
 }
 
 async function generateTagIndex(tag) {
@@ -45,15 +57,15 @@ async function generateTagIndex(tag) {
     return { tag, created: false }
   }
 
-  // Get the tag name (last segment of the path)
-  const tagName = tag.split("/").pop()
+  // Get the tag name (use full tag path with # prefix)
+  const tagName = `#${tag}`
 
   // Create the directory structure if needed
   await mkdir(dirname(indexPath), { recursive: true })
 
-  // Create the index file with frontmatter
+  // Create the index file with frontmatter (quoted to handle # prefix)
   const content = `---
-title: ${tagName}
+title: "${tagName}"
 ---
 
 `

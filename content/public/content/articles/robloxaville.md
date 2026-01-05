@@ -2,7 +2,7 @@
 title: The Unbearable Weight of ROBLOX Celebrity
 date: 2021-08-05
 tags:
-  - projects/roblox
+  - projects/games/roblox
   - engineering/languages/lua
   - articles
 ---

@@ -1,4 +1,4 @@
 ---
-title: college
+title: "#projects/college"
 ---
 

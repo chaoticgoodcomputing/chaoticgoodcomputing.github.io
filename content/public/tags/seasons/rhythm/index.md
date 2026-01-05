@@ -1,5 +1,5 @@
 ---
-title: The Season of Rhythm
+title: "#seasons/rhythm"
 date: 2024-02-27
 draft: false
 ---

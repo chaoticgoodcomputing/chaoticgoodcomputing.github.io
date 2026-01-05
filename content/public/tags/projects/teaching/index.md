@@ -1,4 +1,4 @@
 ---
-title: teaching
+title: "#projects/teaching"
 ---
 
