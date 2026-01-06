@@ -29,7 +29,13 @@ export interface TagIconConfig {
 export const TAG_ICON_CONFIG: TagIconConfig[] = [
   // Access/Privacy
   { tag: "private", icon: "mdi:lock" },
-  
+
+  // Specific Projects
+  { tag: "projects/games/roblox", icon: "custom:roblox" },
+  { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
+  { tag: "projects/flowthru", icon: "mdi:graph-outline" },
+  { tag: "projects/homelab", icon: "mdi:flask-outline" },
+
   // Programming Languages & Technologies
   { tag: "engineering/languages/python", icon: "mdi:language-python" },
   { tag: "engineering/languages/typescript", icon: "mdi:language-typescript" },
@@ -37,6 +43,12 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "engineering/languages/lua", icon: "mdi:language-lua" },
   { tag: "engineering/languages/scratch", icon: "mdi:cat" },
 
+  // Economics Subtopics
+  { tag: "economics/strategy", icon: "mdi:arrow-decision" },
+  { tag: "economics/finance", icon: "mdi:currency-usd" },
+  { tag: "economics/markets", icon: "mdi:handshake" },
+
+  // Engineering Subtopics
   { tag: "engineering/bio", icon: "mdi:molecule" },
   { tag: "engineering/languages", icon: "mdi:code-braces" },
   { tag: "engineering/data", icon: "mdi:database" },
@@ -44,23 +56,14 @@ export const TAG_ICON_CONFIG: TagIconConfig[] = [
   { tag: "engineering/frontend", icon: "mdi:palette" },
   { tag: "engineering/ai", icon: "mdi:robot" },
 
-  { tag: "projects/games/roblox", icon: "custom:roblox" },
-
+  // General Project Types
   { tag: "projects/games", icon: "mdi:controller-classic" },
-  { tag: "projects/homelab", icon: "mdi:flask-outline" },
-  { tag: "projects/college", icon: "mdi:school" },
   { tag: "projects/teaching", icon: "mdi:school" },
   { tag: "projects/dayjob", icon: "mdi:vote" },
-
-  { tag: "projects/flowthru", icon: "mdi:graph-outline" },
-  { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
-
-  { tag: "economics/strategy", icon: "mdi:arrow-decision" },
-  { tag: "economics/finance", icon: "mdi:currency-usd" },
-  { tag: "economics/markets", icon: "mdi:handshake" },
-
+  { tag: "projects/college", icon: "mdi:school" },
   { tag: "articles/tutorials", icon: "mdi:information" },
 
+  // Seasonal Themes
   { tag: "seasons/rhythm", icon: "mdi:music-note" },
   { tag: "seasons/systems", icon: "mdi:transit-connection-variant" },
   
