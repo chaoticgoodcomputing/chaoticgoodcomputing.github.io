@@ -62,9 +62,9 @@ Using Event Storming for product planning breaks into distinct phases:
     - The immediate Phase 1 hop from "What can this do" into "How can this fuck up" feels a bit cart-ahead-of-the-horse. That may be an initial knee-jerk reaction, so I'm going to roll with this for now until I've done it a few times before making a judgement.
 2. **Timeline Enforcement:** Ordering the Chaotic Exploration by the natural lifecycle of when events happen. Creating connections between **🟧 Domain Event** entries that are placed in a logical order of "🟧 X must occur before 🟧 Y".
     - I'm not sure if **🟥 Hotspot** continues to play a "primary" role in this, and more that the timeline enforcement bubbles up potential timing issues (e.g. "🟧 X must happen before 🟧 Y, so a Y->X would cause hotspot 🟥 Z to occur)
-3. **Commands/Actors:** Flesh out with Commands and Actors
-4. **Entities:** TODO
-5. **Policies/Read Models**
+3. **Commands/Actors:** Flesh out with **🟦 Commands** and **🟫 Actors**, namely how endpoints need to be declared, how they interact, and what will be necessary to complete a full feature.
+4. **Entities:** Group the workflows, logically, into domains via **🟨 Aggregates**
+5. **Policies/Read Models:** Work out advanced logic for **🟪 Policies**, including authorization by **🟫 Actor** role. Establish what schemas are necessary to satisfy the **🟦 Command** requirements for each **🟨 Aggregate**.
 
 ## Phasing session thoughts
 
@@ -72,10 +72,14 @@ The Phase 1 being **🟧 Domain Event** and **🟥 Hotspot** feels somewhat conf
 
 The idea would be:
 
-1. Business Meeting:
-    1. Phase 1: Chaotic Entries
-    2. Phase 2: Timeline Organization
-2. Follow-up Engineering Meeting:
-    1. Phase 3:
-    2. Phase 4:
-    3. Phase 5:
+1. Business Meeting: This is the portion where the business side and engineering side meet together to form the outer shape of the application. The goal is not to bikeshed implementation details (or for engineering to [[content/notes/strong-and-weak-opinions|have strong opinions]]). The goal is to agree on the user-facing shell of the application, its capabilities, and its behaviors.
+    1. Phase 1: Chaotic Entries (🟧, 🟫)
+            - **Goal:** Organize a barrage of high-level information from the business side. What is the goal of the app/feature? What should the user be able to do?
+            - This provides a note-taking structure to user stories. Using **🟫 Actors** and **🟧 Domain Events**, you should be able to organize user categorize and what the users expect to be able to accomplish via **🟧 Domain Events**
+    2. Phase 2: Timeline Organization (🟧, 🟫, 🟥)
+            - **Goal:** Sort the **🟧 Domain Events** into chronological stories, developing the full user stories.
+            - As engineers, it's good to understand that chains of **🟧 Domain Events** that occur earlier will have simpler seed data (e.g. an empty cart) and that Events that occur later will require more complicated data with more failure points. This is where **🟥 Hotspots** can be introduced. It is likely that **🟧 Domain Events** further out will have more **🟥 Hotspots**. The chronological ordering can help identify where, given a **🟧 Domain Event's** dependencies, where failure points could occur.
+2. Follow-up Engineering Meeting: Once the shape of the application is agreed on, engineering breaks out into a follow-up to come up with concrete implementation details. Largely the same as above.
+    1. Phase 3: **Commands:** Figure out the actual API surface, constructed with **🟦 Commands** (🟧, 🟫, 🟥, 🟦)
+    2. Phase 4: **Entities:** Logical grouping of workflows into **🟨 Aggregates** (🟧, 🟫, 🟥, 🟦, 🟨)
+    3. Phase 5: Tying up the necessary schema for the state of the application via **🟩 Model/View**, and what is necessary via **💟 External Systems** (and how these introduce new **🟥 Hotspots**) (🟧, 🟫, 🟥, 🟦, 🟨, 🟩, 💟)
