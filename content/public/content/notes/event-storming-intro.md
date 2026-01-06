@@ -80,6 +80,6 @@ The idea would be:
             - **Goal:** Sort the **🟧 Domain Events** into chronological stories, developing the full user stories.
             - As engineers, it's good to understand that chains of **🟧 Domain Events** that occur earlier will have simpler seed data (e.g. an empty cart) and that Events that occur later will require more complicated data with more failure points. This is where **🟥 Hotspots** can be introduced. It is likely that **🟧 Domain Events** further out will have more **🟥 Hotspots**. The chronological ordering can help identify where, given a **🟧 Domain Event's** dependencies, where failure points could occur.
 2. Follow-up Engineering Meeting: Once the shape of the application is agreed on, engineering breaks out into a follow-up to come up with concrete implementation details. Largely the same as above.
-    1. Phase 3: **Commands:** Figure out the actual API surface, constructed with **🟦 Commands** (🟧, 🟫, 🟥, 🟦)
-    2. Phase 4: **Entities:** Logical grouping of workflows into **🟨 Aggregates** (🟧, 🟫, 🟥, 🟦, 🟨)
-    3. Phase 5: Tying up the necessary schema for the state of the application via **🟩 Model/View**, and what is necessary via **💟 External Systems** (and how these introduce new **🟥 Hotspots**) (🟧, 🟫, 🟥, 🟦, 🟨, 🟩, 💟)
+    1. Phase 3: **Commands:** Figure out the actual API surface, constructed with **🟦 Commands** with **🟪 Policies** introduced to set up the advanced conditionals between **🟫 Actors** executing **🟦 Commands** and the **🟧 Domain Events** they trigger. (🟧, 🟫, 🟥, 🟦, 🟪)
+    2. Phase 4: **Entities:** Logical grouping of workflows into **🟨 Aggregates** (🟧, 🟫, 🟥, 🟦, 🟪, 🟨)
+    3. Phase 5: Tying up the necessary schema for the state of the application via **🟩 Model/View**, and what is necessary via **💟 External Systems** (and how these introduce new **🟥 Hotspots**) (🟧, 🟫, 🟥, 🟦, 🟪, 🟨, 🟩, 💟)
