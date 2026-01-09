@@ -195,8 +195,11 @@ async function extractPrivateMetadata() {
         }
       }
 
-      // Strip private/ and public/ prefixes from all links
-      cleanedContent = cleanedContent.replace(/\b(?:private|public)\/([-\w\/\.]+)/g, '$1')
+      // Strip private/ and public/ prefixes from wikilinks
+      cleanedContent = cleanedContent.replace(/\[\[(?:private|public)\/([-\w\/\.]+)(\|[^\]]+)?\]\]/g, '[[$1$2]]')
+      
+      // Strip private/ and public/ prefixes from relative markdown links (not external URLs)
+      cleanedContent = cleanedContent.replace(/(?<!:\/\/[^\s]*)\]\((?:private|public)\/([-\w\/\.]+)\)/g, ']($1)')
 
       // Ensure the directory exists
       await mkdir(dirname(publicFilePath), { recursive: true })
@@ -239,8 +242,11 @@ async function fixLinksInPublicFiles() {
       let content = await readFile(publicFilePath, "utf-8")
       const originalContent = content
 
-      // Strip private/ and public/ prefixes from all links
-      content = content.replace(/\b(?:private|public)\/([-\w\/\.]+)/g, '$1')
+      // Strip private/ and public/ prefixes from wikilinks
+      content = content.replace(/\[\[(?:private|public)\/([-\w\/\.]+)(\|[^\]]+)?\]\]/g, '[[$1$2]]')
+      
+      // Strip private/ and public/ prefixes from relative markdown links (not external URLs)
+      content = content.replace(/(?<!:\/\/[^\s]*)\]\((?:private|public)\/([-\w\/\.]+)\)/g, ']($1)')
 
       // Only write if changes were made
       if (content !== originalContent) {

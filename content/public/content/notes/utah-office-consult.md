@@ -7,7 +7,7 @@ tags:
   - economics/strategy
   - engineering/data
   - projects/college
-annotation-target: https://raw.githubusercontent.com/chaoticgoodcomputing/chaoticgoodcomputing.github.io/refs/heads/main/content/assets/utah_office_update.pdf
+annotation-target: https://raw.githubusercontent.com/chaoticgoodcomputing/chaoticgoodcomputing.github.io/refs/heads/main/content/public/assets/utah_office_update.pdf
 ---
 
 
