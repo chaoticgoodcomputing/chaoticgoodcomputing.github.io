@@ -105,6 +105,9 @@ export const indexLayout: PageLayout = {
       folderClickBehavior: "link",
     }),
   ],
+  body: [
+    Component.Content()
+  ],
   right: [
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),

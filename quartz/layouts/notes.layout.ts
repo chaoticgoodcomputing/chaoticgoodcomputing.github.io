@@ -12,6 +12,9 @@ export const notesLayout: PageLayout = {
     Component.ContentMeta(),
     Component.TagList(),
   ],
+  body: [
+    Component.Content(),
+  ],
   left: [
     Component.PageTitle(),
     Component.Flex({

@@ -17,6 +17,22 @@
         "parallel": true
       }
     },
+    "_prebuild": {
+      "//": "Internal target to run pre-build steps",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo 'Pre-build steps complete!'"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      },
+      "dependsOn": [
+        "vault:download-annotation-pdfs",
+        "vault:index-tags",
+        "vault:sync"
+      ]
+    },
     "serve": {
       "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
       "executor": "nx:run-commands",
@@ -35,7 +51,7 @@
       },
       "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": [ "vault:sync" ]
+      "dependsOn": [ "site:_prebuild" ]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",
@@ -55,7 +71,7 @@
       },
       "defaultConfiguration": "site",
       "outputs": [ "{workspaceRoot}/public" ],
-      "dependsOn": [ "site:clean" ]
+      "dependsOn": [ "site:clean", "site:_prebuild" ]
     },
     "check": {
       "//": "Type checking and formatting validation",

@@ -4,50 +4,29 @@ import { defaultGraphOptions, defaultLocalGraphOptions } from "./index.layout"
 
 /**
  * Layout configuration for PDF annotation pages.
- * This is a specialized template for displaying extracted PDF annotations.
+ * Displays PDFs on the left with synchronized annotations on the right.
  * 
- * TODO: Customize this layout based on annotation display requirements.
- * Possible enhancements:
- * - Custom annotation display components
- * - PDF preview or link to source
- * - Annotation filtering/grouping
- * - Citation formatting
+ * Features:
+ * - Split-view layout with PDF viewer and annotations sidebar
+ * - Synced scrolling between PDF position and relevant annotations
+ * - Click annotations to jump to their position in the PDF
+ * - Responsive design collapses to stacked layout on smaller screens
  */
 export const annotationsLayout: PageLayout = {
   beforeBody: [
-    Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
   ],
-  left: [
-    Component.PageTitle(),
-    Component.MobileOnly(Component.Spacer()),
-    Component.Flex({
-      components: [
-        {
-          Component: Component.Search(),
-          grow: true,
-        },
-        { Component: Component.Darkmode() },
-        { Component: Component.ReaderMode() },
-      ],
-    }),
+  body: [
+    Component.AnnotationViewer(),
+  ],
+  afterBody: [
     Component.Graph({
       localGraph: defaultLocalGraphOptions,
       globalGraph: defaultGraphOptions,
     }),
-    Component.TagExplorer({
-      tagNodeSort: "count-desc",
-      fileNodeSort: "date-desc",
-      excludeTags: ["private"],
-      showFileCount: true,
-      folderDefaultState: "collapsed",
-      folderClickBehavior: "link",
-    }),
   ],
-  right: [
-    Component.DesktopOnly(Component.TableOfContents()),
-    Component.Backlinks(),
-  ],
+  left: [],
+  right: [],
 }

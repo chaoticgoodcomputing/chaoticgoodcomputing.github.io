@@ -318,6 +318,86 @@ a {
   }
 }
 
+// Full-width layout when sidebars are empty
+body.full-width .page {
+  max-width: 1600px;
+  margin: 0 auto;
+
+  >#quartz-body {
+    grid-template-columns: auto;
+    grid-template-areas:
+      "grid-page-header"
+      "grid-center"
+      "grid-footer";
+    padding: 0 2rem;
+
+    @media all and ($tablet) {
+      grid-template-columns: auto;
+      grid-template-areas:
+        "grid-page-header"
+        "grid-center"
+        "grid-footer";
+      padding: 0 1.5rem;
+    }
+
+    @media all and ($mobile) {
+      grid-template-columns: auto;
+      grid-template-areas:
+        "grid-page-header"
+        "grid-center"
+        "grid-footer";
+      padding: 0 1rem;
+    }
+
+    & .center {
+      max-width: none;
+
+      // Keep beforeBody and afterBody sections at normal width, centered
+      & .page-header,
+      & .page-footer {
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+}
+
+// Layout with only right sidebar
+body.no-left .page>#quartz-body {
+  grid-template-columns: auto #{$sidePanelWidth};
+  grid-template-areas:
+    "grid-page-header grid-page-header"
+    "grid-center grid-sidebar-right"
+    "grid-footer .";
+
+  @media all and ($tablet) {
+    grid-template-columns: auto;
+    grid-template-areas:
+      "grid-page-header"
+      "grid-center"
+      "grid-sidebar-right"
+      "grid-footer";
+  }
+}
+
+// Layout with only left sidebar
+body.no-right .page>#quartz-body {
+  grid-template-columns: #{$sidePanelWidth} auto;
+  grid-template-areas:
+    "grid-page-header grid-page-header"
+    "grid-sidebar-left grid-center"
+    ". grid-footer";
+
+  @media all and ($tablet) {
+    grid-template-columns: #{$sidePanelWidth} auto;
+    grid-template-areas:
+      "grid-page-header grid-page-header"
+      "grid-sidebar-left grid-center"
+      "grid-sidebar-left grid-footer";
+  }
+}
+
 .footnotes {
   margin-top: 2rem;
   border-top: 1px solid var(--lightgray);

@@ -1,0 +1,180 @@
+.annotation-viewer {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.annotation-source-citation {
+  padding: 0.75rem 1rem;
+  background: var(--lightgray);
+  border-bottom: 1px solid var(--gray);
+  font-size: 0.9rem;
+  color: var(--darkgray);
+}
+
+.annotation-source-citation a {
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.annotation-source-citation a:hover {
+  text-decoration: underline;
+}
+
+.annotation-split-view {
+  display: flex;
+  height: calc(100% - 3rem);
+  gap: 1rem;
+}
+
+.annotation-pdf-container {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 0.5rem;
+}
+
+.pdf-canvas-wrapper {
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+  padding: 1rem;
+}
+
+.pdf-page {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.pdf-page-wrapper {
+  position: relative;
+  margin: 0 auto 1rem auto;
+}
+
+.pdf-highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pdf-text-highlight {
+  position: absolute;
+  background: rgba(255, 235, 59, 0.4);
+  border: 1px solid rgba(255, 193, 7, 0.6);
+  mix-blend-mode: multiply;
+  transition: opacity 0.2s ease;
+}
+
+.pdf-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--gray);
+}
+
+.annotation-sidebar {
+  flex: 0 0 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 0.5rem;
+}
+
+.annotation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.annotation-item {
+  padding: 1rem;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.annotation-item.active {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px var(--secondary-light);
+}
+
+.annotation-quote {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  color: var(--darkgray);
+}
+
+.annotation-prefix,
+.annotation-suffix {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.annotation-highlight {
+  background: var(--highlight);
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.2rem;
+  font-weight: 500;
+}
+
+.annotation-comment {
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--dark);
+}
+
+.annotation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.annotation-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--lightgray);
+  color: var(--secondary);
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.annotation-meta {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--lightgray);
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+
+@media (max-width: 1200px) {
+  .annotation-split-view {
+    flex-direction: column;
+  }
+
+  .annotation-sidebar {
+    flex: 0 0 auto;
+    max-height: 50vh;
+  }
+
+  .annotation-pdf-container {
+    flex: 1;
+    min-height: 50vh;
+  }
+}

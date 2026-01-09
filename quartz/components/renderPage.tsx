@@ -238,11 +238,22 @@ export function renderPage(
     right,
     footer: Footer,
   } = components
+
+  // Extract body components from pageLayout (if provided in layout config)
+  // @ts-ignore - body is optionally added to layout
+  const bodyComponents = components.body ?? []
   const Header = HeaderConstructor()
   const Body = BodyConstructor()
   const MobileSidebarMenu = MobileSidebarMenuConstructor()
 
-  const LeftComponent = (
+  // Check if sidebars are empty to enable full-width layout
+  const hasLeftSidebar = left.length > 0
+  const hasRightSidebar = right.length > 0
+  const layoutClass = !hasLeftSidebar && !hasRightSidebar ? "full-width" :
+    !hasLeftSidebar ? "no-left" :
+      !hasRightSidebar ? "no-right" : ""
+
+  const LeftComponent = hasLeftSidebar ? (
     <MobileSidebarMenu {...componentData}>
       <div class="left sidebar">
         {left.map((BodyComponent) => (
@@ -250,15 +261,15 @@ export function renderPage(
         ))}
       </div>
     </MobileSidebarMenu>
-  )
+  ) : null
 
-  const RightComponent = (
+  const RightComponent = hasRightSidebar ? (
     <div class="right sidebar">
       {right.map((BodyComponent) => (
         <BodyComponent {...componentData} />
       ))}
     </div>
-  )
+  ) : null
 
   const lang = componentData.fileData.frontmatter?.lang ?? cfg.locale?.split("-")[0] ?? "en"
   const direction = i18n(cfg.locale).direction ?? "ltr"
@@ -277,7 +288,7 @@ export function renderPage(
   const doc = (
     <html lang={lang} dir={direction}>
       <Head {...componentData} />
-      <body data-slug={slug}>
+      <body data-slug={slug} class={layoutClass}>
         <div id="quartz-root" class="page">
           <Body {...componentData}>
             {PageHeaderComponent}
@@ -295,8 +306,11 @@ export function renderPage(
                   ))}
                 </div>
               </div>
-              <Content {...componentData} />
-              <hr />
+              {Content && <Content {...componentData} />}
+              {bodyComponents.map((BodyComponent) => (
+                <BodyComponent {...componentData} />
+              ))}
+              {(Content || bodyComponents.length > 0) && <hr />}
               <div class="page-footer">
                 {afterBody.map((BodyComponent) => (
                   <BodyComponent {...componentData} />

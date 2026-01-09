@@ -37,6 +37,17 @@
         "parallel": false,
         "cwd": "content"
       }
+    },
+    "download-annotation-pdfs": {
+      "//": "Download PDFs referenced in annotation-target frontmatter to public/assets/annotated-documents/",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/download-annotation-pdfs.mjs"
+        ],
+        "parallel": false,
+        "cwd": "content"
+      }
     }
   }
 }

@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 replit.nix
 .nx
 /public
+/public/assets/annotated-documents/

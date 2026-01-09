@@ -28,6 +28,7 @@ import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
 import PostListing from "./PostListing"
+import AnnotationViewer from "./AnnotationViewer"
 
 export {
   ArticleTitle,
@@ -60,4 +61,5 @@ export {
   Flex,
   ConditionalRender,
   PostListing,
+  AnnotationViewer,
 }

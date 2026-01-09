@@ -10,6 +10,7 @@ import { pathToRoot } from "../../util/path"
 import { sharedPageComponents } from "../../layouts/shared.layout"
 import { indexLayout } from "../../layouts/index.layout"
 import { notesLayout } from "../../layouts/notes.layout"
+import { annotationsLayout } from "../../layouts/annotations.layout"
 import { Content } from "../../components"
 import { styleText } from "util"
 import { write } from "./helpers"
@@ -61,14 +62,23 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
       const indexComponents = [
         ...(indexLayout.pageHeader || []),
         ...indexLayout.beforeBody,
+        ...(indexLayout.body || []),
         ...indexLayout.left,
         ...indexLayout.right,
       ]
       const notesComponents = [
         ...(notesLayout.pageHeader || []),
         ...notesLayout.beforeBody,
+        ...(notesLayout.body || []),
         ...notesLayout.left,
         ...notesLayout.right,
+      ]
+      const annotationsComponents = [
+        ...(annotationsLayout.pageHeader || []),
+        ...annotationsLayout.beforeBody,
+        ...(annotationsLayout.body || []),
+        ...annotationsLayout.left,
+        ...annotationsLayout.right,
       ]
 
       return [
@@ -79,6 +89,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         ...header,
         ...indexComponents,
         ...notesComponents,
+        ...annotationsComponents,
         Content(),
         Footer,
       ]
@@ -96,12 +107,19 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         // only process home page, non-tag pages, and non-index pages
         if (slug.endsWith("/index") || slug.startsWith("tags/")) continue
 
-        // Select layout based on slug
-        const pageLayout = slug === "index" ? indexLayout : notesLayout
+        // Select layout based on slug and frontmatter
+        let pageLayout
+        if (slug === "index") {
+          pageLayout = indexLayout
+        } else if (file.data.frontmatter?.["annotation-target"]) {
+          pageLayout = annotationsLayout
+        } else {
+          pageLayout = notesLayout
+        }
+
         const opts: FullPageLayout = {
           ...sharedPageComponents,
           ...pageLayout,
-          pageBody: Content(),
           ...userOpts,
         }
 
@@ -134,12 +152,19 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         if (!changedSlugs.has(slug)) continue
         if (slug.endsWith("/index") || slug.startsWith("tags/")) continue
 
-        // Select layout based on slug
-        const pageLayout = slug === "index" ? indexLayout : notesLayout
+        // Select layout based on slug and frontmatter
+        let pageLayout
+        if (slug === "index") {
+          pageLayout = indexLayout
+        } else if (file.data.frontmatter?.["annotation-target"]) {
+          pageLayout = annotationsLayout
+        } else {
+          pageLayout = notesLayout
+        }
+
         const opts: FullPageLayout = {
           ...sharedPageComponents,
           ...pageLayout,
-          pageBody: Content(),
           ...userOpts,
         }
 

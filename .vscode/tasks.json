@@ -43,7 +43,7 @@
 				"background": {
 					"activeOnStart": true,
 					"beginsPattern": ".",
-					"endsPattern": "Started a Quartz server listening at"
+					"endsPattern": "Done processing"
 				}
 			},
 			"presentation": {
