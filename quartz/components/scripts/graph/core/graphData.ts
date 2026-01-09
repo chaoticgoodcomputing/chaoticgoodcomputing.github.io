@@ -1,6 +1,8 @@
 import type { ContentDetails } from "../../../../plugins/emitters/contentIndex"
-import { FullSlug, SimpleSlug, simplifySlug } from "../../../../util/path"
+import { SimpleSlug } from "../../../../util/path"
 import type { NodeData, SimpleLinkData, LinkData } from "./types"
+import type { TagIndex } from "../../../../util/tags"
+import { tagNameToGraphSlug } from "./tagIndex"
 
 export function calculateEdgeOpacity(
   actualDistance: number,
@@ -15,34 +17,22 @@ export function calculateEdgeOpacity(
   return maxOpacity - t * (maxOpacity - minOpacity)
 }
 
-function tagToSlug(tag: string): SimpleSlug {
-  const slug = simplifySlug(("tags/" + tag) as FullSlug)
-  return slug.endsWith("/") ? slug : ((slug + "/") as SimpleSlug)
-}
-
-function splitHierarchicalTag(tag: SimpleSlug): { parent: SimpleSlug; leaf: SimpleSlug } | null {
-  const normalizedTag = tag.endsWith("/") ? tag.slice(0, -1) : tag
-  const tagPath = normalizedTag.replace(/^tags\//, "")
-  const parts = tagPath.split("/")
-  if (parts.length < 2) return null
-
-  const parentPath = parts.slice(0, -1).join("/")
-  return {
-    parent: `tags/${parentPath}/` as SimpleSlug,
-    leaf: tag,
-  }
-}
-
+/**
+ * Build links and tags for the graph using pre-computed TagIndex data.
+ * This replaces the legacy approach of dynamically computing tag hierarchy.
+ */
 export function buildLinksAndTags(
   data: Map<SimpleSlug, ContentDetails>,
+  tagIndex: TagIndex,
   showTags: boolean,
   removeTags: string[],
 ): { links: SimpleLinkData[]; tags: SimpleSlug[] } {
   const links: SimpleLinkData[] = []
-  const tags: SimpleSlug[] = []
+  const tagSlugs = new Set<SimpleSlug>()
   const validLinks = new Set(data.keys())
   const parentChildPairs = new Set<string>()
 
+  // Build post-to-post links
   for (const [source, details] of data.entries()) {
     const outgoing = details.links ?? []
 
@@ -51,41 +41,53 @@ export function buildLinksAndTags(
         links.push({ source, target: dest, type: "post-post" })
       }
     }
+  }
 
-    if (!showTags) continue
+  if (!showTags) {
+    return { links, tags: [] }
+  }
 
-    const localTags = (details.tags ?? [])
-      .filter((tag) => !removeTags.includes(tag))
-      .map(tagToSlug)
+  // Build tag-related links using TagIndex
+  const processedTags = new Set<string>()
+  
+  for (const [source, details] of data.entries()) {
+    const postTags = (details.tags ?? []).filter((tag) => !removeTags.includes(tag))
 
-    for (const tag of localTags) {
-      if (!tags.includes(tag)) {
-        tags.push(tag)
+    for (const tagName of postTags) {
+      const tagMetadata = tagIndex.tags[tagName]
+      if (!tagMetadata) continue
+
+      // Add this tag and all its ancestors
+      const tagsToAdd = [tagName, ...tagMetadata.ancestors]
+      
+      for (const tag of tagsToAdd) {
+        const tagSlug = tagNameToGraphSlug(tag)
+        tagSlugs.add(tagSlug)
+
+        // Build parent-child links (only once per tag)
+        if (!processedTags.has(tag)) {
+          const metadata = tagIndex.tags[tag]
+          if (metadata && metadata.parent) {
+            const parentSlug = tagNameToGraphSlug(metadata.parent)
+            const childSlug = tagNameToGraphSlug(tag)
+            const pairKey = `${parentSlug}→${childSlug}`
+            
+            if (!parentChildPairs.has(pairKey)) {
+              links.push({ source: parentSlug, target: childSlug, type: "tag-tag" })
+              parentChildPairs.add(pairKey)
+            }
+          }
+          processedTags.add(tag)
+        }
       }
 
-      let currentTag = tag
-      while (true) {
-        const splitTag = splitHierarchicalTag(currentTag)
-        if (!splitTag) break
-
-        if (!tags.includes(splitTag.parent)) {
-          tags.push(splitTag.parent)
-        }
-
-        const pairKey = `${splitTag.parent}→${splitTag.leaf}`
-        if (!parentChildPairs.has(pairKey)) {
-          links.push({ source: splitTag.parent, target: splitTag.leaf, type: "tag-tag" })
-          parentChildPairs.add(pairKey)
-        }
-
-        currentTag = splitTag.parent
-      }
-
-      links.push({ source, target: tag, type: "tag-post" })
+      // Add post-to-tag link
+      const tagSlug = tagNameToGraphSlug(tagName)
+      links.push({ source, target: tagSlug, type: "tag-post" })
     }
   }
 
-  return { links, tags }
+  return { links, tags: Array.from(tagSlugs) }
 }
 
 export function calculateNeighborhood(

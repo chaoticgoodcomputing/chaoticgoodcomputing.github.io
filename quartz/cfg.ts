@@ -56,6 +56,36 @@ export type Analytics =
       host?: string
     }
 
+export interface TagColorConfig {
+  tag: string
+  color: string  // hex color
+}
+
+export interface TagIconConfig {
+  tag: string
+  icon: string  // "provider:icon-name" (e.g., "mdi:lock", "custom:roblox")
+}
+
+export interface TagConfiguration {
+  /** 
+   * Color assignments for tags. Child tags inherit parent colors if not specified.
+   * Order matters: earlier entries take priority when matching.
+   */
+  colors?: TagColorConfig[]
+  
+  /**
+   * Icon assignments for tags.
+   * Order matters: earlier entries take priority when a post has multiple tagged icons.
+   */
+  icons?: TagIconConfig[]
+  
+  /** Default color for tags without explicit or inherited colors */
+  defaultColor?: string
+  
+  /** Default icon for tags without explicit or inherited icons (usually null) */
+  defaultIcon?: string | null
+}
+
 export interface GlobalConfiguration {
   pageTitle: string
   pageTitleSuffix?: string
@@ -83,6 +113,8 @@ export interface GlobalConfiguration {
    * Region Codes: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
    */
   locale: ValidLocale
+  /** Tag system configuration for colors and icons */
+  tags?: TagConfiguration
 }
 
 export interface QuartzConfig {

@@ -1,7 +1,8 @@
 import { Circle, Container, Graphics, Sprite, Text } from "pixi.js"
 import { SimpleSlug } from "../../../../util/path"
 import { IconService } from "../../../../util/iconService"
-import { getIconForTag, getIconForTags } from "../../../../util/iconHelpers"
+import type { TagIndex } from "../../../../util/tags"
+import { getTagIcon, getIconForTagsFromIndex } from "../core/tagIndex"
 import { NodeData } from "../core/types"
 import { LinkRenderData, NodeRenderData } from "../core/renderTypes"
 import { HoverState, updateHoverInfo } from "../core/hoverState"
@@ -17,6 +18,7 @@ export type NodeCreationParams = {
   fontSize: number
   slug: SimpleSlug
   labelAnchorConfig: { baseY: number; scaleFactor: number }
+  tagIndex: TagIndex
 }
 
 export type NodeCreationResult = {
@@ -44,6 +46,7 @@ export async function createNode(
     fontSize,
     slug,
     labelAnchorConfig,
+    tagIndex,
   } = params
 
   const nodeId = n.id
@@ -121,9 +124,9 @@ export async function createNode(
     if (tag.endsWith("/")) {
       tag = tag.substring(0, tag.length - 1)
     }
-    iconId = getIconForTag(tag)
+    iconId = getTagIcon(tag, tagIndex)
   } else {
-    iconId = getIconForTags(n.tags)
+    iconId = getIconForTagsFromIndex(n.tags, tagIndex)
   }
 
   if (iconId) {

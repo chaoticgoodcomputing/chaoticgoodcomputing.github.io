@@ -29,6 +29,7 @@ export function pageResources(
   staticResources: StaticResources,
 ): StaticResources {
   const contentIndexScript = `const fetchData = fetch("/static/contentIndex.json").then(data => data.json())`
+  const tagIndexScript = `const fetchTagData = fetch("/static/tagIndex.json").then(data => data.json())`
 
   const resources: StaticResources = {
     css: [
@@ -48,6 +49,12 @@ export function pageResources(
         contentType: "inline",
         spaPreserve: true,
         script: contentIndexScript,
+      },
+      {
+        loadTime: "beforeDOMReady",
+        contentType: "inline",
+        spaPreserve: true,
+        script: tagIndexScript,
       },
       ...staticResources.js,
     ],

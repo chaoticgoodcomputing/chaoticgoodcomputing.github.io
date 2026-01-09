@@ -51,10 +51,10 @@ export const NotFoundPage: QuartzEmitterPlugin = () => {
         frontmatter: { title: notFound, tags: [] },
       })
       const externalResources = pageResources(path, resources)
-      
+
       // Extract all file data from content for PostListing component
       const allFiles = _content.map((c) => c[1].data)
-      
+
       const componentData: QuartzComponentProps = {
         ctx,
         fileData: vfile.data,
@@ -72,6 +72,6 @@ export const NotFoundPage: QuartzEmitterPlugin = () => {
         ext: ".html",
       })
     },
-    async *partialEmit() {},
+    async *partialEmit() { },
   }
 }

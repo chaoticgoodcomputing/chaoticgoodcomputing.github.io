@@ -1,6 +1,7 @@
 export * from "./types"
 export * from "./config"
 export * from "./contentIndex"
+export * from "./tagIndex"
 export * from "./tags"
 export * from "./graphData"
 export * from "./simulation"

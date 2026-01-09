@@ -1,6 +1,15 @@
 import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
 
+const RED = "#FF0000"
+const ORANGE = "#FFA500"
+const YELLOW = "#FFFF00"
+const GREEN = "#00FF00"
+const BLUE = "#0000FF"
+const INDIGO = "#4B0082"
+const VIOLET = "#8B00FF"
+const BLUESTEEL = "#4682B4"
+
 /**
  * Quartz 4 Configuration
  */
@@ -17,6 +26,71 @@ const config: QuartzConfig = {
     baseUrl: "chaoticgood.computer",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
+    tags: {
+      colors: [
+        // Top-level categories
+        { tag: "engineering", color: RED },
+        { tag: "economics", color: ORANGE },
+        { tag: "horticulture", color: GREEN },
+        { tag: "projects", color: BLUE },
+        { tag: "articles", color: YELLOW },
+        { tag: "annotations", color: "#795548" },
+        { tag: "seasons", color: "#FFEB3B" },
+        { tag: "private", color: BLUESTEEL },
+      ],
+      icons: [
+        // Access/Privacy
+        { tag: "private", icon: "mdi:lock" },
+        
+        // Specific Projects
+        { tag: "projects/games/roblox", icon: "custom:roblox" },
+        { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
+        { tag: "projects/flowthru", icon: "mdi:graph-outline" },
+        { tag: "projects/homelab", icon: "mdi:flask-outline" },
+        
+        // Programming Languages
+        { tag: "engineering/languages/python", icon: "mdi:language-python" },
+        { tag: "engineering/languages/typescript", icon: "mdi:language-typescript" },
+        { tag: "engineering/languages/csharp", icon: "mdi:language-csharp" },
+        { tag: "engineering/languages/lua", icon: "mdi:language-lua" },
+        { tag: "engineering/languages/scratch", icon: "mdi:cat" },
+        
+        // Engineering Subtopics
+        { tag: "engineering/bio", icon: "mdi:molecule" },
+        { tag: "engineering/languages", icon: "mdi:code-braces" },
+        { tag: "engineering/data", icon: "mdi:database" },
+        { tag: "engineering/devops", icon: "mdi:truck" },
+        { tag: "engineering/frontend", icon: "mdi:palette" },
+        { tag: "engineering/ai", icon: "mdi:robot" },
+        
+        // Economics Subtopics
+        { tag: "economics/strategy", icon: "mdi:arrow-decision" },
+        { tag: "economics/finance", icon: "mdi:currency-usd" },
+        { tag: "economics/markets", icon: "mdi:handshake" },
+        
+        // Top-level Categories
+        { tag: "engineering", icon: "mdi:tools" },
+        { tag: "economics", icon: "mdi:chart-bell-curve" },
+        { tag: "horticulture", icon: "mdi:flower" },
+        { tag: "projects", icon: "mdi:folder-cog" },
+        { tag: "articles", icon: "mdi:pencil" },
+        { tag: "annotations", icon: "mdi:file-edit" },
+        { tag: "seasons", icon: "mdi:weather-sunny" },
+        
+        // Project Types
+        { tag: "projects/games", icon: "mdi:controller-classic" },
+        { tag: "projects/teaching", icon: "mdi:school" },
+        { tag: "projects/dayjob", icon: "mdi:vote" },
+        { tag: "projects/college", icon: "mdi:school" },
+        { tag: "articles/tutorials", icon: "mdi:information" },
+        
+        // Seasonal Themes
+        { tag: "seasons/rhythm", icon: "mdi:music-note" },
+        { tag: "seasons/systems", icon: "mdi:transit-connection-variant" },
+      ],
+      defaultColor: "#888888",
+      defaultIcon: null,
+    },
     theme: {
       fontOrigin: "googleFonts",
       cdnCaching: true,
@@ -83,6 +157,7 @@ const config: QuartzConfig = {
       Plugin.ContentPage(),
       Plugin.FolderPage(),
       Plugin.TagPage(),
+      Plugin.TagIndex(),
       Plugin.ContentIndex({
         enableSiteMap: true,
         enableRSS: true,

@@ -1,11 +1,12 @@
 import { removeAllChildren } from "../../util"
 import { FullSlug, SimpleSlug, simplifySlug } from "../../../../util/path"
 import { IconService } from "../../../../util/iconService"
-import { getAllConfiguredIcons } from "../../../../util/iconHelpers"
 import {
   buildLinksAndTags,
-  buildTagColorMap,
-  buildTagFileCountMap,
+  fetchTagIndex,
+  buildGraphColorMap,
+  buildGraphCountMap,
+  getAllIconsFromTagIndex,
   calculateNeighborhood,
   constructGraphData,
   constructGraphNodes,
@@ -42,7 +43,9 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const visited = getVisited()
   removeAllChildren(graph)
 
-  await IconService.preloadIcons(getAllConfiguredIcons())
+  // Load TagIndex and preload icons
+  const tagIndex = await fetchTagIndex()
+  await IconService.preloadIcons(getAllIconsFromTagIndex(tagIndex))
 
   const {
     drag: enableDrag,
@@ -68,21 +71,20 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   // Normalize configuration
   const linkDistanceConfig = normalizeLinkDistance(linkDistance)
   const linkStrengthConfig = normalizeLinkStrength(linkStrength)
-  const gradient = normalizeTagColorGradient(tagColorGradient)
   const edgeOpacityConfig = normalizeEdgeOpacity(edgeOpacity)
   const baseSizeConfig = normalizeBaseSize(baseSize)
   const labelAnchorConfig = normalizeLabelAnchor(labelAnchor)
 
   // Fetch and process data
   const data = await fetchAndTransformData()
-  const { links, tags } = buildLinksAndTags(data, showTags, removeTags)
+  const { links, tags } = buildLinksAndTags(data, tagIndex, showTags, removeTags)
   const validLinks = new Set(data.keys())
   const neighbourhood = calculateNeighborhood(slug, links, validLinks, tags, depth, showTags)
   const nodes = constructGraphNodes(neighbourhood, data)
   const graphData = constructGraphData(nodes, links, neighbourhood)
 
-  const tagFileCountMap = buildTagFileCountMap(data, tags)
-  const tagColorMap = buildTagColorMap(tags, gradient)
+  const tagFileCountMap = buildGraphCountMap(tags, tagIndex)
+  const tagColorMap = buildGraphColorMap(tags, tagIndex)
 
   // Setup dimensions and simulation
   const width = graph.offsetWidth
@@ -149,6 +151,7 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         fontSize,
         slug,
         labelAnchorConfig,
+        tagIndex,
       },
       nodesContainer,
       labelsContainer,
