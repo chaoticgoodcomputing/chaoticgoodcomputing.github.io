@@ -8,6 +8,7 @@ import ReaderMode from "./ReaderMode"
 import Head from "./Head"
 import PageTitle from "./PageTitle"
 import IndexTitle from "./IndexTitle"
+import NotFoundTitle from "./NotFoundTitle"
 import ContentMeta from "./ContentMeta"
 import Spacer from "./Spacer"
 import TableOfContents from "./TableOfContents"
@@ -40,6 +41,7 @@ export {
   Head,
   PageTitle,
   IndexTitle,
+  NotFoundTitle,
   ContentMeta,
   Spacer,
   TableOfContents,

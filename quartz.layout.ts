@@ -20,6 +20,7 @@ export { indexLayout } from "./quartz/layouts/index.layout"
 export { notesLayout } from "./quartz/layouts/notes.layout"
 export { tagsLayout } from "./quartz/layouts/tags.layout"
 export { annotationsLayout } from "./quartz/layouts/annotations.layout"
+export { notFoundLayout } from "./quartz/layouts/404.layout"
 
 // Re-export graph options for customization
 export { 
