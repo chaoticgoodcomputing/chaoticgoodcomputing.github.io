@@ -29,8 +29,7 @@
       },
       "dependsOn": [
         "vault:download-annotation-pdfs",
-        "vault:index-tags",
-        "vault:sync"
+        "vault:index-tags"
       ]
     },
     "serve": {
@@ -51,7 +50,7 @@
       },
       "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": [ "site:_prebuild" ]
+      "dependsOn": [ "vault:sync", "site:_prebuild" ]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",
