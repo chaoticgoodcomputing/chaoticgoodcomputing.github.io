@@ -15,7 +15,7 @@ I remember, growing up, seeing my dad come home from work every day. Like clockw
 
 I'm still working out, in my own mind, how this season will differ from [[tags/seasons/rhythm/index|rhythm]] — which has a [[content/notes/season-of-rhythm-in-review|review pending]], I'll get around to that sometime soon. The distinguishing factor in my mind, at the moment, is to review and restructure the way I operate, both personally and productively.
 
-Since the last post ([[content/notes/periodic/daily/2024-04-21|in April of last year]] — never has 16 months felt longer), a whole lot has changed. I think that I, along with a lot of people in my own (or similar) positions, have suffered a bit of whiplash with how quickly the systems that grew over the course of decades shifted under our feet.
+Since the last post ([[public/content/notes/periodic/daily/2024-04-21|in April of last year]] — never has 16 months felt longer), a whole lot has changed. I think that I, along with a lot of people in my own (or similar) positions, have suffered a bit of whiplash with how quickly the systems that grew over the course of decades shifted under our feet.
 
 ## Agentic Models
 
