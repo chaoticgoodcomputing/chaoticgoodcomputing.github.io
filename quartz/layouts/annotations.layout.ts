@@ -17,15 +17,16 @@ export const annotationsLayout: PageLayout = {
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
+    Component.Graph({
+      localGraph: defaultLocalGraphOptions,
+      globalGraph: defaultGraphOptions,
+    }),
   ],
   body: [
     Component.AnnotationViewer(),
   ],
   afterBody: [
-    Component.Graph({
-      localGraph: defaultLocalGraphOptions,
-      globalGraph: defaultGraphOptions,
-    }),
+    Component.Backlinks()
   ],
   left: [],
   right: [],

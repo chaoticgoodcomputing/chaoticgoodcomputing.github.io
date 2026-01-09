@@ -197,7 +197,7 @@ async function extractPrivateMetadata() {
 
       // Strip private/ and public/ prefixes from wikilinks
       cleanedContent = cleanedContent.replace(/\[\[(?:private|public)\/([-\w\/\.]+)(\|[^\]]+)?\]\]/g, '[[$1$2]]')
-      
+
       // Strip private/ and public/ prefixes from relative markdown links (not external URLs)
       cleanedContent = cleanedContent.replace(/(?<!:\/\/[^\s]*)\]\((?:private|public)\/([-\w\/\.]+)\)/g, ']($1)')
 
@@ -244,7 +244,7 @@ async function fixLinksInPublicFiles() {
 
       // Strip private/ and public/ prefixes from wikilinks
       content = content.replace(/\[\[(?:private|public)\/([-\w\/\.]+)(\|[^\]]+)?\]\]/g, '[[$1$2]]')
-      
+
       // Strip private/ and public/ prefixes from relative markdown links (not external URLs)
       content = content.replace(/(?<!:\/\/[^\s]*)\]\((?:private|public)\/([-\w\/\.]+)\)/g, ']($1)')
 
