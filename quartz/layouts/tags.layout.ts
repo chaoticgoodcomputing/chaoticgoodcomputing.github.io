@@ -41,7 +41,8 @@ export const tagsLayout: PageLayout = {
     Component.PostListing({
       excludeTags: ["private"],
       filterToCurrentTag: true,
-      collapsedItemCount: 10,
+      includeSubtags: true,
+      collapsedItemCount: 5,
       showEmptyMessage: true,
     }),
   ],

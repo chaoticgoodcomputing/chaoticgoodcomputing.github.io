@@ -2,11 +2,10 @@ import { QuartzConfig } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
 
 const RED = "#FF0000"
-const ORANGE = "#FFA500"
-const YELLOW = "#FFFF00"
+const ORANGE = "#de8200"
+const YELLOW = "#FFD637"
 const GREEN = "#00FF00"
 const BLUE = "#0055ffff"
-const INDIGO = "#4B0082"
 const VIOLET = "#8B00FF"
 const BLUESTEEL = "#4682B4"
 

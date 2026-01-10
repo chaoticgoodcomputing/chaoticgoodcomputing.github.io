@@ -48,6 +48,17 @@
         "parallel": false,
         "cwd": "content"
       }
+    },
+    "list-non-private": {
+      "//": "List all markdown files in content/public without 'private' tag or description field.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/list-non-private-files.mjs"
+        ],
+        "parallel": false,
+        "cwd": "content"
+      }
     }
   }
 }

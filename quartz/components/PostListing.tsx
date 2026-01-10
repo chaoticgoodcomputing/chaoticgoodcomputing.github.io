@@ -3,6 +3,7 @@ import { resolveRelative } from "../util/path"
 import { QuartzPluginData } from "../plugins/vfile"
 import { Date, getDate } from "./Date"
 import { byDateAndAlphabetical, SortFn } from "./PageList"
+import { matchesTagFilter } from "../util/tags"
 
 // @ts-ignore
 import script from "./scripts/PostListing.inline"
@@ -36,6 +37,15 @@ export interface PostListingOptions {
    * Default: false
    */
   filterToCurrentTag?: boolean
+
+  /**
+   * If true, includes posts with subtags when filtering to current tag.
+   * For example, on the "engineering" tag page, posts tagged with
+   * "engineering/languages/typescript" or "engineering/ai" will also be shown.
+   * Only applies when filterToCurrentTag is true.
+   * Default: false
+   */
+  includeSubtags?: boolean
 
   /**
    * Filter function to determine which pages to include.
@@ -107,7 +117,7 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
           .replace(/\/$/, "")
         filteredFiles = filteredFiles.filter((file) => {
           const tags = file.frontmatter?.tags ?? []
-          return tags.includes(currentTag)
+          return matchesTagFilter(tags, currentTag, opts.includeSubtags ?? false)
         })
       }
 
