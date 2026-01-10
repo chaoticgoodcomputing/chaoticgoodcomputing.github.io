@@ -2,9 +2,8 @@
 title: "Shortcuts, Data, and State Machines"
 date: "2026-01-01T00:00:00.000Z"
 tags:
-  - "seasons/rhythm"
+  - "horticulture/seasons/rhythm"
   - "private"
-draft: false
 ---
 
 This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.

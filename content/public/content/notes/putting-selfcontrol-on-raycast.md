@@ -4,12 +4,11 @@ date: 2024-02-28
 tags:
   - horticulture
   - engineering/languages/typescript
-  - seasons/rhythm
-draft: false
+  - horticulture/seasons/rhythm
 ---
 > I talk a lot in this post. You may want to skip to [[content/notes/putting-selfcontrol-on-raycast#The Useful Part|the useful part]].
 
-So, during this recent period of [[tags/seasons/rhythm/index|trying to break quite a few years of bad work habits]], I've been putting up little guardrails in my own life to keep myself on-track when I want to stay on-track. One issue I've run into - especially during a *particularly tumultuous US election year* - is a tendency to check the news.
+So, during this recent period of [[tags/horticulture/seasons/rhythm/index|trying to break quite a few years of bad work habits]], I've been putting up little guardrails in my own life to keep myself on-track when I want to stay on-track. One issue I've run into - especially during a *particularly tumultuous US election year* - is a tendency to check the news.
 
 And then, five minutes later, check the news again.
 

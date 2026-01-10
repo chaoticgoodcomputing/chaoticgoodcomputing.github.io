@@ -2,7 +2,7 @@
 title: Intro to Event Storming
 date: 2026-01-06
 tags:
-  - annotations
+  - writing/annotations
   - engineering
   - projects/dayjob
 ---

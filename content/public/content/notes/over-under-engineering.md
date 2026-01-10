@@ -4,7 +4,6 @@ date: 2024-02-25
 tags:
   - horticulture
   - engineering
-draft: false
 ---
 
 > > > > ~~Premature optimization~~ **Over-engineering** is the root of all evil

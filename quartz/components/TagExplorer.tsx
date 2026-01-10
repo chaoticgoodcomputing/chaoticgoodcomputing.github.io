@@ -74,6 +74,7 @@ export default ((userOpts?: Partial<Options>) => {
           showFileCount: opts.showFileCount,
           expandCurrentFileTags: opts.expandCurrentFileTags,
         })}
+        data-use-tag-index="true"
       >
         <div id={id} class="tag-explorer-content" role="group">
           <OverflowList class="tag-explorer-ul" />

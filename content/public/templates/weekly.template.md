@@ -16,7 +16,7 @@ const latestSeason = app.vault.getMarkdownFiles()
     return latest;
   }, null);
 
-// Extract season directory name (e.g., "tags/seasons/systems/index.md" -> "systems")
+// Extract season directory name (e.g., "tags/horticulture/seasons/systems/index.md" -> "systems")
 const seasonName = latestSeason.file.path.split('/').slice(-2)[0];
 const seasonTag = `seasons/${seasonName}`;
 
@@ -33,7 +33,6 @@ date: <% tp.date.now() %>
 tags:
   - <% seasonTag %>
   - notes/weekly
-draft: false
 ---
 ## Up & Coming
 

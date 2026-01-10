@@ -26,57 +26,7 @@ export interface TagIconConfig {
  * Tag-to-icon mappings.
  * Order matters: first matching tag gets priority when a post has multiple tagged icons.
  */
-export const TAG_ICON_CONFIG: TagIconConfig[] = [
-  // Access/Privacy
-  { tag: "private", icon: "mdi:lock" },
-
-  // Specific Projects
-  { tag: "projects/games/roblox", icon: "custom:roblox" },
-  { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
-  { tag: "projects/flowthru", icon: "mdi:graph-outline" },
-  { tag: "projects/homelab", icon: "mdi:flask-outline" },
-
-  // Programming Languages & Technologies
-  { tag: "engineering/languages/python", icon: "mdi:language-python" },
-  { tag: "engineering/languages/typescript", icon: "mdi:language-typescript" },
-  { tag: "engineering/languages/csharp", icon: "mdi:language-csharp" },
-  { tag: "engineering/languages/lua", icon: "mdi:language-lua" },
-  { tag: "engineering/languages/scratch", icon: "mdi:cat" },
-
-  // Economics Subtopics
-  { tag: "economics/strategy", icon: "mdi:arrow-decision" },
-  { tag: "economics/finance", icon: "mdi:currency-usd" },
-  { tag: "economics/markets", icon: "mdi:handshake" },
-
-  // Engineering Subtopics
-  { tag: "engineering/bio", icon: "mdi:molecule" },
-  { tag: "engineering/languages", icon: "mdi:code-braces" },
-  { tag: "engineering/data", icon: "mdi:database" },
-  { tag: "engineering/devops", icon: "mdi:truck" },
-  { tag: "engineering/frontend", icon: "mdi:palette" },
-  { tag: "engineering/ai", icon: "mdi:robot" },
-
-  // General Project Types
-  { tag: "projects/games", icon: "mdi:controller-classic" },
-  { tag: "projects/teaching", icon: "mdi:school" },
-  { tag: "projects/dayjob", icon: "mdi:vote" },
-  { tag: "projects/college", icon: "mdi:school" },
-  { tag: "articles/tutorials", icon: "mdi:information" },
-
-  // Seasonal Themes
-  { tag: "seasons/rhythm", icon: "mdi:music-note" },
-  { tag: "seasons/systems", icon: "mdi:transit-connection-variant" },
-  
-  // General Categories
-  { tag: "seasons", icon: "mdi:weather-sunny" },
-  { tag: "articles", icon: "mdi:pencil" },
-  { tag: "engineering", icon: "mdi:tools" },
-  { tag: "economics", icon: "mdi:chart-bell-curve" },
-  { tag: "horticulture", icon: "mdi:flower" },
-  { tag: "season", icon: "mdi:flower" },
-  { tag: "projects", icon: "mdi:folder-cog" },
-  { tag: "annotations", icon: "mdi:file-edit" },
-]
+export const TAG_ICON_CONFIG: TagIconConfig[] = [ ]
 
 /**
  * Build a Map for fast icon lookups.

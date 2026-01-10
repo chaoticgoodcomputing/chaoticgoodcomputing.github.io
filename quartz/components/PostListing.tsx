@@ -1,8 +1,11 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
-import { FullSlug, resolveRelative } from "../util/path"
+import { resolveRelative } from "../util/path"
 import { QuartzPluginData } from "../plugins/vfile"
 import { Date, getDate } from "./Date"
 import { byDateAndAlphabetical, SortFn } from "./PageList"
+
+// @ts-ignore
+import script from "./scripts/PostListing.inline"
 
 export interface PostListingOptions {
   /**
@@ -62,6 +65,12 @@ export interface PostListingOptions {
    * Default: true
    */
   showDates?: boolean
+
+  /**
+   * Whether to show post counts in tag badges.
+   * Default: false
+   */
+  showTagCounts?: boolean
 }
 
 const defaultOptions: PostListingOptions = {
@@ -146,14 +155,17 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
                 </h3>
               </div>
               {opts.showTags && tags.length > 0 && (
-                <ul class="tags">
+                <ul
+                  class="tags"
+                  data-component="post-listing"
+                  data-showcount={opts.showTagCounts}
+                >
                   {tags.map((tag) => (
-                    <li>
-                      <a
-                        class="internal tag-link"
-                        href={resolveRelative(fileData.slug!, `tags/${tag}` as FullSlug)}
-                      >
-                        {tag}
+                    <li class="tag-item" data-tag={tag}>
+                      <a href="#" class="internal tag-link">
+                        <span class="tag-icon-badge"></span>
+                        <span class="tag-name"></span>
+                        <span class="tag-count"></span>
                       </a>
                     </li>
                   ))}
@@ -192,6 +204,68 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
 
 .section > .tags {
   margin: 0;
+  list-style: none;
+  display: flex;
+  padding-left: 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.section > .tags > .tag-item {
+  display: inline-block;
+  white-space: nowrap;
+  margin: 0;
+  overflow-wrap: normal;
+}
+
+.section > .tags a.internal.tag-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 18px 8px 8px 18px;
+  background-color: var(--highlight);
+  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+  margin: 0;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.section > .tags a.internal.tag-link:hover {
+  background-color: var(--gray);
+}
+
+.section > .tags .tag-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2.5px solid var(--tag-color, #888888);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.section > .tags .tag-name {
+  font-weight: 500;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+}
+
+.section > .tags .tag-name::before {
+  content: "#";
+  margin-right: 0.2em;
+  opacity: 0.7;
+}
+
+.section > .tags .tag-count {
+  color: var(--gray);
+  font-size: 0.85em;
+  margin-left: 0.2rem;
 }
 
 .post-listing-empty {
@@ -219,5 +293,6 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
 }
 `
 
+  PostListing.afterDOMLoaded = script
   return PostListing
 }) satisfies QuartzComponentConstructor<PostListingOptions>

@@ -5,7 +5,7 @@ tags:
   - engineering/data
   - engineering/devops
   - engineering/languages/python
-  - articles/tutorials
+  - writing/tutorials
   - engineering/data
   - economics/finance
 ---

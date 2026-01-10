@@ -2,9 +2,8 @@
 title: "Kickoff: Season of Rhythm"
 date: 2024-02-27
 tags:
-  - seasons/rhythm
+  - horticulture/seasons/rhythm
   - horticulture
-draft: false
 ---
 In the spirit of [setting themes instead of resolutions](https://youtu.be/NVGuFdX5guE?si=TLk72LPnvoUjS1l2), I've adopted a seasonal (or perhaps year-long - who knows?) theme for my own life:
 

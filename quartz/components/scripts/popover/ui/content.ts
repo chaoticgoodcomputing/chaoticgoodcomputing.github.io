@@ -47,6 +47,19 @@ export async function populatePopoverContent(
       const elements = await createHtmlContent(domParser, response, targetUrl)
       if (!elements) return false
       elements.forEach((elt) => popoverInner.appendChild(elt))
+
+      // Re-run tag list setup inside popovers, if available
+      const maybeSetupTagList = (window as any).setupTagList
+      if (typeof maybeSetupTagList === "function") {
+        try {
+          // Use requestAnimationFrame to ensure DOM is fully updated before processing
+          await new Promise((resolve) => requestAnimationFrame(resolve))
+          await maybeSetupTagList(popoverInner)
+        } catch (err) {
+          console.warn("Popover: setupTagList failed", err)
+        }
+      }
+
       return true
     }
   }

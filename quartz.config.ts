@@ -5,7 +5,7 @@ const RED = "#FF0000"
 const ORANGE = "#FFA500"
 const YELLOW = "#FFFF00"
 const GREEN = "#00FF00"
-const BLUE = "#0000FF"
+const BLUE = "#0055ffff"
 const INDIGO = "#4B0082"
 const VIOLET = "#8B00FF"
 const BLUESTEEL = "#4682B4"
@@ -33,9 +33,7 @@ const config: QuartzConfig = {
         { tag: "economics", color: ORANGE },
         { tag: "horticulture", color: GREEN },
         { tag: "projects", color: BLUE },
-        { tag: "articles", color: YELLOW },
-        { tag: "annotations", color: "#795548" },
-        { tag: "seasons", color: "#FFEB3B" },
+        { tag: "writing", color: YELLOW },
         { tag: "private", color: BLUESTEEL },
       ],
       icons: [
@@ -68,25 +66,28 @@ const config: QuartzConfig = {
         { tag: "economics/finance", icon: "mdi:currency-usd" },
         { tag: "economics/markets", icon: "mdi:handshake" },
         
+        // Project Types
+        { tag: "projects/dayjob", icon: "mdi:vote" },
+        { tag: "projects/games", icon: "mdi:controller-classic" },
+        { tag: "projects/college", icon: "custom:uofu" },
+        { tag: "projects/teaching", icon: "mdi:thought-bubble" },
+        
+        { tag: "writing/annotations", icon: "mdi:chat-plus" },
+        { tag: "writing/articles", icon: "mdi:file-edit" },
+        { tag: "writing/tutorials", icon: "mdi:school" },
+
+        { tag: "horticulture/seasons", icon: "mdi:weather-sunny" },
+        
         // Top-level Categories
         { tag: "engineering", icon: "mdi:tools" },
         { tag: "economics", icon: "mdi:chart-bell-curve" },
         { tag: "horticulture", icon: "mdi:flower" },
         { tag: "projects", icon: "mdi:folder-cog" },
-        { tag: "articles", icon: "mdi:pencil" },
-        { tag: "annotations", icon: "mdi:file-edit" },
-        { tag: "seasons", icon: "mdi:weather-sunny" },
-        
-        // Project Types
-        { tag: "projects/games", icon: "mdi:controller-classic" },
-        { tag: "projects/teaching", icon: "mdi:school" },
-        { tag: "projects/dayjob", icon: "mdi:vote" },
-        { tag: "projects/college", icon: "mdi:school" },
-        { tag: "articles/tutorials", icon: "mdi:information" },
+        { tag: "writing", icon: "mdi:pencil" },
         
         // Seasonal Themes
-        { tag: "seasons/rhythm", icon: "mdi:music-note" },
-        { tag: "seasons/systems", icon: "mdi:transit-connection-variant" },
+        { tag: "horticulture/seasons/rhythm", icon: "mdi:music-note" },
+        { tag: "horticulture/seasons/systems", icon: "mdi:transit-connection-variant" },
       ],
       defaultColor: "#888888",
       defaultIcon: null,

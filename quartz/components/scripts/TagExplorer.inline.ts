@@ -1,6 +1,10 @@
-import { TagTrieNode } from "../../util/tagTrie"
 import { FullSlug, resolveRelative } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
+import type { TagIndex } from "../../util/tags"
+import { normalizeTag } from "../../util/tags"
+
+// Global variable injected by renderPage.tsx
+declare const fetchTagData: Promise<any>
 
 type MaybeHTMLElement = HTMLElement | undefined
 
@@ -76,22 +80,94 @@ function _updateTagState(tagPath: string, isCollapsed: boolean) {
 }
 
 /**
- * Create comparator function for sorting tag nodes
+ * Check if a tag should be filtered out
  */
-function _createTagNodeSortFn(strategy: string) {
-  return (a: TagTrieNode, b: TagTrieNode) => {
+function _isTagFiltered(tag: string, excludeTags: string[]): boolean {
+  const normalized = normalizeTag(tag)
+  return excludeTags.some((excluded) => normalizeTag(excluded) === normalized)
+}
+
+/**
+ * Check if a tag node has the given file in its files list
+ */
+function _hasFileInTag(tagName: string, slug: FullSlug, contentIndex: Map<FullSlug, ContentDetails>): boolean {
+  for (const [fileSlug, details] of contentIndex) {
+    if (fileSlug === slug && details.tags.includes(tagName)) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
+ * Check if a tag node has the given file in any descendant tag
+ */
+function _hasFileInDescendantTags(
+  tag: string,
+  slug: FullSlug,
+  tagIndex: TagIndex,
+  contentIndex: Map<FullSlug, ContentDetails>,
+): boolean {
+  const metadata = tagIndex.tags[tag]
+  if (!metadata) return false
+
+  // Check direct files with this tag
+  if (_hasFileInTag(tag, slug, contentIndex)) return true
+
+  // Check descendants
+  for (const descendant of metadata.descendants) {
+    if (_hasFileInTag(descendant, slug, contentIndex)) return true
+  }
+
+  return false
+}
+
+/**
+ * Determine if a tag should be expanded based on state and options
+ */
+function _shouldExpandTag(
+  tagName: string,
+  currentSlug: FullSlug,
+  tagIndex: TagIndex,
+  contentIndex: Map<FullSlug, ContentDetails>,
+  opts: ParsedOptions,
+): boolean {
+  const savedState = currentTagExplorerState.find((item) => item.path === tagName)
+  const isCollapsed = savedState?.collapsed ?? opts.folderDefaultState === "collapsed"
+
+  if (!isCollapsed) return true
+
+  if (opts.expandCurrentFileTags) {
+    return _hasFileInDescendantTags(tagName, currentSlug, tagIndex, contentIndex)
+  }
+
+  return false
+}
+
+/**
+ * Create comparator for sorting tags by metadata
+ */
+function _createTagNodeSortFn(strategy: string, tagIndex: TagIndex) {
+  return (a: string, b: string) => {
+    const metaA = tagIndex.tags[a]
+    const metaB = tagIndex.tags[b]
+    const countA = metaA?.totalPostCount ?? 0
+    const countB = metaB?.totalPostCount ?? 0
+    const segmentA = a.split("/").pop() ?? ""
+    const segmentB = b.split("/").pop() ?? ""
+
     switch (strategy) {
       case "count-desc":
-        return b.totalFileCount - a.totalFileCount
+        return countB - countA
       case "count-asc":
-        return a.totalFileCount - b.totalFileCount
+        return countA - countB
       case "alphabetical":
-        return a.tagSegment.localeCompare(b.tagSegment, undefined, {
+        return segmentA.localeCompare(segmentB, undefined, {
           numeric: true,
           sensitivity: "base",
         })
       case "alphabetical-reverse":
-        return b.tagSegment.localeCompare(a.tagSegment, undefined, {
+        return segmentB.localeCompare(segmentA, undefined, {
           numeric: true,
           sensitivity: "base",
         })
@@ -99,6 +175,14 @@ function _createTagNodeSortFn(strategy: string) {
         return 0
     }
   }
+}
+
+/**
+ * Get immediate children of a tag (non-recursive)
+ */
+function _getChildTags(tag: string, tagIndex: TagIndex): string[] {
+  const metadata = tagIndex.tags[tag]
+  return metadata?.children ?? []
 }
 
 /**
@@ -133,51 +217,22 @@ function _createFileNodeSortFn(strategy: string) {
   }
 }
 
-/**
- * Check if a tag node has the given file in any descendant
- */
-function _hasFileInDescendants(node: TagTrieNode, slug: FullSlug): boolean {
-  if (node.files.some((file) => file.slug === slug)) return true
-  return node.children.some((child) => _hasFileInDescendants(child, slug))
-}
-
-/**
- * Determine if a tag should be expanded based on state and options
- */
-function _shouldExpandTag(
-  tagPath: string,
-  node: TagTrieNode,
-  currentSlug: FullSlug,
-  opts: ParsedOptions,
-): boolean {
-  const savedState = currentTagExplorerState.find((item) => item.path === tagPath)
-  const isCollapsed = savedState?.collapsed ?? opts.folderDefaultState === "collapsed"
-
-  if (!isCollapsed) return true
-
-  if (opts.expandCurrentFileTags) {
-    const currentFileInTag = node.files.some((file) => file.slug === currentSlug)
-    const childHasCurrentFile = _hasFileInDescendants(node, currentSlug)
-    return currentFileInTag || childHasCurrentFile
-  }
-
-  return false
-}
+// ===== Old trie-based functions removed - using TagIndex instead =====
 
 /**
  * Create a file node list item from a ContentDetails object
  */
-function _createFileNode(currentSlug: FullSlug, file: ContentDetails): HTMLLIElement {
+function _createFileNode(currentSlug: FullSlug, fileSlug: FullSlug, details: ContentDetails): HTMLLIElement {
   const template = document.getElementById("template-file-node") as HTMLTemplateElement
   const clone = template.content.cloneNode(true) as DocumentFragment
   const li = clone.querySelector("li") as HTMLLIElement
   const a = li.querySelector("a") as HTMLAnchorElement
 
-  a.href = resolveRelative(currentSlug, file.slug)
-  a.dataset.for = file.slug
-  a.textContent = file.title
+  a.href = resolveRelative(currentSlug, details.slug)
+  a.dataset.for = details.slug
+  a.textContent = details.title
 
-  if (currentSlug === file.slug) a.classList.add("active")
+  if (currentSlug === details.slug) a.classList.add("active")
 
   return li
 }
@@ -188,25 +243,33 @@ function _createFileNode(currentSlug: FullSlug, file: ContentDetails): HTMLLIEle
 function _buildTagAsLink(
   container: HTMLElement,
   currentSlug: FullSlug,
-  node: TagTrieNode,
+  tagName: string,
+  tagIndex: TagIndex,
   opts: ParsedOptions,
 ) {
   const button = container.querySelector(".tag-button") as HTMLElement
   const a = document.createElement("a")
 
-  a.href = resolveRelative(currentSlug, `tags/${node.fullTagPath}` as FullSlug)
-  a.dataset.for = node.fullTagPath
+  a.href = resolveRelative(currentSlug, `tags/${tagName}` as FullSlug)
+  a.dataset.for = tagName
   a.className = "tag-link"
+
+  // Apply tag color from TagIndex metadata
+  const metadata = tagIndex.tags[tagName]
+  if (metadata?.color) {
+    a.style.setProperty("--tag-color", metadata.color)
+  }
 
   const titleSpan = document.createElement("span")
   titleSpan.className = "tag-title"
-  titleSpan.textContent = `#${node.tagSegment}`
+  const segment = tagName.split("/").pop() ?? tagName
+  titleSpan.textContent = `#${segment}`
   a.appendChild(titleSpan)
 
   if (opts.showFileCount) {
     const countSpan = document.createElement("span")
     countSpan.className = "tag-count"
-    countSpan.textContent = ` (${node.totalFileCount})`
+    countSpan.textContent = ` (${metadata?.totalPostCount ?? 0})`
     a.appendChild(countSpan)
   }
 
@@ -216,16 +279,28 @@ function _buildTagAsLink(
 /**
  * Build tag title as a collapsible button
  */
-function _buildTagAsButton(container: HTMLElement, node: TagTrieNode, opts: ParsedOptions) {
+function _buildTagAsButton(
+  container: HTMLElement,
+  tagName: string,
+  tagIndex: TagIndex,
+  opts: ParsedOptions,
+) {
   const titleSpan = container.querySelector(".tag-title") as HTMLElement
-  titleSpan.textContent = `#${node.tagSegment}`
+  const segment = tagName.split("/").pop() ?? tagName
+  titleSpan.textContent = `#${segment}`
+
+  // Apply tag color from TagIndex metadata
+  const metadata = tagIndex.tags[tagName]
+  if (metadata?.color) {
+    container.style.setProperty("--tag-color", metadata.color)
+  }
 
   if (opts.showFileCount) {
     const countSpan = container.querySelector(".tag-count") as HTMLElement
-    countSpan.textContent = ` (${node.totalFileCount})`
+    countSpan.textContent = ` (${metadata?.totalPostCount ?? 0})`
   } else {
     const countSpan = container.querySelector(".tag-count") as HTMLElement
-    countSpan.remove()
+    countSpan?.remove()
   }
 }
 
@@ -235,28 +310,43 @@ function _buildTagAsButton(container: HTMLElement, node: TagTrieNode, opts: Pars
 function _appendChildNodes(
   ul: HTMLUListElement,
   currentSlug: FullSlug,
-  node: TagTrieNode,
+  tagName: string,
+  tagIndex: TagIndex,
+  contentIndex: Map<FullSlug, ContentDetails>,
   opts: ParsedOptions,
 ) {
-  for (const child of node.children) {
-    const childNode = _createTagNode(currentSlug, child, opts)
+  const children = _getChildTags(tagName, tagIndex)
+
+  // Sort children
+  const sortFn = _createTagNodeSortFn(opts.tagNodeSort, tagIndex)
+  children.sort(sortFn)
+
+  for (const childTag of children) {
+    if (_isTagFiltered(childTag, opts.excludeTags)) continue
+    const childNode = _createTagNode(currentSlug, childTag, tagIndex, contentIndex, opts)
     ul.appendChild(childNode)
   }
 
-  for (const file of node.files) {
-    const fileNode = _createFileNode(currentSlug, file)
-    ul.appendChild(fileNode)
+  // Add files with this tag
+  for (const [fileSlug, details] of contentIndex) {
+    if (details.tags.includes(tagName)) {
+      const fileNode = _createFileNode(currentSlug, fileSlug, details)
+      ul.appendChild(fileNode)
+    }
   }
 }
 
 /**
- * Create a tag node list item from a TagTrieNode
+ * Create a tag node list item using TagIndex metadata
  */
 function _createTagNode(
   currentSlug: FullSlug,
-  node: TagTrieNode,
+  tagName: string,
+  tagIndex: TagIndex,
+  contentIndex: Map<FullSlug, ContentDetails>,
   opts: ParsedOptions,
 ): HTMLLIElement {
+  console.log("_createTagNode:", tagName)
   const template = document.getElementById("template-tag-node") as HTMLTemplateElement
   const clone = template.content.cloneNode(true) as DocumentFragment
   const li = clone.querySelector("li") as HTMLLIElement
@@ -265,19 +355,22 @@ function _createTagNode(
   const tagOuter = li.querySelector(".tag-outer") as HTMLElement
   const ul = tagOuter.querySelector("ul") as HTMLUListElement
 
-  tagContainer.dataset.tagpath = node.fullTagPath
+  tagContainer.dataset.tagpath = tagName
 
+  console.log("_createTagNode: folderClickBehavior =", opts.folderClickBehavior)
   if (opts.folderClickBehavior === "link") {
-    _buildTagAsLink(titleContainer, currentSlug, node, opts)
+    _buildTagAsLink(titleContainer, currentSlug, tagName, tagIndex, opts)
   } else {
-    _buildTagAsButton(titleContainer, node, opts)
+    _buildTagAsButton(titleContainer, tagName, tagIndex, opts)
   }
 
-  if (_shouldExpandTag(node.fullTagPath, node, currentSlug, opts)) {
+  console.log("_createTagNode: checking if should expand")
+  if (_shouldExpandTag(tagName, currentSlug, tagIndex, contentIndex, opts)) {
     tagOuter.classList.add("open")
   }
 
-  _appendChildNodes(ul, currentSlug, node, opts)
+  console.log("_createTagNode: appending child nodes")
+  _appendChildNodes(ul, currentSlug, tagName, tagIndex, contentIndex, opts)
 
   return li
 }
@@ -384,46 +477,49 @@ function _parseExplorerOptions(explorer: HTMLElement): ParsedOptions {
   }
 }
 
-/**
- * Build tag trie from entries and apply sorting to tags and files
- */
-function _buildAndSortTagTrie(
-  entries: [FullSlug, ContentDetails][],
-  opts: ParsedOptions,
-): TagTrieNode {
-  const tagTrie = TagTrieNode.fromTaggedEntries(entries, opts.excludeTags)
-  tagTrie.sort(_createTagNodeSortFn(opts.tagNodeSort))
-  tagTrie.map((node) => node.files.sort(_createFileNodeSortFn(opts.fileNodeSort)))
-  return tagTrie
-}
+
 
 /**
- * Initialize the tag state array from saved state and tag trie
+ * Initialize the tag state array from saved state and available tags
  */
-function _initializeTagState(tagTrie: TagTrieNode, opts: ParsedOptions) {
+function _initializeTagState(tagIndex: TagIndex, opts: ParsedOptions) {
   const oldState = _loadTagState(opts)
-  const tagPaths = tagTrie.getTagPaths()
 
-  currentTagExplorerState = tagPaths.map((path) => ({
-    path,
-    collapsed: oldState.get(path) ?? opts.folderDefaultState === "collapsed",
+  currentTagExplorerState = tagIndex.allTags.map((tag) => ({
+    path: tag,
+    collapsed: oldState.get(tag) ?? opts.folderDefaultState === "collapsed",
   }))
 }
 
 /**
- * Render the tag tree into the explorer list
+ * Render the tag tree into the explorer list using TagIndex
  */
 function _renderTagTree(
   ul: Element,
   currentSlug: FullSlug,
-  tagTrie: TagTrieNode,
+  tagIndex: TagIndex,
+  contentIndex: Map<FullSlug, ContentDetails>,
   opts: ParsedOptions,
 ) {
   const fragment = document.createDocumentFragment()
-  for (const child of tagTrie.children) {
-    const node = _createTagNode(currentSlug, child, opts)
+
+  // Get top-level tags and sort them
+  console.log("_renderTagTree: topLevelTags =", tagIndex.topLevelTags)
+  const topLevelTags = tagIndex.topLevelTags.filter((tag) => !_isTagFiltered(tag, opts.excludeTags))
+  console.log("_renderTagTree: filtered topLevelTags =", topLevelTags)
+  
+  const sortFn = _createTagNodeSortFn(opts.tagNodeSort, tagIndex)
+  console.log("_renderTagTree: sortFn =", sortFn)
+  
+  topLevelTags.sort(sortFn)
+  console.log("_renderTagTree: sorted topLevelTags =", topLevelTags)
+
+  for (const tag of topLevelTags) {
+    console.log("_renderTagTree: Creating node for tag =", tag)
+    const node = _createTagNode(currentSlug, tag, tagIndex, contentIndex, opts)
     fragment.appendChild(node)
   }
+
   ul.insertBefore(fragment, ul.firstChild)
 }
 
@@ -463,20 +559,40 @@ function _handleDesktopToMobileResize() {
 async function setupTagExplorer(currentSlug: FullSlug) {
   const allExplorers = document.querySelectorAll("div.tag-explorer") as NodeListOf<HTMLElement>
 
-  for (const explorer of allExplorers) {
-    const opts = _parseExplorerOptions(explorer)
-    const data = await fetchData
-    const entries = [...Object.entries(data)] as [FullSlug, ContentDetails][]
+  try {
+    // Fetch TagIndex and content data once
+    console.log("TagExplorer: Fetching TagIndex...")
+    const tagIndex = (await fetchTagData) as TagIndex
+    console.log("TagExplorer: TagIndex loaded", tagIndex)
+    
+    console.log("TagExplorer: Fetching content index...")
+    const contentDataResponse = await fetch("/static/contentIndex.json")
+    console.log("TagExplorer: Content index response status:", contentDataResponse.status)
+    const contentData = (await contentDataResponse.json()) as Record<FullSlug, ContentDetails>
+    console.log("TagExplorer: Content data loaded, entries:", Object.keys(contentData).length)
+    
+    const contentIndex = new Map(Object.entries(contentData) as [FullSlug, ContentDetails][])
+    console.log("TagExplorer: Content index map created")
 
-    const tagTrie = _buildAndSortTagTrie(entries, opts)
-    _initializeTagState(tagTrie, opts)
+    for (const explorer of allExplorers) {
+      const opts = _parseExplorerOptions(explorer)
 
-    const explorerUl = explorer.querySelector(".tag-explorer-ul")
-    if (!explorerUl) continue
+      _initializeTagState(tagIndex, opts)
 
-    _renderTagTree(explorerUl, currentSlug, tagTrie, opts)
-    _restoreScrollPosition(explorerUl)
-    _attachEventListeners(explorer, opts)
+      const explorerUl = explorer.querySelector(".tag-explorer-ul")
+      if (!explorerUl) continue
+
+      _renderTagTree(explorerUl, currentSlug, tagIndex, contentIndex, opts)
+      _restoreScrollPosition(explorerUl)
+      _attachEventListeners(explorer, opts)
+    }
+    console.log("TagExplorer: Initialization complete")
+  } catch (err) {
+    console.error("Error initializing TagExplorer:", err)
+    if (err instanceof Error) {
+      console.error("Error message:", err.message)
+      console.error("Error stack:", err.stack)
+    }
   }
 }
 

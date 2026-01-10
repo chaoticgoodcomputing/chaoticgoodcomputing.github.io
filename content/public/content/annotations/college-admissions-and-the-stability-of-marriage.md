@@ -3,8 +3,7 @@ title: "College Admissions and the Stability of Marriage"
 date: 2024-03-14
 tags:
   - economics/markets
-  - annotations
-draft: false
+  - writing/annotations
 annotation-target: https://www.math.utoronto.ca/mccann/assignments/477/GaleShapley62.pdf
 ---
 

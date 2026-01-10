@@ -28,8 +28,7 @@
         "parallel": false
       },
       "dependsOn": [
-        "vault:download-annotation-pdfs",
-        "vault:index-tags"
+        "vault:download-annotation-pdfs"
       ]
     },
     "serve": {

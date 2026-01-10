@@ -2,7 +2,7 @@
 title: Utah Office Consult
 date: 2021-03-01
 tags:
-  - annotations
+  - writing/annotations
   - engineering/languages/python
   - economics/strategy
   - engineering/data

@@ -4,11 +4,11 @@ date: 2026-01-04
 tags:
   - engineering/ai
   - horticulture
-  - seasons/systems
+  - horticulture/seasons/systems
 ---
 Since we're now in the era of [[content/notes/hostage-negotiations|AI slop]], it feels necessary to have a general AI policy available for this site.
 
-This site originated as part of a note-taking habit I formed for my [[tags/seasons/rhythm/index|season of rhythm]]. I picked the habit back up as part of Rhythm's follow-up, [[tags/seasons/systems/index|season of systems]]. As a software engineer, it's become clear to me that LLM systems will continue to be an essential part of the trade moving forward. That said, I want to keep this site a space where I can practice writing, and develop other personal and professional development skills.
+This site originated as part of a note-taking habit I formed for my [[tags/horticulture/seasons/rhythm/index|season of rhythm]]. I picked the habit back up as part of Rhythm's follow-up, [[tags/horticulture/seasons/systems/index|season of systems]]. As a software engineer, it's become clear to me that LLM systems will continue to be an essential part of the trade moving forward. That said, I want to keep this site a space where I can practice writing, and develop other personal and professional development skills.
 
 So: here are the hard lines I'm drawing related to the use of AI on this site:
 
@@ -19,4 +19,4 @@ So: here are the hard lines I'm drawing related to the use of AI on this site:
 As for AI **consumption** of the site:
 
 1. I'm really not sure there's much I can do about AI scraping the site. I'm sure there's some things, but as far as the public portions of the site go, I'm not particularly against that information being read.
-2. However — since restarting Season of System's, I've decided to take portions of this site private. The two primary portions are periodic notes, as well as initial drafts of notes. The metadata for these notes (titles, tags, ingoing and outgoing links) are preserved, but the actual contents of the notes will be replaced in the public version of the site, as well as on GitHub, using a separate git submodule. These all get labelled with the [[tags/index|private]] tag. I'm not against anybody seeing them. If one does look helpful, absolutely [[contact|reach out]]. However, I don't necessarily want them publicly available.
+2. However — since restarting Season of System's, I've decided to take portions of this site private. The two primary portions are periodic notes, as well as initial drafts of notes. The metadata for these notes (titles, tags, ingoing and outgoing links) are preserved, but the actual contents of the notes will be replaced in the public version of the site, as well as on GitHub, using a separate git submodule. These all get labelled with the [[tags/private/index|private]] tag. I'm not against anybody seeing them. If one does look helpful, absolutely [[contact|reach out]]. However, I don't necessarily want them publicly available.

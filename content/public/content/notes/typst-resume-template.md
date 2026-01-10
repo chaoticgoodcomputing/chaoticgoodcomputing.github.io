@@ -2,10 +2,9 @@
 title: Typst Resume Template
 date: 2024-04-21
 tags:
-  - articles/tutorials
+  - writing/tutorials
   - projects/college
   - projects/teaching
-draft: false
 ---
 
 ![[Sample Resume Template.png]]

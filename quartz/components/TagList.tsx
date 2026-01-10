@@ -1,6 +1,9 @@
-import { FullSlug, resolveRelative, getAllSegmentPrefixes } from "../util/path"
+import { FullSlug, resolveRelative } from "../util/path"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { classNames } from "../util/lang"
+
+// @ts-ignore
+import script from "./scripts/TagList.inline"
 
 export interface TagListOptions {
   /**
@@ -25,105 +28,51 @@ const defaultOptions: TagListOptions = {
 export default ((userOpts?: Partial<TagListOptions>) => {
   const opts: TagListOptions = { ...defaultOptions, ...userOpts }
 
-  const TagList: QuartzComponent = ({ fileData, displayClass, allFiles }: QuartzComponentProps) => {
+  const TagList: QuartzComponent = ({ fileData, displayClass }: QuartzComponentProps) => {
     const slug = fileData.slug
-
-    // If showSubtags is enabled and we're on a tag page, show subtags
-    if (opts.showSubtags && slug?.startsWith("tags/")) {
-      // Get current tag from slug (remove "tags/" prefix and "/index" suffix)
-      let currentTag = slug === "tags" ? "index" : slug.replace(/^tags\//, "")
-      if (currentTag.endsWith("/index")) {
-        currentTag = currentTag.slice(0, -6)
-      }
-      currentTag = currentTag.replace(/\/$/, "")
-
-      // Find all tags in the system with their cumulative counts
-      const allTagsInSystem = new Set<string>(
-        allFiles
-          .flatMap((file) => file.frontmatter?.tags ?? [])
-          .flatMap(getAllSegmentPrefixes),
-      )
-
-      // Calculate cumulative counts for all tags
-      const tagCounts = new Map<string, number>()
-      for (const tag of allTagsInSystem) {
-        // Count all files that have this tag OR any descendant tag
-        const count = allFiles.filter((file) => {
-          const fileTags = file.frontmatter?.tags ?? []
-          // Check if any file tag starts with this tag (includes exact match and descendants)
-          return fileTags.some((fileTag) => {
-            return fileTag === tag || fileTag.startsWith(tag + "/")
-          })
-        }).length
-        tagCounts.set(tag, count)
-      }
-
-      // Find direct children subtags
-      const prefix = currentTag === "index" ? "" : currentTag + "/"
-      const subtags: string[] = []
-
-      for (const tag of allTagsInSystem) {
-        if (tag === currentTag) continue
-
-        if (tag.startsWith(prefix)) {
-          const remainder = tag.slice(prefix.length)
-          // Only direct children (no additional slashes)
-          if (remainder.length > 0 && !remainder.includes("/")) {
-            subtags.push(tag)
-          }
-        }
-      }
-
-      // Sort by count descending, then alphabetically
-      subtags.sort((a, b) => {
-        const countA = tagCounts.get(a) ?? 0
-        const countB = tagCounts.get(b) ?? 0
-        if (countB !== countA) return countB - countA
-        return a.localeCompare(b)
-      })
-
-      if (subtags.length === 0) return null
-
-      return (
-        <ul class={classNames(displayClass, "tags")}>
-          {subtags.map((tag) => {
-            const displayTag = currentTag === "index" ? tag : tag.slice(prefix.length)
-            const linkDest = resolveRelative(fileData.slug!, `tags/${tag}` as FullSlug)
-            const count = tagCounts.get(tag) ?? 0
-
-            return (
-              <li>
-                <a href={linkDest} class="internal tag-link">
-                  {displayTag}
-                  {opts.showCount && <span class="tag-count"> ({count})</span>}
-                </a>
-              </li>
-            )
-          })}
-        </ul>
-      )
-    }
 
     // Default behavior: show the current page's tags
     const tags = fileData.frontmatter?.tags
+
+    // If this page has explicit tags, render them.
     if (tags && tags.length > 0) {
       return (
-        <ul class={classNames(displayClass, "tags")}>
+        <ul
+          class={classNames(displayClass, "tags")}
+          data-showtags="true"
+          data-showsubtags={opts.showSubtags}
+          data-showcount={opts.showCount}
+          data-currentslug={slug}
+        >
           {tags.map((tag) => {
-            const linkDest = resolveRelative(fileData.slug!, `tags/${tag}` as FullSlug)
             return (
-              <li>
-                <a href={linkDest} class="internal tag-link">
-                  {tag}
+              <li class="tag-item" data-tag={tag}>
+                <a href="#" class="internal tag-link">
+                  <span class="tag-icon-badge"></span>
+                  <span class="tag-name"></span>
+                  <span class="tag-count"></span>
                 </a>
               </li>
             )
           })}
         </ul>
       )
-    } else {
-      return null
     }
+
+    // On tag pages with showSubtags enabled, render an empty list for the script to populate.
+    if (opts.showSubtags && slug?.startsWith("tags/")) {
+      return (
+        <ul
+          class={classNames(displayClass, "tags")}
+          data-showtags="true"
+          data-showsubtags={opts.showSubtags}
+          data-showcount={opts.showCount}
+          data-currentslug={slug}
+        ></ul>
+      )
+    }
+
+    return null
   }
 
   TagList.css = `
@@ -131,7 +80,7 @@ export default ((userOpts?: Partial<TagListOptions>) => {
   list-style: none;
   display: flex;
   padding-left: 0;
-  gap: 0.4rem;
+  gap: 0.5rem;
   margin: 1rem 0;
   flex-wrap: wrap;
 }
@@ -140,7 +89,7 @@ export default ((userOpts?: Partial<TagListOptions>) => {
   justify-content: flex-end;
 }
   
-.tags > li {
+.tags > .tag-item {
   display: inline-block;
   white-space: nowrap;
   margin: 0;
@@ -148,17 +97,56 @@ export default ((userOpts?: Partial<TagListOptions>) => {
 }
 
 a.internal.tag-link {
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 18px 8px 8px 18px;
   background-color: var(--highlight);
-  padding: 0.2rem 0.4rem;
-  margin: 0 0.1rem;
+  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+  margin: 0;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+a.internal.tag-link:hover {
+  background-color: var(--gray);
+}
+
+.tag-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2.5px solid var(--tag-color, #888888);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tag-name {
+  font-weight: 500;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+}
+
+.tag-name::before {
+  content: "#";
+  margin-right: 0.2em;
+  opacity: 0.7;
 }
 
 .tag-count {
   color: var(--gray);
-  font-size: 0.9em;
+  font-size: 0.85em;
+  margin-left: 0.2rem;
 }
 `
 
+  TagList.afterDOMLoaded = script
   return TagList
 }) satisfies QuartzComponentConstructor<TagListOptions>

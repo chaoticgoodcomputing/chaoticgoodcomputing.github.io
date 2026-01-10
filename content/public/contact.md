@@ -1,4 +1,3 @@
 ---
-title: Contact Chaotic Good Computing
-draft: true
+title: Contact
 ---

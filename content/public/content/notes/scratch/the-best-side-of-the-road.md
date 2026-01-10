@@ -4,7 +4,6 @@ date: "2024-03-06T00:00:00.000Z"
 tags:
   - "horticulture"
   - "private"
-draft: false
 ---
 
 This note is part of my private vault, and isn't published publicly on the site or within the public GitHub.
