@@ -40,6 +40,8 @@ export default (() => {
       <head>
         <title>{title}</title>
         <meta charSet="utf-8" />
+        {/* Set base URL for 404 page to ensure links resolve from root, not relative to error path */}
+        {fileData.slug === "404" && <base href="/" />}
         {cfg.theme.cdnCaching && cfg.theme.fontOrigin === "googleFonts" && (
           <>
             <link rel="preconnect" href="https://fonts.googleapis.com" />

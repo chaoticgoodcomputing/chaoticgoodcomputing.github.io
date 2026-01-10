@@ -1,6 +1,6 @@
 <%*
 // Configuration
-const SEASONS_FOLDER = "public/tags/seasons";
+const SEASONS_FOLDER = "public/tags/horticulture/seasons";
 const DAILY_NOTES_FOLDER = "private/content/notes/periodic/daily";
 
 // Find the most recent season by date
@@ -16,17 +16,19 @@ const latestSeason = app.vault.getMarkdownFiles()
     return latest;
   }, null);
 
-// Extract season directory name (e.g., "tags/horticulture/seasons/systems/index.md" -> "systems")
-const seasonName = latestSeason.file.path.split('/').slice(-2)[0];
+// Extract season info with fallback if no season found
+const seasonName = latestSeason?.file.path.split('/').slice(-2)[0] ?? 'daily';
 const seasonTag = `seasons/${seasonName}`;
 
 // Calculate day number within season
-const daysSinceSeason = moment().diff(moment(latestSeason.createdAt), 'days', true);
+const daysSinceSeason = latestSeason 
+  ? moment().diff(moment(latestSeason.createdAt), 'days', true)
+  : 0;
 const dayNumber = Math.ceil(daysSinceSeason);
 
 // Build title with capitalized season name
 const seasonTitle = seasonName.charAt(0).toUpperCase() + seasonName.slice(1);
-const title = `${seasonTitle}: Day ${dayNumber}`;
+const title = latestSeason ? `${seasonTitle}: Day ${dayNumber}` : tp.date.now("YYYY-MM-DD");
 
 // Find most recent daily note before today
 const today = tp.date.now("YYYY-MM-DD");
@@ -38,7 +40,15 @@ const previousNote = app.vault.getMarkdownFiles()
   })
   .sort((a, b) => b.basename.localeCompare(a.basename))[0];
 
-const previousLink = previousNote ? previousNote.basename : tp.date.now("YYYY-MM-DD", -1);
+// Build previous note link with nested year/month structure
+const previousPath = previousNote 
+  ? previousNote.path.replace(/\.md$/, '')
+  : (() => {
+      const yesterday = tp.date.now("YYYY-MM-DD", -1);
+      const [year, month] = yesterday.split('-');
+      return `${DAILY_NOTES_FOLDER}/${year}/${month}/${yesterday}`;
+    })();
+const previousBasename = previousNote ? previousNote.basename : tp.date.now("YYYY-MM-DD", -1);
 
 -%>---
 title: "<% title %>"
@@ -46,7 +56,7 @@ date: <% tp.date.now() %>
 tags:
   - <% seasonTag %>
 ---
-⇐ [[private/content/notes/periodic/daily/<% previousLink %>|<% previousLink %>]]
+⇐ [[<% previousPath %>|<% previousBasename %>]]
 
 ## Up Front
 
