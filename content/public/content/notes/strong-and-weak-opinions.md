@@ -1,5 +1,5 @@
 ---
-title: let opinion = null
+title: "Feeling Right, Nothing Done: Don't Be the Death of Consensus"
 description: |
   Classifying opinions as "strong" or "weak" to stop wasting hours in fruitless engineering debates.
   How consensus can beat being "right", and an open letter for the tactically apathetic.

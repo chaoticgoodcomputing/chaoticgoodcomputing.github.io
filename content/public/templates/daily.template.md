@@ -18,7 +18,7 @@ const latestSeason = app.vault.getMarkdownFiles()
 
 // Extract season info with fallback if no season found
 const seasonName = latestSeason?.file.path.split('/').slice(-2)[0] ?? 'daily';
-const seasonTag = `seasons/${seasonName}`;
+const seasonTag = `horticulture/seasons/${seasonName}`;
 
 // Calculate day number within season
 const daysSinceSeason = latestSeason 
