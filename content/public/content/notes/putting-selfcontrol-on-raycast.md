@@ -37,7 +37,7 @@ I've added a couple of useful bash scripts to a [SelfControl Raycast Plugin](htt
 
 ![[Pasted image 20240229001915.png]]
 
-**THAT BEING SAID:** I've used the term [[content/notes/caveat-lector|caveat lector]] quite a bit to warn people that I'm just some guy. This goes doubly here! This is software that has literally only been tested, by me, a handful of times, that I made while (ironically) procrastinating [[public/content/notes/periodic/daily/2024-02-28#E-Block|other things I should be working on]]. *To say it isn't well-tested would be a dramatic understatement.* The creators of SelfControl [warn that it's a tool that, if misused, can have side effects](https://github.com/SelfControlApp/selfcontrol/wiki/FAQ#q-selfcontrols-timer-is-at-finishing-and-i-cant-access-my-websites-and-im-freaking-out). So to that end... what would the phrase even be?
+**THAT BEING SAID:** I've used the term [[content/notes/caveat-lector|caveat lector]] quite a bit to warn people that I'm just some guy. This goes doubly here! This is software that has literally only been tested, by me, a handful of times, that I made while (ironically) procrastinating [[public/content/notes/periodic/daily/2024/02/2024-02-28#E-Block|other things I should be working on]]. *To say it isn't well-tested would be a dramatic understatement.* The creators of SelfControl [warn that it's a tool that, if misused, can have side effects](https://github.com/SelfControlApp/selfcontrol/wiki/FAQ#q-selfcontrols-timer-is-at-finishing-and-i-cant-access-my-websites-and-im-freaking-out). So to that end... what would the phrase even be?
 
 ![[Pasted image 20240228194431.png]]
 

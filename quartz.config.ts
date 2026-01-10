@@ -56,7 +56,7 @@ const config: QuartzConfig = {
         // Engineering Subtopics
         { tag: "engineering/bio", icon: "mdi:molecule" },
         { tag: "engineering/languages", icon: "mdi:code-braces" },
-        { tag: "engineering/data", icon: "mdi:database" },
+        { tag: "engineering/data", icon: "mdi:pulse" },
         { tag: "engineering/devops", icon: "mdi:truck" },
         { tag: "engineering/frontend", icon: "mdi:palette" },
         { tag: "engineering/ai", icon: "mdi:robot" },

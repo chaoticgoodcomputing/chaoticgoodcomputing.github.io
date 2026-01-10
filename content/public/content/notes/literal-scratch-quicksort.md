@@ -6,7 +6,7 @@ tags:
   - projects/teaching
   - projects/college
 ---
-As an addendum to the [[content/notes/literal-scratch-piano|Scratch Piano Application]], I also around the same time cooked up an implementation of QuickSort. At my partner's recent swim meet I sat next to [[content/notes/periodic/daily/2024-03-02|a couple kids who've been learning Scratch]] and they were showing off some games they'd made.
+As an addendum to the [[content/notes/literal-scratch-piano|Scratch Piano Application]], I also around the same time cooked up an implementation of QuickSort. At my partner's recent swim meet I sat next to [[content/notes/periodic/daily/2024/03/2024-03-02|a couple kids who've been learning Scratch]] and they were showing off some games they'd made.
 
 i was shocked - when it was my turn to show off, they didn't seem very impressed by this.
 
