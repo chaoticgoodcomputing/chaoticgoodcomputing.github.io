@@ -58,6 +58,13 @@
         ],
         "parallel": false,
         "cwd": "content"
+      },
+      "configurations": {
+        "limit": {
+          "commands": [
+            "node utils/list-non-private-files.mjs -n 3"
+          ]
+        }
       }
     }
   }

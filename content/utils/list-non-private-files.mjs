@@ -4,12 +4,17 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Handle broken pipe errors (e.g., when piping to head)
+process.stdout.on('error', (err) => {
+  if (err.code === 'EPIPE') {
+    process.exit(0);
+  }
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const PUBLIC_CONTENT_DIR = path.join(REPO_ROOT, 'content', 'public');
-const TEMPLATES_DIR = path.join(PUBLIC_CONTENT_DIR, 'templates');
-const ASSETS_DIR = path.join(PUBLIC_CONTENT_DIR, 'assets');
+const PUBLIC_CONTENT_DIR = path.join(REPO_ROOT, 'content', 'public', 'content');
 
 /**
  * Remove surrounding quotes from a string
@@ -136,15 +141,24 @@ async function findMarkdownFiles(dir) {
  * Main function
  */
 async function main() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  let maxResults = Infinity;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '-n' || args[i] === '--limit') {
+      const value = parseInt(args[i + 1], 10);
+      if (!isNaN(value) && value > 0) {
+        maxResults = value;
+      }
+      break;
+    }
+  }
+
   const allMarkdownFiles = await findMarkdownFiles(PUBLIC_CONTENT_DIR);
   const nonPrivateFiles = [];
 
   for (const filePath of allMarkdownFiles) {
-    // Skip files in templates or assets directories
-    if (filePath.startsWith(TEMPLATES_DIR) || filePath.startsWith(ASSETS_DIR)) {
-      continue;
-    }
-
     const shouldSkip = await shouldSkipFile(filePath);
     if (!shouldSkip) {
       // Convert to relative path from repo root
@@ -153,8 +167,13 @@ async function main() {
     }
   }
 
+  let count = 0;
   for (const filePath of nonPrivateFiles.sort()) {
     console.log(filePath);
+    count++;
+    if (count >= maxResults) {
+      break;
+    }
   }
 }
 
