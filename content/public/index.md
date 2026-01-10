@@ -1,6 +1,5 @@
 ---
 title: Welcome!
-date: 2024-02-27
 tags:
   - engineering
   - economics
