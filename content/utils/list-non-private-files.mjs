@@ -102,7 +102,6 @@ async function shouldSkipFile(filePath) {
 
     return hasPrivateTag || hasDescription;
   } catch (error) {
-    console.error(`Error reading ${filePath}:`, error.message);
     return false;
   }
 }
@@ -128,9 +127,7 @@ async function findMarkdownFiles(dir) {
         files.push(fullPath);
       }
     }
-  } catch (error) {
-    console.error(`Error reading directory ${dir}:`, error.message);
-  }
+  } catch (error) { }
 
   return files;
 }
@@ -139,8 +136,6 @@ async function findMarkdownFiles(dir) {
  * Main function
  */
 async function main() {
-  console.log('Scanning for non-private markdown files in content/public...\n');
-
   const allMarkdownFiles = await findMarkdownFiles(PUBLIC_CONTENT_DIR);
   const nonPrivateFiles = [];
 
@@ -149,7 +144,7 @@ async function main() {
     if (filePath.startsWith(TEMPLATES_DIR) || filePath.startsWith(ASSETS_DIR)) {
       continue;
     }
-    
+
     const shouldSkip = await shouldSkipFile(filePath);
     if (!shouldSkip) {
       // Convert to relative path from repo root
@@ -158,14 +153,8 @@ async function main() {
     }
   }
 
-  // Print results
-  if (nonPrivateFiles.length === 0) {
-    console.log('No non-private files found.');
-  } else {
-    console.log(`Found ${nonPrivateFiles.length} non-private file(s):\n`);
-    for (const filePath of nonPrivateFiles.sort()) {
-      console.log(filePath);
-    }
+  for (const filePath of nonPrivateFiles.sort()) {
+    console.log(filePath);
   }
 }
 
