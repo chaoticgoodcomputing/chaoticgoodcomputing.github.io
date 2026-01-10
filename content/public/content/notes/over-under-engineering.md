@@ -1,15 +1,13 @@
 ---
 title: The Over/Unders of Over- and Under-Engineering
+description: |
+  I've learned so much in my career — so why do I finish fewer projects than I used to?
+  Over-engineering: it's easier to be bad at something on accident than on purpose.
 date: 2024-02-25
 tags:
   - horticulture
   - engineering
 ---
-
-> > > > ~~Premature optimization~~ **Over-engineering** is the root of all evil
-> > > -- [~~Donald Knuth~~](https://en.wikipedia.org/wiki/Donald_Knuth)
-> > -- [~~Sir Tony Hoare~~](https://ubiquity.acm.org/article.cfm?id=1513451)
-> -- Me, just now
 
 I think that over-engineering is the single greatest contributor to starting projects and never finishing them.
 

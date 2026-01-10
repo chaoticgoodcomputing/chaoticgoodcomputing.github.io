@@ -1,5 +1,8 @@
 ---
 title: Unstable Marriage
+description: |
+  After researching matchmaking algorithms forever, I never considered odd-numbered sets.
+  The implications are funnier than expected — addendum on Gale-Shapley matchmaking.
 date: 2024-02-27
 tags:
   - engineering/data

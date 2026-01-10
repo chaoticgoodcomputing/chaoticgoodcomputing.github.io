@@ -1,5 +1,9 @@
 ---
 title: "Review: Season of Rhythm"
+description: |
+  Looking back at my year-long attempt to build sustainable habits after finishing undergrad.
+  A retrospective on routines, remote work transitions, and learning to go slow-and-steady.
+date: 2024-04-21
 tags:
   - horticulture/seasons/rhythm
 ---
@@ -10,3 +14,4 @@ About a year and a half ago, I started off the [[tags/horticulture/seasons/rhyth
 - I (finally!) finished [[tags/projects/college/index|my undergraduate degree at the University of Utah]] after far too long. It was hardly a photo finish — I had already been working full-time in the software industry for ~two years to pay for what was, effectively, a bunch of unrelated gen-ed credit I'd put off
 - I had switched jobs, going from a hybrid role to a fully remote one
 
+<!-- TODO: Finish this up. -->

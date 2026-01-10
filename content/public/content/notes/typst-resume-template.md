@@ -1,5 +1,7 @@
 ---
 title: Typst Resume Template
+description: |
+  A beginner-friendly resume template in Typst — 100% less LaTeX, 100% more opinions.
 date: 2024-04-21
 tags:
   - writing/tutorials

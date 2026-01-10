@@ -1,5 +1,8 @@
 ---
 title: 'What *are* Supply Chains, Anyway?'
+description: |
+  A first foray into network visualization: messy graphs, abject terror.
+  Early data viz experiments searching for supply loops. Bad graphs; interesting questions.
 date: 2019-07-01
 tags:
   - economics/finance

@@ -1,5 +1,8 @@
 ---
 title: Utah Office Consult
+description: |
+  People problems are the hardest engineering problems.
+  A consult on thinking out-of-the-box to explain morale problems in small companies.
 date: 2021-03-01
 tags:
   - writing/annotations

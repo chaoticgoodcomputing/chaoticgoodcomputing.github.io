@@ -1,20 +1,24 @@
 ---
-title: Watering Down SelfControl into Self Restraint
+title: Turning SelfControl into Self Restraint
+description: |
+  Building a Raycast plugin to schedule website blocks — because checking news "just one more time" destroys flow.
+  Automate SelfControl and self control: take your laptop back.
 date: 2024-02-28
 tags:
   - horticulture
   - engineering/languages/typescript
   - horticulture/seasons/rhythm
 ---
-> I talk a lot in this post. You may want to skip to [[content/notes/putting-selfcontrol-on-raycast#The Useful Part|the useful part]].
 
-So, during this recent period of [[tags/horticulture/seasons/rhythm/index|trying to break quite a few years of bad work habits]], I've been putting up little guardrails in my own life to keep myself on-track when I want to stay on-track. One issue I've run into - especially during a *particularly tumultuous US election year* - is a tendency to check the news.
+During this recent period of [[tags/horticulture/seasons/rhythm/index|trying to break quite a few years of bad work habits]], I've been putting up little guardrails in my own life to keep myself on-track when I want to stay on-track. One issue I've run into - especially during a *particularly tumultuous US election year* - is a tendency to check the news.
 
 And then, five minutes later, check the news again.
 
 ...and again
 
 ...and *again.*
+
+> I talk a lot in this post. You may want to skip to [[content/notes/putting-selfcontrol-on-raycast#The Useful Part|the useful part]].
 
 I've rationalized it for awhile by saying "I work in politics - of *course* I should stay up to date!" However, that's a *lie* - my day job is *not* in politics. At best, It's working on software *adjacent* to people who are *adjacent* to politics.
 

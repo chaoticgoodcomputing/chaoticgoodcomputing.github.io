@@ -1,5 +1,8 @@
 ---
 title: The Quest to Slay The Goblin
+description: |
+  My life devolves into sleep-eat-procrastinate cycles without structure—I call this "The Goblin."
+  Productivity tools, hating on hustle culture, and a new definition for horticulture.
 date: 2024-02-27
 tags:
   - horticulture

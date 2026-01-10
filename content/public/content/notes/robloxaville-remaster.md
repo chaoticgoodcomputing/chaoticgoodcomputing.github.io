@@ -1,5 +1,8 @@
 ---
-title: Thoughts on the bad 2017 Robloxaville Remaster
+title: "In Review: The (bad) 2017 Robloxaville Remaster"
+description: |
+  How over-engineering killed a 3-month remaster of an old ROBLOX game.
+  Looking back at the depth of Dunning-Kruger, and how good code doesn't make a good game.
 date: 2024-02-25
 tags:
   - projects/games/roblox

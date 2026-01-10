@@ -77,11 +77,11 @@ The idea would be:
 
 1. Business Meeting: This is the portion where the business side and engineering side meet together to form the outer shape of the application. The goal is not to bikeshed implementation details (or for engineering to [[content/notes/strong-and-weak-opinions|have strong opinions]]). The goal is to agree on the user-facing shell of the application, its capabilities, and its behaviors.
     1. Phase 1: Chaotic Entries (🟧, 🟫)
-            - **Goal:** Organize a barrage of high-level information from the business side. What is the goal of the app/feature? What should the user be able to do?
-            - This provides a note-taking structure to user stories. Using **🟫 Actors** and **🟧 Domain Events**, you should be able to organize user categorize and what the users expect to be able to accomplish via **🟧 Domain Events**
+        - **Goal:** Organize a barrage of high-level information from the business side. What is the goal of the app/feature? What should the user be able to do?
+        - This provides a note-taking structure to user stories. Using **🟫 Actors** and **🟧 Domain Events**, you should be able to organize user categorize and what the users expect to be able to accomplish via **🟧 Domain Events**
     2. Phase 2: Timeline Organization (🟧, 🟫, 🟥)
-            - **Goal:** Sort the **🟧 Domain Events** into chronological stories, developing the full user stories.
-            - As engineers, it's good to understand that chains of **🟧 Domain Events** that occur earlier will have simpler seed data (e.g. an empty cart) and that Events that occur later will require more complicated data with more failure points. This is where **🟥 Hotspots** can be introduced. It is likely that **🟧 Domain Events** further out will have more **🟥 Hotspots**. The chronological ordering can help identify where, given a **🟧 Domain Event's** dependencies, where failure points could occur.
+        - **Goal:** Sort the **🟧 Domain Events** into chronological stories, developing the full user stories.
+        - As engineers, it's good to understand that chains of **🟧 Domain Events** that occur earlier will have simpler seed data (e.g. an empty cart) and that Events that occur later will require more complicated data with more failure points. This is where **🟥 Hotspots** can be introduced. It is likely that **🟧 Domain Events** further out will have more **🟥 Hotspots**. The chronological ordering can help identify where, given a **🟧 Domain Event's** dependencies, where failure points could occur.
 2. Follow-up Engineering Meeting: Once the shape of the application is agreed on, engineering breaks out into a follow-up to come up with concrete implementation details. Largely the same as above.
     1. Phase 3: **Commands:** Figure out the actual API surface, constructed with **🟦 Commands** with **🟪 Policies** introduced to set up the advanced conditionals between **🟫 Actors** executing **🟦 Commands** and the **🟧 Domain Events** they trigger. (🟧, 🟫, 🟥, 🟦, 🟪)
     2. Phase 4: **Entities:** Logical grouping of workflows into **🟨 Aggregates** (🟧, 🟫, 🟥, 🟦, 🟪, 🟨)

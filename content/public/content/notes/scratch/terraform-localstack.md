@@ -1,5 +1,8 @@
 ---
 title: Terraform LocalStack Testing
+description: |
+    $70/mo/seat? Just using live AWS may be cheaper.
+    An evaluation of LocalStack as a testbed for Account Factory Terraform.
 date: 2024-04-18
 tags:
   - engineering/devops
@@ -7,7 +10,7 @@ tags:
 ---
 ## Primary Takeaways
 
-There are two reasons AFT/AWS would want to buy into something like this:
+There are two reasons AFT/AWS users would want to buy into something like this:
 
 1. Ability to quickly iterate on the *validity* of AFT deployments
 2. Ability to quickly iterate on the *functionality* of AWS infrastructure

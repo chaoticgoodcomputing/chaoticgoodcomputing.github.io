@@ -1,11 +1,13 @@
 ---
 title: let opinion = null
+description: |
+  Classifying opinions as "strong" or "weak" to stop wasting hours in fruitless engineering debates.
+  How consensus can beat being "right", and an open letter for the tactically apathetic.
 date: 2024-03-05
 tags:
   - engineering
   - horticulture
 ---
-> This note ended up having a lot of front-loaded context — feel free to skip to [[content/notes/strong-and-weak-opinions#The Point|the point]]
 
 ## Opinionated Software
 
@@ -14,6 +16,8 @@ There's a term that floats around that *feels* new. It's not something that I'd 
 > [Proper noun] is an opinionated [general noun]
 
 What… does this mean? I'd never seen it in an academic slide deck before, but I can name a few high-profile instances of the label used. While it's usually surrounding frameworks, I've seen it used in other places as well:
+
+> This note ended up having a lot of front-loaded context — feel free to skip to [[content/notes/strong-and-weak-opinions#The Point|the point]]
 
 - During C# related work — I have previously used [Wrapt](https://wrapt.dev/) as a [[tags/engineering/languages/csharp/index]] web API scaffolding tool, which [describes its default options as opinionated](https://wrapt.dev/docs/customizing-wrapt-projects#smart-defaults)
     - On wandering through the chain of opinions, Wrapt's opinions are, in turn, based on the Vertical Slice Architecture (VSA) opinions I'd first seen in [Jimmy Bogart's post on VSA](https://www.jimmybogard.com/vertical-slice-architecture/), a recommended must-read by my team at NWYC

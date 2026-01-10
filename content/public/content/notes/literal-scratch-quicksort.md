@@ -1,5 +1,7 @@
 ---
-title: "Scratch Quicksort"
+title: "Quicksort: Every CS Student's Favorite Algorithm, Scratched Up"
+description: |
+  Implementing QuickSort in Scratch. Its only real-world accomplishment? Wearing out my mouse's scroll bar.
 date: 2018-07-18
 tags:
   - engineering/languages/scratch
