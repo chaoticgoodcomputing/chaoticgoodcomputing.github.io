@@ -1,12 +1,15 @@
 ---
 title: Intro to Event Storming
+description: |
+  Notes from learning Event Storming for domain-driven design. Thoughts on phases,
+  color-coded chaos, and how to transition from fast pitches to full products.
 date: 2026-01-06
 tags:
   - writing/annotations
   - engineering
   - projects/dayjob
 ---
-I was sent a video on the concept of [event storming](https://www.youtube.com/watch?v=l93N4XaQJok) recently. This'll be a more concrete note on the concept, overview, and my thoughts.
+I was sent a video on the concept of [event storming](https://www.youtube.com/watch?v=l93N4XaQJok) recently. This'll be a more concrete note on the concepts behind Event Storming/Domain-Driven Design, and my thoughts on phasing it in.
 
 ## Colors/Terminologies
 

@@ -1,5 +1,7 @@
 ---
 title: 'Reading the Room with Beethoven'
+description: |
+  A HackTheU 2019 project for real-time live captioning using remote microphones.
 date: 2019-08-01
 tags:
   - engineering/languages/typescript

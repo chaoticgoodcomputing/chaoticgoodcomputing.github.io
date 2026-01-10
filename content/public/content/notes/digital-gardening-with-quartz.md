@@ -1,5 +1,8 @@
 ---
-title: Kicking off a Digital Garden with Quartz
+title: Breaking Ground on Digital Gardening
+description: |
+  Why I stopped hoarding 60%-done drafts and started publishing messy thoughts instead.
+  Embracing digital gardening, from-chaos-to-cultivated, and a healthy dose of imperfection.
 date: 2024-02-25
 tags:
   - horticulture

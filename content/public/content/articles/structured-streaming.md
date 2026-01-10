@@ -1,5 +1,8 @@
 ---
-title: "Don't Double Down: Using Spark Structured Streaming to Wrangle Growing Data"
+title: "Don't Double Down: Structured Streaming to Wrangle Data"
+description: |
+  Stop reprocessing your entire dataset every time new data arrives.
+  A practical guide to Spark Structured Streaming with code examples and cost logic.
 date: 2022-07-14
 tags:
   - engineering/data
@@ -9,7 +12,6 @@ tags:
   - engineering/data
   - economics/finance
 ---
-> This post was written during my time as a software engineer at M Science as a joint project with Databricks. You can view the original post [here](https://www.databricks.com/blog/2022/07/14/using-spark-structured-streaming-to-scale-your-analytics.html)
 
 Let's say that _you_, a ✨ _humble data plumber_ ✨ of the Big Data era, have been tasked to create an analytics solution for [an online retail dataset](https://github.com/databricks/Spark-The-Definitive-Guide/blob/master/data/retail-data/all/online-retail-dataset.csv):
 
@@ -267,3 +269,5 @@ This all comes together to create a scalable solution to your growing data. If n
 You'd be hard pressed to find any context where data isn't going to be updated at some point. It's a soft agreement that data analysts, engineers, and scientists make when we work with modern data - it's going to grow, and we have to find ways to handle that growth.
 
 With Spark Structured Streaming, we can use the latest and greatest data to deliver the best products, without the headaches that come with scale.
+
+> This post was written during my time as a software engineer at M Science as a joint project with Databricks. You can view the original post [here](https://www.databricks.com/blog/2022/07/14/using-spark-structured-streaming-to-scale-your-analytics.html)

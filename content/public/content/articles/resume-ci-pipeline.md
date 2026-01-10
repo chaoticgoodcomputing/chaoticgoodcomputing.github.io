@@ -1,5 +1,7 @@
 ---
-title: Job Applications are a Waking Nightmare - Let Tech Do It For You
+title: "Say Goodbye to Untitled (5) — GitHub Actions for Resumes"
+description: |
+  Set up continuous integration to auto-update your resume everywhere. Overleaf, GitHub, and LaTeX automation for the perpetually disorganized.
 date: 2021-07-29
 tags:
   - writing/tutorials
@@ -7,7 +9,8 @@ tags:
   - projects/college
 ---
 
-> NOTE: THIS IS OUTDATED. There are now *far* better PDF markup languages to use, such as [Typst](https://typst.app). I wrote [[content/notes/typst-resume-template|A new guide for the template here!]]
+> [!NOTE]
+> There are now *way* beginner-friendlier PDF markup languages to use, such as [Typst](https://typst.app). I wrote [[content/notes/typst-resume-template|A new guide for the template here!]]
 
 After trying - and failing - to *constantly* keep my resume up-to-date in a dozen different places, I took a page out of the wild world of software development and found the solution: **continuous integration.**
 

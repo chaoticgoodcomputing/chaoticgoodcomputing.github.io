@@ -1,5 +1,8 @@
 ---
-title: Zen, and the Art of Laziness
+title: "Littlefield Simulator: The Art of Laziness"
+description: |
+  Efficiency: spending six hours building a web scraper to avoid five minutes of daily work.
+  Automating a business simulation because checking in is for chumps.
 date: 2021-08-28
 tags:
   - engineering/languages/python
@@ -7,7 +10,7 @@ tags:
   - economics/strategy
   - projects/college
 ---
-[[tags/horticulture/seasons/rhythm/index|I am awful at sticking to routines]] - the only thing I can bear to check on every day is Twitter. Even if it means spending twice as long over the course of a weekend, I will *always* try to find a way to automate away routine manual work.
+I am **awful** at sticking to routines - the only thing I can bear to check on every day is Twitter. Even if it means spending twice as long over the course of a weekend, I will *always* try to find a way to automate away routine manual work.
 
 (All of the code used in this post can be found [here.](https://github.com/Spelkington/LittlefieldDriver/blob/main/ipynb/driver.ipynb))
 

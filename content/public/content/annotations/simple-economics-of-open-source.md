@@ -1,5 +1,8 @@
 ---
 title: "The Simple Economics of Open Source"
+description: |
+  Why do we do what we do? "Egoboo."
+  Exploring economic models of OSS contributions beyond altruism and ego.
 date: 2024-03-17
 tags:
   - economics/markets
