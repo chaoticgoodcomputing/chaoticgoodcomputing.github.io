@@ -66,10 +66,7 @@
       "//": "Production build to public/. Use build:docs or build:site for presets.",
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "./quartz/bootstrap-cli.mjs build -d {args.dir}",
-          "cp quartz/static/robots.txt public/robots.txt"
-        ],
+        "commands": [ ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
@@ -80,7 +77,8 @@
         "site": {
           "commands": [
             "./quartz/bootstrap-cli.mjs build -d content/public",
-            "cp quartz/static/robots.txt public/robots.txt"
+            "cp quartz/static/robots.txt public/robots.txt",
+            "cp CNAME public/CNAME"
           ]
         }
       },
@@ -168,8 +166,8 @@
         "parallel": false,
         "cwd": "{workspaceRoot}",
         "env": {
-          "LHCI_MAX_URLS": "10",
-          "LHCI_RUNS": "1"
+          "LHCI_MAX_URLS": "20",
+          "LHCI_RUNS": "3"
         }
       },
       "outputs": [ "{workspaceRoot}/utils/lighthouse/assets/lighthouse-insights-multi.json" ],

@@ -14,3 +14,5 @@ replit.nix
 
 .nx/cache
 .nx/workspace-data
+
+.lighthouseci
