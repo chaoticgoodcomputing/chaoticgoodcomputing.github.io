@@ -1,3 +1,5 @@
 assets
 raw
+lighthouserc.cjs
 !.gitkeep
+.lighthouseci

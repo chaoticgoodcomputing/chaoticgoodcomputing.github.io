@@ -70,7 +70,7 @@ async function extractInsights() {
     }
   }
 
-  // Extract diagnostics (performance issues)
+  // Extract diagnostics (performance issues) with details
   for (const [auditId, audit] of Object.entries(report.audits)) {
     if (
       audit.details?.type === 'table' &&
@@ -78,25 +78,61 @@ async function extractInsights() {
       audit.score < 1 &&
       !audit.details?.type?.includes('opportunity')
     ) {
-      insights.diagnostics.push({
+      const diagnostic = {
         id: auditId,
         title: audit.title,
         description: audit.description,
         displayValue: audit.displayValue,
         score: audit.score,
-      });
+      };
+
+      // Include table data if available
+      if (audit.details?.items && audit.details.items.length > 0) {
+        diagnostic.items = audit.details.items.map(item => {
+          const cleanItem = {};
+          for (const [key, value] of Object.entries(item)) {
+            if (typeof value !== 'object' || value === null) {
+              cleanItem[key] = value;
+            } else if (value.url) {
+              cleanItem[key] = value.url;
+            }
+          }
+          return cleanItem;
+        });
+      }
+
+      insights.diagnostics.push(diagnostic);
     }
   }
 
-  // Extract failed audits (accessibility, SEO, best practices)
+  // Extract failed audits (accessibility, SEO, best practices) with details
   for (const [auditId, audit] of Object.entries(report.audits)) {
     if (audit.score !== null && audit.score < 1 && audit.scoreDisplayMode === 'binary') {
-      insights.failedAudits.push({
+      const failedAudit = {
         id: auditId,
         title: audit.title,
         description: audit.description,
         score: audit.score,
-      });
+      };
+
+      // Include specific details if available
+      if (audit.details?.items && audit.details.items.length > 0) {
+        failedAudit.items = audit.details.items.map(item => {
+          // Extract relevant fields, excluding heavy data like screenshots
+          const cleanItem = {};
+          for (const [key, value] of Object.entries(item)) {
+            if (key !== 'node' && key !== 'screenshot' && typeof value !== 'object') {
+              cleanItem[key] = value;
+            } else if (key === 'node' && value?.selector) {
+              cleanItem.selector = value.selector;
+              cleanItem.snippet = value.snippet;
+            }
+          }
+          return cleanItem;
+        });
+      }
+
+      insights.failedAudits.push(failedAudit);
     }
   }
 

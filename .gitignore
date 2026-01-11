@@ -9,3 +9,8 @@ replit.nix
 .nx
 /public
 /public/assets/annotated-documents/
+
+
+
+.nx/cache
+.nx/workspace-data

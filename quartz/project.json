@@ -121,7 +121,7 @@
       "options": {
         "commands": [
           "sleep 5",
-          "lighthouse http://localhost:8080 --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report.html --view",
+          "lighthouse http://localhost:8080 --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report.html",
           "node utils/lighthouse/extract-insights.mjs lighthouse-report"
         ],
         "parallel": false,
@@ -139,19 +139,41 @@
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
-      "continuous": true
+      "continuous": true,
+      "outputs": [ "{workspaceRoot}/utils/lighthouse/assets/lighthouse-insights.json" ]
     },
     "eval:live": {
       "//": "Run Lighthouse audit on live site for remote server performance, then extract actionable insights",
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "lighthouse https://blog.chaoticgood.computer --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report-live.html --view",
+          "lighthouse https://blog.chaoticgood.computer --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report-live.html",
           "node utils/lighthouse/extract-insights.mjs lighthouse-report-live"
         ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
-      }
+      },
+      "outputs": [ "{workspaceRoot}/utils/lighthouse/assets/lighthouse-insights-live.json" ]
+    },
+    "eval:multi": {
+      "//": "Run Lighthouse CI on multiple pages from sitemap.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "sleep 5",
+          "node utils/lighthouse/generate-urls-from-sitemap.mjs",
+          "npx @lhci/cli@0.15.x autorun --config=utils/lighthouse/lighthouserc.cjs",
+          "node utils/lighthouse/aggregate-multi-results.mjs"
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}",
+        "env": {
+          "LHCI_MAX_URLS": "10",
+          "LHCI_RUNS": "1"
+        }
+      },
+      "outputs": [ "{workspaceRoot}/utils/lighthouse/assets/lighthouse-insights-multi.json" ],
+      "dependsOn": [ "site:build", "_serve-static" ]
     }
   }
 }
