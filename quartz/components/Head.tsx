@@ -1,10 +1,34 @@
 import { i18n } from "../i18n"
-import { FullSlug, getFileExtension, joinSegments, pathToRoot } from "../util/path"
+import { FullSlug, getFileExtension, isAbsoluteURL, joinSegments, pathToRoot } from "../util/path"
 import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/resources"
 import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
 import { CustomOgImagesEmitterName } from "../plugins/emitters/ogImage"
+import type { SchemaOrgArticleType, StructuredDataMapping } from "../cfg"
+
+/**
+ * Get structured data type and section for a file based on its tags
+ */
+function getStructuredDataForFile(
+  tags: string[] | undefined,
+  mappings: StructuredDataMapping[],
+  defaultType: SchemaOrgArticleType,
+): { type: SchemaOrgArticleType; section: string | null } {
+  if (!tags || tags.length === 0) {
+    return { type: defaultType, section: null }
+  }
+
+  // Iterate through mappings in priority order (first match wins)
+  for (const mapping of mappings) {
+    if (tags.includes(mapping.tag)) {
+      return { type: mapping.type, section: mapping.section }
+    }
+  }
+
+  return { type: defaultType, section: null }
+}
+
 export default (() => {
   const Head: QuartzComponent = ({
     cfg,
@@ -71,7 +95,7 @@ export default (() => {
             <meta name="twitter:image" content={ogImageDefaultPath} />
             <meta
               property="og:image:type"
-              content={`image/${getFileExtension(ogImageDefaultPath) ?? "png"}`}
+              content={`image/${getFileExtension(ogImageDefaultPath)?.slice(1) ?? "png"}`}
             />
           </>
         )}
@@ -84,9 +108,100 @@ export default (() => {
           </>
         )}
 
+        <link rel="canonical" href={socialUrl} />
         <link rel="icon" href={iconPath} />
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
+
+        {/* Structured Data (JSON-LD) */}
+        {cfg.structuredData && fileData.slug !== "404" && fileData.slug?.startsWith("content/") && (
+          <script type="application/ld+json">
+            {JSON.stringify(
+              (() => {
+                const sdConfig = cfg.structuredData
+                const { type, section } = getStructuredDataForFile(
+                  fileData.frontmatter?.tags,
+                  sdConfig.mappings ?? [],
+                  sdConfig.defaultType ?? "Article",
+                )
+
+                const author = sdConfig.author ?? {
+                  type: "Organization",
+                  name: cfg.pageTitle,
+                }
+
+                const publisher = sdConfig.publisher ?? author
+
+                // Determine OG image path (same logic as ogImage.tsx)
+                const userDefinedOgImagePath = fileData.frontmatter?.socialImage
+                const generatedOgImagePath = usesCustomOgImage
+                  ? `https://${cfg.baseUrl}/${fileData.slug}-og-image.webp`
+                  : undefined
+                const ogImagePath = userDefinedOgImagePath
+                  ? (isAbsoluteURL(userDefinedOgImagePath)
+                    ? userDefinedOgImagePath
+                    : `https://${cfg.baseUrl}/static/${userDefinedOgImagePath}`)
+                  : (generatedOgImagePath ?? ogImageDefaultPath)
+
+                const jsonLd: any = {
+                  "@context": "https://schema.org",
+                  "@type": type,
+                  headline: fileData.frontmatter?.title,
+                  url: socialUrl,
+                  image: ogImagePath,
+                  inLanguage: cfg.locale,
+                  mainEntityOfPage: {
+                    "@type": "WebPage",
+                    "@id": socialUrl,
+                  },
+                  author: {
+                    "@type": author.type,
+                    name: author.name,
+                    ...(author.url && { url: author.url }),
+                  },
+                  publisher: {
+                    "@type": publisher.type,
+                    name: publisher.name,
+                    ...(publisher.url && { url: publisher.url }),
+                    ...(publisher.type === "Organization" && {
+                      logo: {
+                        "@type": "ImageObject",
+                        url: `https://${cfg.baseUrl}/static/icon.png`,
+                        width: 184,
+                        height: 184,
+                      },
+                    }),
+                  },
+                }
+
+                // Add description if available
+                if (description) {
+                  jsonLd.description = description
+                }
+
+                // Add dates if available
+                if (fileData.dates?.published) {
+                  jsonLd.datePublished = fileData.dates.published.toISOString()
+                }
+                if (fileData.dates?.modified) {
+                  jsonLd.dateModified = fileData.dates.modified.toISOString()
+                }
+
+                // Add section if available
+                if (section) {
+                  jsonLd.articleSection = section
+                }
+
+                // Add keywords from all tags
+                if (fileData.frontmatter?.tags && fileData.frontmatter.tags.length > 0) {
+                  jsonLd.keywords = fileData.frontmatter.tags.join(", ")
+                }
+
+                return jsonLd
+              })(),
+            )}
+          </script>
+        )}
 
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js

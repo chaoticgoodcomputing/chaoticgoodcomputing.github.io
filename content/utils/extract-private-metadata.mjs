@@ -8,7 +8,7 @@ import { existsSync } from "fs"
 
 const PRIVATE_DIR = "private"
 const PUBLIC_DIR = "public"
-const PRIVATE_BODY_FILE = "public/assets/PRIVATE_FILE_BODY.md"
+const PRIVATE_BODY_FILE = "public/assets/PRIVATE_FILE_BODY.txt"
 
 /**
  * Remove all public markdown files that have the "private" tag.
@@ -113,7 +113,7 @@ async function extractPrivateMetadata() {
   try {
     privateBodyContent = await readFile(PRIVATE_BODY_FILE, "utf-8")
   } catch (error) {
-    console.log("⚠️  Could not read PRIVATE_FILE_BODY.md, using default message")
+    console.log("⚠️  Could not read PRIVATE_FILE_BODY.txt, using default message")
   }
 
   // Find all markdown files in the private directory

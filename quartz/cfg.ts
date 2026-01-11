@@ -86,6 +86,55 @@ export interface TagConfiguration {
   defaultIcon?: string | null
 }
 
+/**
+ * Schema.org types for structured data
+ * @see https://schema.org/Article
+ */
+export type SchemaOrgArticleType =
+  | "Article"           // Generic article
+  | "BlogPosting"       // Blog post
+  | "NewsArticle"       // News article
+  | "ScholarlyArticle"  // Academic/research article
+  | "TechArticle"       // Technical article
+  | "Report"            // Report or documentation
+  | "HowTo"             // Tutorial or how-to guide
+  | "Review"            // Review or annotation
+
+export interface StructuredDataMapping {
+  /** Tag to match (e.g., "writing/articles") */
+  tag: string
+  /** Schema.org type */
+  type: SchemaOrgArticleType
+  /** Human-readable section name for articleSection property */
+  section: string
+}
+
+export interface StructuredDataAuthor {
+  /** "Organization" or "Person" */
+  type: "Organization" | "Person"
+  /** Author name */
+  name: string
+  /** Author URL (optional) */
+  url?: string
+}
+
+export interface StructuredDataConfiguration {
+  /**
+   * Tag-to-type mappings for structured data.
+   * Order matters: first matching tag determines the article type and section.
+   */
+  mappings?: StructuredDataMapping[]
+  
+  /** Default Schema.org type when no tags match */
+  defaultType?: SchemaOrgArticleType
+  
+  /** Author information for structured data */
+  author?: StructuredDataAuthor
+  
+  /** Publisher information (defaults to author if not specified) */
+  publisher?: StructuredDataAuthor
+}
+
 export interface GlobalConfiguration {
   pageTitle: string
   pageTitleSuffix?: string
@@ -115,6 +164,8 @@ export interface GlobalConfiguration {
   locale: ValidLocale
   /** Tag system configuration for colors and icons */
   tags?: TagConfiguration
+  /** Structured data (JSON-LD) configuration for SEO */
+  structuredData?: StructuredDataConfiguration
 }
 
 export interface QuartzConfig {

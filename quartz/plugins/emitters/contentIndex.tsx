@@ -63,6 +63,17 @@ function generateRSSFeed(cfg: GlobalConfiguration, idx: ContentIndexMap, limit?:
   </item>`
 
   const items = Array.from(idx)
+    .filter(([slug, content]) => {
+      // Only include content pages (paths starting with "content/")
+      if (!slug.startsWith("content/")) {
+        return false
+      }
+      // Exclude posts with "private" tag
+      if (content.tags.some((tag) => tag.toLowerCase().includes("private"))) {
+        return false
+      }
+      return true
+    })
     .sort(([_, f1], [__, f2]) => {
       if (f1.date && f2.date) {
         return f2.date.getTime() - f1.date.getTime()

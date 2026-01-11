@@ -22,7 +22,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "chaoticgood.computer",
+    baseUrl: "blog.chaoticgood.computer",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     tags: {
@@ -90,6 +90,31 @@ const config: QuartzConfig = {
       ],
       defaultColor: "#888888",
       defaultIcon: null,
+    },
+    structuredData: {
+      mappings: [
+        // Writing types (most specific)
+        { tag: "writing/annotations", type: "ScholarlyArticle", section: "Annotations" },
+        { tag: "writing/tutorials", type: "HowTo", section: "Tutorials" },
+        { tag: "writing/articles", type: "Article", section: "Articles" },
+        
+        // Subject areas (fallback categories)
+        { tag: "engineering", type: "TechArticle", section: "Engineering" },
+        { tag: "economics", type: "Article", section: "Economics" },
+        { tag: "horticulture", type: "BlogPosting", section: "Digital Garden" },
+        { tag: "projects", type: "Report", section: "Projects" },
+      ],
+      defaultType: "Article",
+      author: {
+        type: "Person",
+        name: "Spencer Elkington",
+        url: "https://blog.chaoticgood.computer/about",
+      },
+      publisher: {
+        type: "Organization",
+        name: "Chaotic Good Computing",
+        url: "https://blog.chaoticgood.computer/about",
+      },
     },
     theme: {
       fontOrigin: "googleFonts",
@@ -161,12 +186,13 @@ const config: QuartzConfig = {
       Plugin.ContentIndex({
         enableSiteMap: true,
         enableRSS: true,
+        rssLimit: 40,
       }),
       Plugin.Assets(),
       Plugin.Static(),
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-      // Plugin.CustomOgImages(),
+      Plugin.CustomOgImages(),
     ],
   },
 }

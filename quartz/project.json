@@ -31,6 +31,17 @@
         "vault:download-annotation-pdfs"
       ]
     },
+    "_postbuild": {
+      "//": "Internal target to run post-build steps (copy robots.txt to root)",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp quartz/static/robots.txt public/robots.txt"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      }
+    },
     "serve": {
       "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
       "executor": "nx:run-commands",
@@ -55,7 +66,10 @@
       "//": "Production build to public/. Use build:docs or build:site for presets.",
       "executor": "nx:run-commands",
       "options": {
-        "commands": [ "./quartz/bootstrap-cli.mjs build -d {args.dir}" ],
+        "commands": [
+          "./quartz/bootstrap-cli.mjs build -d {args.dir}",
+          "cp quartz/static/robots.txt public/robots.txt"
+        ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
@@ -64,7 +78,10 @@
           "commands": [ "./quartz/bootstrap-cli.mjs build -d docs/reference/external/quartz/repo/docs" ]
         },
         "site": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build -d content/public" ]
+          "commands": [
+            "./quartz/bootstrap-cli.mjs build -d content/public",
+            "cp quartz/static/robots.txt public/robots.txt"
+          ]
         }
       },
       "defaultConfiguration": "site",
@@ -94,6 +111,44 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [ "tsx --test" ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "eval": {
+      "//": "Run Lighthouse audit on static build for performance evaluation, then extract actionable insights",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "sleep 5",
+          "lighthouse http://localhost:8080 --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report.html --view",
+          "node utils/lighthouse/extract-insights.mjs lighthouse-report"
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [ "site:build", "_serve-static" ]
+    },
+    "_serve-static": {
+      "//": "Helper: Serve production build from public/ directory on port 8080 for Lighthouse evaluation",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx serve public -l 8080"
+        ],
+        "parallel": false,
+        "cwd": "{workspaceRoot}"
+      },
+      "continuous": true
+    },
+    "eval:live": {
+      "//": "Run Lighthouse audit on live site for remote server performance, then extract actionable insights",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "lighthouse https://blog.chaoticgood.computer --only-categories=performance,accessibility,best-practices,seo --output=html,json --output-path=./utils/lighthouse/raw/lighthouse-report-live.html --view",
+          "node utils/lighthouse/extract-insights.mjs lighthouse-report-live"
+        ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       }
