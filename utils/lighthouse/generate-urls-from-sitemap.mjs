@@ -29,7 +29,7 @@ const EXCLUDE_PATTERNS = [
 function urlToMarkdownPaths(urlPath) {
   // Remove leading slash
   const path = urlPath.replace(/^\//, '');
-  
+
   // Try both public and private directories
   return [
     resolve(process.cwd(), `content/public/${path}.md`),
@@ -43,10 +43,10 @@ function urlToMarkdownPaths(urlPath) {
 function extractTags(content) {
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!frontmatterMatch) return [];
-  
+
   const frontmatter = frontmatterMatch[1];
   const tagsMatch = frontmatter.match(/tags:\s*\n((?:  - .+\n)+)/);
-  
+
   if (!tagsMatch) {
     // Try inline format: tags: [tag1, tag2]
     const inlineMatch = frontmatter.match(/tags:\s*\[([^\]]+)\]/);
@@ -55,7 +55,7 @@ function extractTags(content) {
     }
     return [];
   }
-  
+
   // Parse YAML list format
   return tagsMatch[1]
     .split('\n')
@@ -70,38 +70,38 @@ async function shouldIncludeUrl(url) {
   // Extract path from URL
   const urlObj = new URL(url);
   const urlPath = urlObj.pathname;
-  
+
   // Check exclude patterns first
   if (EXCLUDE_PATTERNS.some(pattern => urlPath.includes(pattern))) {
     return false;
   }
-  
+
   // Root pages (/, /about, etc.) - always include
   if (urlPath === '/' || !urlPath.includes('/content/')) {
     return true;
   }
-  
+
   // Content pages - check for private tag
   const possiblePaths = urlToMarkdownPaths(urlPath);
-  
+
   for (const filePath of possiblePaths) {
     try {
       await access(filePath);
       const content = await readFile(filePath, 'utf-8');
       const tags = extractTags(content);
-      
+
       // Exclude if any tag contains "private"
       if (tags.some(tag => tag.includes('private'))) {
         return false;
       }
-      
+
       return true;
     } catch (err) {
       // File doesn't exist at this path, try next
       continue;
     }
   }
-  
+
   // If we can't find the source file, include it (better safe than sorry)
   console.warn(`⚠️  Could not find source file for ${urlPath}, including by default`);
   return true;
@@ -127,7 +127,7 @@ async function generateConfig() {
     const include = await shouldIncludeUrl(url);
     return { url, include };
   });
-  
+
   const filterResults = await Promise.all(filterPromises);
   const filteredUrls = filterResults.filter(r => r.include).map(r => r.url);
 

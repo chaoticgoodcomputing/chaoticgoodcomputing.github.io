@@ -1,0 +1,72 @@
+{
+  "name": "resume",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "resume",
+  "targets": {
+    "setup": {
+      "//": "Verifies Typst is installed locally, provides installation guidance if missing",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bash resume/utils/setup.sh"
+        ],
+        "parallel": false
+      }
+    },
+    "build": {
+      "//": "Compiles resume.typ to PDF output in dist/resume/",
+      "executor": "nx:run-commands",
+      "dependsOn": [ "setup" ],
+      "options": {
+        "commands": [
+          "mkdir -p dist/resume",
+          "typst compile resume/resume.typ dist/resume/resume.pdf"
+        ],
+        "parallel": false
+      },
+      "outputs": [ "{workspaceRoot}/dist/resume" ]
+    },
+    "clean": {
+      "//": "Removes build artifacts",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rm -rf dist/resume"
+        ],
+        "parallel": false
+      }
+    },
+    "serve": {
+      "//": "Watches resume.typ for changes and recompiles automatically",
+      "executor": "nx:run-commands",
+      "dependsOn": [ "setup" ],
+      "options": {
+        "commands": [
+          "mkdir -p dist/resume && typst watch resume/resume.typ dist/resume/resume.pdf"
+        ],
+        "parallel": false
+      },
+      "continuous": true
+    },
+    "_lint-links": {
+      "//": "Helper target: Checks for broken links in resume.typ using curl",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node resume/utils/check-links.mjs"
+        ],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "//": "Runs all linting checks on the resume",
+      "executor": "nx:run-commands",
+      "dependsOn": [ "_lint-links" ],
+      "options": {
+        "commands": [],
+        "parallel": false
+      }
+    }
+  }
+}

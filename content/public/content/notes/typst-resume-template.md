@@ -24,7 +24,7 @@ If you publicly post or share the source code to your resume, you're totally all
 ## Quickstart: How to use this template
 
 1. If you haven't already, create a (free!) Typst account at https://typst.app
-2. Once you have an account, go to https://typst.app/universe/package/resume-starter-cgc
+2. Once you have an account, go to [Typst Universe and select the CGC template](https://typst.app/universe/package/guided-resume-starter-cgc)
 3. Click on "Create Project in App", give your project a title, and press "Create"
 4. Start editing! This copy is your own personal copy to edit however you want!
     - If you would like to edit a copy of the resume without the guide, use the `resume.typ` file.
