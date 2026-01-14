@@ -87,9 +87,9 @@
   location: "Remote",
   summary: "Creating software & applications to connect voters to their representatives",
   details: [
-    - Rollout LLM agent tooling in developer and deployment workflows for fully autonomous ticket resolution
+    - Roll out LLM agent tooling in developer and deployment workflows for autonomous ticket resolution
     - Develop testing & CI/CD frameworks to minimize regression risk in *ASP.NET* and *React Native* apps
-    - Orchestrate codebase consolidation via *NX* to de-silo dev teams and inroduce end-to-end testing
+    - Orchestrate codebase consolidatifully on via *NX* to de-silo dev teams and inroduce end-to-end testing
   ],
 )
 
@@ -202,7 +202,7 @@
   project: link(
     "https://blog.chaoticgood.computing",
   )[CGC],
-  date: "June 2022",
+  date: "Oct 2025 - Present",
   details: [
     - Architected a data engineering framework for compile-time, type-safe ETL pipelines in *C\#/.NET*
     - Exercised API surface-first design philosophy for intuitive developer onboarding & reliable agentic usage
@@ -217,7 +217,7 @@
   project: link(
     "https://blog.chaoticgood.computing",
   )[CGC],
-  date: "June 2022",
+  date: "Oct 2025 - Present",
   details: [
     - Designed an analytics suite for rules and card analysis of Magic: The Gathering rules and game data
     - Created a custom *NUnit* #link("https://blog.chaoticgood.computer/content/notes/scratch/ratcheted-testing")[ratcheted testing framework] for scalable test case creation

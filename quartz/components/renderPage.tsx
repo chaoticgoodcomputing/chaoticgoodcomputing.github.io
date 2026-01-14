@@ -11,6 +11,7 @@ import { Root, Element, ElementContent } from "hast"
 import { GlobalConfiguration } from "../cfg"
 import { i18n } from "../i18n"
 import { styleText } from "util"
+import { QuartzPluginData } from "../plugins/vfile"
 
 interface RenderComponents {
   head: QuartzComponent
@@ -24,12 +25,28 @@ interface RenderComponents {
 }
 
 const headerRegex = new RegExp(/h[1-6]/)
+
+/**
+ * Builds the complete resource set for a page, merging:
+ * 1. Base resources (index.css, prescript.js, postscript.js)
+ * 2. Static resources from plugins (via externalResources)
+ * 3. Per-page resources from transformers (via fileData.pageResources)
+ *
+ * @param baseDir - Base directory for resolving relative paths
+ * @param staticResources - Global static resources from plugins
+ * @param fileData - Optional file data containing per-page resources
+ */
 export function pageResources(
   baseDir: FullSlug | RelativeURL,
   staticResources: StaticResources,
+  fileData?: QuartzPluginData,
 ): StaticResources {
   const contentIndexScript = `const fetchData = fetch("/static/contentIndex.json").then(data => data.json())`
   const tagIndexScript = `const fetchTagData = fetch("/static/tagIndex.json").then(data => data.json())`
+
+  // Extract per-page resources if available
+  const pageJs = fileData?.pageResources?.js ?? []
+  const pageCss = fileData?.pageResources?.css ?? []
 
   const resources: StaticResources = {
     css: [
@@ -37,6 +54,8 @@ export function pageResources(
         content: "/index.css",
       },
       ...staticResources.css,
+      // Per-page CSS comes after static resources
+      ...pageCss,
     ],
     js: [
       {
@@ -67,6 +86,9 @@ export function pageResources(
     moduleType: "module",
     contentType: "external",
   })
+
+  // Per-page JS comes after postscript to ensure dependencies are loaded
+  resources.js.push(...pageJs)
 
   return resources
 }

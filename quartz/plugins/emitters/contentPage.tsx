@@ -29,7 +29,8 @@ async function processContent(
 ) {
   const slug = fileData.slug!
   const cfg = ctx.cfg.configuration
-  const externalResources = pageResources(pathToRoot(slug), resources)
+  // Pass fileData to merge any per-page resources from transformers
+  const externalResources = pageResources(pathToRoot(slug), resources, fileData)
   const componentData: QuartzComponentProps = {
     ctx,
     fileData,

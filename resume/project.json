@@ -64,7 +64,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [ "_lint-links" ],
       "options": {
-        "commands": [],
+        "commands": [ ],
         "parallel": false
       }
     }

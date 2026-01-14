@@ -67,6 +67,17 @@ export interface StaticResources {
   additionalHead: (JSX.Element | ((pageData: QuartzPluginData) => JSX.Element))[]
 }
 
+/**
+ * Per-page resources that transformers can attach to individual files.
+ * These are merged into the page's externalResources during rendering,
+ * allowing transformers to inject page-specific scripts/styles without
+ * adding them to the global bundle.
+ */
+export interface PageResources {
+  js?: JSResource[]
+  css?: CSSResource[]
+}
+
 export type StringResource = string | string[] | undefined
 export function concatenateResources(...resources: StringResource[]): StringResource {
   return resources

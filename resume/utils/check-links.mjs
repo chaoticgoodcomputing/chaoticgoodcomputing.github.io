@@ -60,20 +60,20 @@ function checkUrl(url) {
         { encoding: 'utf-8' }
       );
       const statusCode = parseInt(result.trim());
-      
+
       // Consider 2xx and 3xx as success
       if (statusCode >= 200 && statusCode < 400) {
         return { success: true, method: 'GET', statusCode };
       }
-      
-      return { 
-        success: false, 
+
+      return {
+        success: false,
         message: `HTTP ${statusCode}`,
-        statusCode 
+        statusCode
       };
     } catch (getError) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: `Both HEAD and GET requests failed: ${getError.message}`
       };
     }
@@ -94,7 +94,7 @@ let warnings = [];
 for (const url of links) {
   process.stdout.write(`  Checking: ${url} ... `);
   const result = checkUrl(url);
-  
+
   if (result.success) {
     console.log('✅');
   } else if (result.statusCode && isWarningStatusCode(result.statusCode)) {
