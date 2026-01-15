@@ -14,11 +14,11 @@ import { JSX } from "preact"
  */
 export function Initialization(): JSX.Element {
   return (
-    <div className="widget-content-initialization" data-widget="content-initialization">
-      <div className="init-status-container">
-        <div className="init-status-item loading">
-          <span className="init-icon"></span>
-          <span className="init-text">Initializing Vault widgets...</span>
+    <div class="widget-content-initialization" data-widget="content-initialization">
+      <div class="init-status-container">
+        <div class="init-status-item loading">
+          <span class="init-icon"></span>
+          <span class="init-text">Initializing Vault widgets...</span>
         </div>
       </div>
     </div>

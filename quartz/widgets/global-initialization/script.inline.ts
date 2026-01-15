@@ -53,14 +53,7 @@ const globalInitWidget = createWidgetScript({
     const text = statusItem.querySelector(".init-text")
     if (!text) return
     
-    // Check if any widgets exist (excluding this one)
-    const hasWidgets = document.querySelector('[data-widget]:not([data-widget="global-initialization"])')
-    
-    if (hasWidgets) {
-      text.textContent = "Quartz widgets initialized"
-    } else {
-      text.textContent = "Quartz widgets ready (none on page)"
-    }
+    text.textContent = "Quartz widgets initialized"
     
     // Switch from loading to initialized state
     statusItem.classList.remove("loading")

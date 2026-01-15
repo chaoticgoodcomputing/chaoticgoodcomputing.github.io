@@ -53,14 +53,7 @@ const contentInitWidget = createWidgetScript({
     const text = statusItem.querySelector(".init-text")
     if (!text) return
     
-    // Check if any content-specific widgets exist (greeting, etc.)
-    const hasContentWidgets = document.querySelector('.greeting-box, .annotation-viewer')
-    
-    if (hasContentWidgets) {
-      text.textContent = "Vault widgets initialized"
-    } else {
-      text.textContent = "Vault widgets ready (none on page)"
-    }
+    text.textContent = "Vault widgets initialized"
     
     // Switch from loading to initialized state
     statusItem.classList.remove("loading")

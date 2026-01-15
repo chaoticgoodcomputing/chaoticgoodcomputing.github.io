@@ -22,6 +22,8 @@
     "quartz/**/*.tsx",
     "content/**/*.ts",
     "content/**/*.tsx",
+    "public/**/*.ts",
+    "public/**/*.tsx",
     "*.ts",
     "*.tsx",
     "./package.json"

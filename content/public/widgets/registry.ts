@@ -1,5 +1,7 @@
 import type { WidgetRegistry } from "../../../quartz/widgets/types"
 import { initialization } from "./initialization"
+import { pageAssets } from "./page-assets"
+import { gameOfLife } from "./game-of-life"
 
 /**
  * Vault-specific widget registry.
@@ -11,6 +13,8 @@ import { initialization } from "./initialization"
  */
 export const contentWidgets: WidgetRegistry = {
   "@content/widgets/initialization": initialization,
+  "@content/widgets/page-assets": pageAssets,
+  "@content/widgets/game-of-life": gameOfLife
 }
 
 /**

@@ -91,12 +91,24 @@ export const MDX: QuartzTransformerPlugin = () => {
               }
             })
 
-            // Remove widget import statements from the tree
-            for (const { index, parent } of importNodesToRemove.reverse()) {
-              parent.children.splice(index, 1)
+            // Remove widget import statements by filtering the root children
+            // (Don't use indices from visit since tree structure changes)
+            if (importNodesToRemove.length > 0) {
+              const nodesToRemove = new Set(importNodesToRemove.map(n => n.node))
+              for (const {parent} of importNodesToRemove) {
+                parent.children = parent.children.filter((child: any) => !nodesToRemove.has(child))
+              }
             }
 
-            // Transform widget JSX elements to static HTML
+            // Collect widget JSX elements to transform
+            const jsxNodesToReplace: Array<{
+              node: any
+              index: number
+              parent: any
+              html: string
+            }> = []
+
+            // Find and render all widget JSX elements
             visit(tree, "mdxJsxFlowElement", (node: any, index, parent) => {
               if (!parent || index === undefined) return
 
@@ -133,12 +145,17 @@ export const MDX: QuartzTransformerPlugin = () => {
               // Render the widget placeholder component
               const html = renderToString(widget.Component(props))
               
-              // Replace the JSX node with raw HTML
+              // Store replacement information
+              jsxNodesToReplace.push({ node, index, parent, html })
+            })
+
+            // Apply all replacements after traversal is complete
+            for (const { index, parent, html } of jsxNodesToReplace) {
               parent.children[index] = {
                 type: "html",
                 value: html,
               } as any
-            })
+            }
 
             // Add widget scripts to page resources
             if (usedWidgets.size > 0) {

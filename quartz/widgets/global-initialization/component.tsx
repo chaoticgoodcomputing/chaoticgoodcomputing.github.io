@@ -14,11 +14,11 @@ import { JSX } from "preact"
  */
 export function GlobalInitialization(): JSX.Element {
   return (
-    <div className="widget-global-initialization" data-widget="global-initialization">
-      <div className="init-status-container">
-        <div className="init-status-item loading">
-          <span className="init-icon"></span>
-          <span className="init-text">Initializing Quartz widgets...</span>
+    <div class="widget-global-initialization" data-widget="global-initialization">
+      <div class="init-status-container">
+        <div class="init-status-item loading">
+          <span class="init-icon"></span>
+          <span class="init-text">Initializing Quartz widgets...</span>
         </div>
       </div>
     </div>

@@ -64,7 +64,6 @@ const config: QuartzConfig = {
         { tag: "economics/markets", icon: "mdi:handshake" },
         
         // Project Types
-        { tag: "projects/dayjob", icon: "mdi:vote" },
         { tag: "projects/games", icon: "mdi:controller-classic" },
         { tag: "projects/college", icon: "custom:uofu" },
         { tag: "projects/teaching", icon: "mdi:thought-bubble" },
@@ -85,6 +84,9 @@ const config: QuartzConfig = {
         // Seasonal Themes
         { tag: "horticulture/seasons/rhythm", icon: "mdi:music-note" },
         { tag: "horticulture/seasons/systems", icon: "mdi:transit-connection-variant" },
+
+        // Dayjob
+        { tag: "projects/dayjob", icon: "mdi:vote" },
 
         // Access/Privacy
         { tag: "private", icon: "mdi:lock" },

@@ -3,9 +3,13 @@ title: "Quartz MDX: Graphs, Galore"
 tags:
   - horticulture
   - engineering/languages/typescript
+  - engineering/frontend
+  - writing/articles
 ---
 import { GlobalInitialization } from '@widgets/global-initialization'
 import { Initialization } from '@content/widgets/initialization'
+import { PageAssets } from "@content/widgets/page-assets"
+import { GameOfLife } from "@content/widgets/game-of-life"
 
 ## Testing Content-Specific Widgets
 
@@ -13,3 +17,29 @@ import { Initialization } from '@content/widgets/initialization'
 
 <Initialization />
 
+<PageAssets />
+
+<GameOfLife 
+  initialState={[
+    [0,0,1,1,1,0,0,0,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [0,0,1,1,1,0,0,0,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,1,1,1,0,0,0,1,1,1,0,0],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [1,0,0,0,0,1,0,1,0,0,0,0,1],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,1,1,1,0,0,0,1,1,1,0,0]
+  ]}
+  verticalPadding={3}
+  height={400}
+  secondsPerFrame={0.3}
+/>
+
+Enim tempor ad amet exercitation tempor cillum incididunt fugiat ipsum laborum reprehenderit sit laboris cupidatat. Fugiat officia duis proident aute Lorem mollit reprehenderit pariatur exercitation do cillum fugiat adipisicing nostrud nisi. Commodo culpa aute qui nulla proident aute mollit do incididunt. Aliquip aute ut quis ut ullamco. Officia ea dolore nulla in quis nulla commodo do cillum sint mollit culpa deserunt. Irure sint ipsum do dolor duis enim ad commodo.
+
+Duis sint consectetur cupidatat id sunt ex. In non dolore elit commodo exercitation Lorem. Lorem adipisicing proident enim tempor irure dolore exercitation dolor. Minim nostrud minim qui elit ullamco proident exercitation ut quis esse. Mollit aliquip mollit laborum excepteur id ad.
