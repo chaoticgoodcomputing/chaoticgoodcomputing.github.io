@@ -169,15 +169,16 @@ function _scrollToTarget(url: URL): void {
 }
 
 /**
- * Update head elements by removing old and adding new (except persisted)
- * Returns a promise that resolves when all new scripts have loaded
+ * Update head elements by removing old non-persisted elements and adding all new elements
+ * Returns a promise that resolves when all new scripts and stylesheets have loaded
  */
 function _updateHead(html: Document): Promise<void> {
   const elementsToRemove = document.head.querySelectorAll(":not([data-persist])")
   elementsToRemove.forEach((el) => el.remove())
 
-  const scriptLoadPromises: Promise<void>[] = []
-  const elementsToAdd = html.head.querySelectorAll(":not([data-persist])")
+  const resourceLoadPromises: Promise<void>[] = []
+  // Add ALL elements from new page (including persisted ones that might not be in current page)
+  const elementsToAdd = html.head.querySelectorAll("link, meta, script, style")
   
   elementsToAdd.forEach((el) => {
     // For script elements, create a new script tag to ensure it executes
@@ -193,20 +194,35 @@ function _updateHead(html: Document): Promise<void> {
           script.onload = () => resolve()
           script.onerror = () => reject(new Error(`Failed to load script: ${(el as HTMLScriptElement).src}`))
         })
-        scriptLoadPromises.push(loadPromise)
+        resourceLoadPromises.push(loadPromise)
         script.src = (el as HTMLScriptElement).src
       } else {
         script.textContent = el.textContent
       }
       
       document.head.appendChild(script)
+    } else if (el.tagName === "LINK" && (el as HTMLLinkElement).rel === "stylesheet") {
+      // For stylesheet links, create a new link element to ensure it loads
+      const link = document.createElement("link")
+      Array.from(el.attributes).forEach((attr) => {
+        link.setAttribute(attr.name, attr.value)
+      })
+      
+      // Create a promise that resolves when the stylesheet loads
+      const loadPromise = new Promise<void>((resolve, reject) => {
+        link.onload = () => resolve()
+        link.onerror = () => reject(new Error(`Failed to load stylesheet: ${(el as HTMLLinkElement).href}`))
+      })
+      resourceLoadPromises.push(loadPromise)
+      
+      document.head.appendChild(link)
     } else {
       document.head.appendChild(el)
     }
   })
   
-  // Wait for all scripts to load
-  return Promise.all(scriptLoadPromises).then(() => {})
+  // Wait for all scripts and stylesheets to load
+  return Promise.all(resourceLoadPromises).then(() => {})
 }
 
 // ============================================================================

@@ -1,7 +1,5 @@
 import { WidgetRegistry } from "./types"
 import { pdfViewer } from "./pdf-viewer"
-import { counter } from "./counter"
-import { initCheck } from "./init-check"
 import { globalInitialization } from "./global-initialization"
 
 /**
@@ -23,8 +21,6 @@ import { globalInitialization } from "./global-initialization"
  */
 export const widgets: WidgetRegistry = {
   "@widgets/pdf-viewer": pdfViewer,
-  "@widgets/counter": counter,
-  "@widgets/init-check": initCheck,
   "@widgets/global-initialization": globalInitialization,
 }
 

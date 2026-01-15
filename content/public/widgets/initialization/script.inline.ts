@@ -4,38 +4,68 @@
  * Updates status to confirm content widget system initialization.
  */
 
-function initializeContentInit(element: HTMLElement): void {
-  const statusItem = element.querySelector<HTMLElement>(".init-status-item")
+// === Widget Script Helper (inlined to avoid import issues) ===
+interface WidgetScriptConfig {
+  selector: string
+  initialize: (element: HTMLElement) => (() => void) | void
+}
+
+function createWidgetScript(config: WidgetScriptConfig) {
+  const cleanupHandlers = new WeakMap<HTMLElement, () => void>()
   
-  if (!statusItem) return
+  function cleanupInstance(element: HTMLElement): void {
+    const cleanup = cleanupHandlers.get(element)
+    if (cleanup) {
+      cleanup()
+      cleanupHandlers.delete(element)
+    }
+  }
   
-  const checkbox = statusItem.querySelector(".init-checkbox")
-  const text = statusItem.querySelector(".init-text")
+  function initializeAll(): void {
+    const elements = document.querySelectorAll<HTMLElement>(config.selector)
+    elements.forEach((element) => {
+      cleanupInstance(element)
+      const cleanup = config.initialize(element)
+      if (cleanup) cleanupHandlers.set(element, cleanup)
+    })
+  }
   
-  if (!checkbox || !text) return
-  
-  // Check if any content-specific widgets exist (greeting, etc.)
-  const hasContentWidgets = document.querySelector('.greeting-box, .annotation-viewer')
-  
-  if (hasContentWidgets) {
-    checkbox.textContent = "✅"
-    text.textContent = "Content widget system initialized"
-    statusItem.style.color = "#22c55e"
-  } else {
-    checkbox.textContent = "ℹ️"
-    text.textContent = "Content widget system ready (no content widgets on page)"
-    statusItem.style.color = "#94a3b8"
+  return {
+    start() {
+      document.addEventListener("nav", initializeAll)
+      window.addEventListener("load", initializeAll)
+      window.addCleanup(() => {
+        document.removeEventListener("nav", initializeAll)
+        window.removeEventListener("load", initializeAll)
+      })
+      initializeAll()
+    }
   }
 }
+// === End Widget Script Helper ===
 
-// Initialize all content-initialization widgets
-function initializeAll(): void {
-  document.querySelectorAll<HTMLElement>(".widget-content-initialization").forEach(initializeContentInit)
-}
+const contentInitWidget = createWidgetScript({
+  selector: ".widget-content-initialization",
+  initialize: (element) => {
+    const statusItem = element.querySelector<HTMLElement>(".init-status-item")
+    if (!statusItem) return
+    
+    const text = statusItem.querySelector(".init-text")
+    if (!text) return
+    
+    // Check if any content-specific widgets exist (greeting, etc.)
+    const hasContentWidgets = document.querySelector('.greeting-box, .annotation-viewer')
+    
+    if (hasContentWidgets) {
+      text.textContent = "Vault widgets initialized"
+    } else {
+      text.textContent = "Vault widgets ready (none on page)"
+    }
+    
+    // Switch from loading to initialized state
+    statusItem.classList.remove("loading")
+    statusItem.classList.add("initialized")
+  }
+})
 
-// Initialize on both page load and navigation
-document.addEventListener("nav", initializeAll)
-window.addEventListener("load", initializeAll)
-
-// Also initialize immediately when script loads
-initializeAll()
+contentInitWidget.start()
