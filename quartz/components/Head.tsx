@@ -206,7 +206,7 @@ export default (() => {
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
-          .map((res) => JSResourceToScriptElement(res, true))}
+          .map((res) => JSResourceToScriptElement(res))}
         {additionalHead.map((resource) => {
           if (typeof resource === "function") {
             return resource(fileData)

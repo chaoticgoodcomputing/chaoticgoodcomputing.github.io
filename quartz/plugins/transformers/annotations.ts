@@ -71,12 +71,19 @@ export const Annotations: QuartzTransformerPlugin = () => {
         }
       }
       
+      // Remove annotation blocks from source to prevent MDX parsing errors
+      // Use a fresh regex instance for replacement since we already consumed the matches above
+      const annotationRemovalRegex = />%%\s*\n>```annotation-json\s*\n>([\s\S]*?)\n>```\s*\n>%%[\s\S]*?\n\^([a-z0-9]+)/gm
+      src = src.replace(annotationRemovalRegex, '')
+      
       // Store annotations in a way that will be accessible in fileData
-      // We'll inject this as a special comment that we can parse later
+      // We'll inject this as a special code block that won't be rendered
+      // Using a code fence is MDX-compatible unlike HTML comments
       if (annotations.length > 0) {
         const annotationsJson = JSON.stringify(annotations)
-        // Add hidden metadata that won't render but will be in the tree
-        src += `\n\n<!-- quartz:annotations ${Buffer.from(annotationsJson).toString('base64')} -->\n`
+        const encoded = Buffer.from(annotationsJson).toString('base64')
+        // Use a hidden code block that will be in the tree but not rendered
+        src += `\n\n\`\`\`quartz-annotations\n${encoded}\n\`\`\`\n`
       }
       
       return src
@@ -85,18 +92,18 @@ export const Annotations: QuartzTransformerPlugin = () => {
       return [
         () => {
           return async (tree: Root, file) => {
-            // Extract annotation metadata from the hidden comment we injected
+            // Extract annotation metadata from the hidden code block we injected
             let annotationsToProcess: any[] = []
-            let commentNode: any = null
+            let codeNode: any = null
             
-            visit(tree, "html", (node: any) => {
-              const match = node.value?.match(/<!-- quartz:annotations (.*?) -->/)
-              if (match) {
+            visit(tree, "code", (node: any) => {
+              // Look for our special quartz-annotations code block
+              if (node.lang === "quartz-annotations" && node.value) {
                 try {
-                  const annotationsJson = Buffer.from(match[1], 'base64').toString('utf-8')
+                  const annotationsJson = Buffer.from(node.value.trim(), 'base64').toString('utf-8')
                   const annotations = JSON.parse(annotationsJson)
                   annotationsToProcess = annotations
-                  commentNode = node
+                  codeNode = node
                 } catch (e) {
                   console.error(`[Annotations] Failed to decode annotation metadata: ${e}`)
                 }
@@ -114,9 +121,11 @@ export const Annotations: QuartzTransformerPlugin = () => {
               // Store in file data for component access
               file.data.annotations = annotationsToProcess
               
-              // Remove the comment from output
-              if (commentNode) {
-                commentNode.value = ''
+              // Remove the code block from output
+              if (codeNode) {
+                codeNode.type = 'html'
+                codeNode.value = ''
+                delete codeNode.lang
               }
             }
           }

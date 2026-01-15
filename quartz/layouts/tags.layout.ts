@@ -36,7 +36,9 @@ export const tagsLayout: PageLayout = {
       folderClickBehavior: "link",
     }),
   ],
-  right: [],
+  right: [
+    Component.Backlinks(),
+  ],
   afterBody: [
     Component.PostListing({
       excludeTags: ["private"],

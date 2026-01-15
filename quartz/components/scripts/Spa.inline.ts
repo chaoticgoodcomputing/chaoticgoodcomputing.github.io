@@ -82,6 +82,35 @@ function _runCleanup(): void {
   cleanupFns.clear()
 }
 
+/**
+ * Execute scripts that should not be persisted across navigations.
+ * Looks in both head and body since afterDOMReady scripts are placed at end of body.
+ */
+function _executeNewScripts(): void {
+  // Find non-persisted scripts in both head and body
+  const scripts = document.querySelectorAll<HTMLScriptElement>(
+    'script[src][data-persist="false"]:not([data-loaded])',
+  )
+  scripts.forEach((oldScript) => {
+    const newScript = document.createElement("script")
+    newScript.src = oldScript.src
+    newScript.type = oldScript.type || "module"
+    
+    // Copy all data attributes
+    Array.from(oldScript.attributes).forEach((attr) => {
+      if (attr.name.startsWith("data-")) {
+        newScript.setAttribute(attr.name, attr.value)
+      }
+    })
+    
+    // Mark as loaded to prevent re-execution
+    newScript.dataset.loaded = "true"
+    
+    // Replace old script with new one to trigger execution
+    oldScript.replaceWith(newScript)
+  })
+}
+
 // ============================================================================
 // HELPER FUNCTIONS - UI Updates
 // ============================================================================
@@ -141,13 +170,43 @@ function _scrollToTarget(url: URL): void {
 
 /**
  * Update head elements by removing old and adding new (except persisted)
+ * Returns a promise that resolves when all new scripts have loaded
  */
-function _updateHead(html: Document): void {
+function _updateHead(html: Document): Promise<void> {
   const elementsToRemove = document.head.querySelectorAll(":not([data-persist])")
   elementsToRemove.forEach((el) => el.remove())
 
+  const scriptLoadPromises: Promise<void>[] = []
   const elementsToAdd = html.head.querySelectorAll(":not([data-persist])")
-  elementsToAdd.forEach((el) => document.head.appendChild(el))
+  
+  elementsToAdd.forEach((el) => {
+    // For script elements, create a new script tag to ensure it executes
+    if (el.tagName === "SCRIPT") {
+      const script = document.createElement("script")
+      Array.from(el.attributes).forEach((attr) => {
+        script.setAttribute(attr.name, attr.value)
+      })
+      
+      // Create a promise that resolves when the script loads
+      if ((el as HTMLScriptElement).src) {
+        const loadPromise = new Promise<void>((resolve, reject) => {
+          script.onload = () => resolve()
+          script.onerror = () => reject(new Error(`Failed to load script: ${(el as HTMLScriptElement).src}`))
+        })
+        scriptLoadPromises.push(loadPromise)
+        script.src = (el as HTMLScriptElement).src
+      } else {
+        script.textContent = el.textContent
+      }
+      
+      document.head.appendChild(script)
+    } else {
+      document.head.appendChild(el)
+    }
+  })
+  
+  // Wait for all scripts to load
+  return Promise.all(scriptLoadPromises).then(() => {})
 }
 
 // ============================================================================
@@ -196,12 +255,16 @@ async function _performNavigation(url: URL, isBack: boolean): Promise<void> {
   // Morph body with new content
   micromorph(document.body, html.body)
 
+  // Execute non-persistent scripts that were added during morph
+  _executeNewScripts()
+
   // Scroll and update history
   if (!isBack) {
     _scrollToTarget(url)
   }
 
-  _updateHead(html)
+  // Wait for all head scripts to load before dispatching nav event
+  await _updateHead(html)
 
   // Update URL after everything is loaded
   if (!isBack) {

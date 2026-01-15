@@ -60,7 +60,7 @@
       },
       "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": [ "vault:sync", "site:_prebuild" ]
+      "dependsOn": [ "site: clean", "vault:sync", "site:_prebuild" ]
     },
     "build": {
       "//": "Production build to public/. Use build:docs or build:site for presets.",

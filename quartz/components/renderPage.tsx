@@ -350,10 +350,11 @@ export function renderPage(
             <Footer {...componentData} />
           </Body>
         </div>
+        {/* afterDOMReady scripts go at the end of body, where micromorph can see them */}
+        {pageResources.js
+          .filter((resource) => resource.loadTime === "afterDOMReady")
+          .map((res) => JSResourceToScriptElement(res))}
       </body>
-      {pageResources.js
-        .filter((resource) => resource.loadTime === "afterDOMReady")
-        .map((res) => JSResourceToScriptElement(res, true))}
     </html>
   )
 

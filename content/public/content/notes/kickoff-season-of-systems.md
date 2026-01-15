@@ -28,6 +28,6 @@ My thoughts on this are... complicated, to say the least. There's a lot at play,
 1. First, the extent to which any person, myself included, utilizes this system is a constant negotiation with a lot of factors: how expensive the (good) models can be, how useful they actually are in a person's line of work (the ceiling is very high in software development, depending on how you use them), how willing somebody is to "feed the machine". These things have gotten really good, really fast (not sure what the current state of counting the `r`s in `strawberries` is), so not only does it need to be negotiated, but it needs to be *re*negotiated as the landscape changes, which has gotten pretty damn exhausting.
 2. As the boundary of what work can be handed off to these systems shifts, my (or anybody else's) role in work also shifts.
 
-<!-- TODO: Wrap it up -->
+%% TODO: Wrap it up %%
 
 ^[1]: my biggest knock against LLMs? My writing uses an abusive amount of [em-dashes](https://www.merriam-webster.com/grammar/em-dash-en-dash-how-to-use), a habit that I picked up in college because it seemed to be an acceptable way to phrase connected thoughts, asides, or parentheticals that would otherwise be critiqued for being run-on sentences. LLMs have, for some *fucking reason*, decided to [steal this habit out from under me](https://www.nytimes.com/2025/09/18/magazine/chatgpt-dash-hyphen-writing-communication.html), and now my writing looks *less* human, not more. I'm still not sure what to do about this.

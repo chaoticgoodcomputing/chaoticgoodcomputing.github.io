@@ -72,7 +72,7 @@ async function buildQuartz(argv: Argv, mut: Mutex, clientRefresh: () => void) {
 
   perf.addEvent("glob")
   const allFiles = await glob("**/*.*", argv.directory, cfg.configuration.ignorePatterns)
-  const markdownPaths = allFiles.filter((fp) => fp.endsWith(".md")).sort()
+  const markdownPaths = allFiles.filter((fp) => fp.endsWith(".md") || fp.endsWith(".mdx")).sort()
   console.log(
     `Found ${markdownPaths.length} input files from \`${argv.directory}\` in ${perf.timeSince("glob")}`,
   )
@@ -202,7 +202,8 @@ async function rebuild(changes: ChangeEvent[], clientRefresh: () => void, buildD
   const staticResources = getStaticResourcesFromPlugins(ctx)
   const pathsToParse: FilePath[] = []
   for (const [fp, type] of Object.entries(changesSinceLastBuild)) {
-    if (type === "delete" || path.extname(fp) !== ".md") continue
+    const ext = path.extname(fp)
+    if (type === "delete" || (ext !== ".md" && ext !== ".mdx")) continue
     const fullPath = joinSegments(argv.directory, toPosixPath(fp)) as FilePath
     pathsToParse.push(fullPath)
   }
@@ -226,7 +227,8 @@ async function rebuild(changes: ChangeEvent[], clientRefresh: () => void, buildD
 
     // manually track non-markdown files as processed files only
     // contains markdown files
-    if (change === "add" && path.extname(file) !== ".md") {
+    const ext = path.extname(file)
+    if (change === "add" && ext !== ".md" && ext !== ".mdx") {
       contentMap.set(file as FilePath, {
         type: "other",
       })

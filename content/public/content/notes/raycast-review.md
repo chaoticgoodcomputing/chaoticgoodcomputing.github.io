@@ -9,4 +9,4 @@ tags:
 ---
 Recently, I stumbled on [Raycast](https://www.raycast.com/) - a MacOS Spotlight replacement that I would *highly* recommend to *everybody*, not just engineers.
 
-<!-- TODO: Lengthen this out. I mean... *cmon* -->
+%% TODO: Lengthen this out. I mean... *cmon* %%

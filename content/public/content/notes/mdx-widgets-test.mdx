@@ -1,0 +1,41 @@
+---
+title: Testing Content-Specific Widgets
+tags:
+  - horticulture
+  - engineering/languages/typescript
+---
+
+import { GlobalInitialization } from '@widgets/global-initialization'
+import { Initialization } from '@content/widgets/initialization'
+
+# Testing Content-Specific Widgets
+
+<GlobalInitialization />
+
+<Initialization />
+
+This page tests widgets from the content widget registry (`content/public/widgets/`).
+
+These are vault-specific widgets that might be used for particular tutorials, demonstrations, or page-specific functionality.
+
+## Greeting Widget
+
+The Greeting widget is a simple example that cycles through different greetings.
+
+import { Greeting } from '@content/widgets/greeting'
+
+<Greeting name="Developer" />
+
+Click the button to cycle through different greeting styles!
+
+## Combining Global and Content Widgets
+
+You can use both global and content widgets on the same page:
+
+import { Counter } from '@widgets/counter'
+
+<Counter initial={0} label="Mix Test" />
+
+<Greeting name="World" />
+
+This demonstrates that both widget systems work together seamlessly.

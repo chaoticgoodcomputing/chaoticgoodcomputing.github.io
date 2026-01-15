@@ -36,8 +36,6 @@ const config: QuartzConfig = {
         { tag: "private", color: BLUESTEEL },
       ],
       icons: [
-        // Access/Privacy
-        { tag: "private", icon: "mdi:lock" },
         
         // Specific Projects
         { tag: "projects/games/roblox", icon: "custom:roblox" },
@@ -87,6 +85,9 @@ const config: QuartzConfig = {
         // Seasonal Themes
         { tag: "horticulture/seasons/rhythm", icon: "mdi:music-note" },
         { tag: "horticulture/seasons/systems", icon: "mdi:transit-connection-variant" },
+
+        // Access/Privacy
+        { tag: "private", icon: "mdi:lock" },
       ],
       defaultColor: "#888888",
       defaultIcon: null,
@@ -153,7 +154,8 @@ const config: QuartzConfig = {
   plugins: {
     transformers: [
       Plugin.FrontMatter(),
-      Plugin.Annotations(),
+      Plugin.Annotations(), // Must run before MDX to remove annotation blocks
+      Plugin.MDX(),
       Plugin.CreatedModifiedDate({
         priority: ["frontmatter", "git", "filesystem"],
       }),
@@ -179,6 +181,7 @@ const config: QuartzConfig = {
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
+      Plugin.WidgetScripts(), // Emit widget scripts to /static/widgets/
       Plugin.ContentPage(),
       Plugin.FolderPage(),
       Plugin.TagPage(),
@@ -192,7 +195,7 @@ const config: QuartzConfig = {
       Plugin.Static(),
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-      Plugin.CustomOgImages(),
+      // Plugin.CustomOgImages(),
     ],
   },
 }

@@ -7,15 +7,15 @@ export type JSResource = {
   moduleType?: "module"
   spaPreserve?: boolean
 } & (
-  | {
+    | {
       src: string
       contentType: "external"
     }
-  | {
+    | {
       script: string
       contentType: "inline"
     }
-)
+  )
 
 export type CSSResource = {
   content: string
