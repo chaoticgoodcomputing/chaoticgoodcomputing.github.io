@@ -23,10 +23,6 @@ export const tagsLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Graph({
-      localGraph: defaultLocalGraphOptions,
-      globalGraph: defaultGraphOptions,
-    }),
     Component.TagExplorer({
       tagNodeSort: "count-desc",
       fileNodeSort: "date-desc",
@@ -37,6 +33,10 @@ export const tagsLayout: PageLayout = {
     }),
   ],
   right: [
+    Component.Graph({
+      localGraph: defaultLocalGraphOptions,
+      globalGraph: defaultGraphOptions,
+    }),
     Component.Backlinks(),
   ],
   afterBody: [

@@ -12,7 +12,7 @@ tags:
 ---
 In college, my area of focus during [[content/notes/qamo|my economics degree]] was **non-market environments**, which encompass the areas of economics where money isn't used for moral or practical reasons.
 
-A presentation I'm particularly proud of is a presentation on David Gale and Lloyd Shapley's 1962 paper [College Admissions and the Stability of Marriage](https://www.eecs.harvard.edu/cs286r/courses/fall09/papers/galeshapley.pdf)
+A presentation I'm particularly proud of is a presentation on David Gale and Lloyd Shapley's 1962 paper [[content/annotations/college-admissions-and-the-stability-of-marriage|College Admissions and the Stability of Marriage]]
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/lMFQp3wN-cg?si=WyU4VG0KnmL9BqIc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 

@@ -27,10 +27,6 @@ export const notesLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Graph({
-      localGraph: defaultLocalGraphOptions,
-      globalGraph: defaultGraphOptions,
-    }),
     Component.TagExplorer({
       tagNodeSort: "count-desc",
       fileNodeSort: "date-desc",
@@ -41,6 +37,10 @@ export const notesLayout: PageLayout = {
     }),
   ],
   right: [
+    Component.Graph({
+      localGraph: defaultLocalGraphOptions,
+      globalGraph: defaultGraphOptions,
+    }),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
