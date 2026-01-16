@@ -50,9 +50,9 @@ async function processFile(filePath) {
     
     // Calculate day number
     const noteDate = new Date(currentTitle);
-    const dayNumber = daysBetween(START_DATE, noteDate);
+    const dayNumber = daysBetween(START_DATE, noteDate) + 1;
     
-    if (dayNumber < 0) {
+    if (dayNumber < 1) {
       console.log(`⚠️  Skipping ${filePath} - date is before start date`);
       return;
     }
