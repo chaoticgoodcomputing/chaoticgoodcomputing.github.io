@@ -5,7 +5,7 @@ tags:
   - engineering/frontend
 ---
 > [!NOTE]
-> Reference of additions from [[content/notes/mdx-widgets-test|widget intro note]], summary of [[content/notes/scratch/quartz-mdx-notes|private feature integration doc]]
+> Reference of additions from [[content/notes/mdx-widgets-test.mdx|widget intro note]], summary of [[content/notes/scratch/quartz-mdx-notes|private feature integration doc]]
 ## Creating a New Widget
 
 1. Create directory: `{dir}/widgets/{widget-name}/`
