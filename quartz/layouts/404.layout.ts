@@ -10,14 +10,19 @@ import { defaultGraphOptions } from "./index.layout"
 export const notFoundLayout: PageLayout = {
   pageHeader: [
     Component.NotFoundTitle(),
-    Component.FullGraph({
-      globalGraph: defaultGraphOptions,
-      height: "500px",
-    }),
   ],
   beforeBody: [],
   body: [
     Component.NotFound(),
+    Component.FullGraph({
+      globalGraph: defaultGraphOptions,
+      height: "500px",
+    }),
+    Component.PostListing({
+      excludeTags: ["private"],
+      collapsedItemCount: 5,
+      showEmptyMessage: false,
+    }),
   ],
   left: [
     Component.PageTitle(),
@@ -42,10 +47,5 @@ export const notFoundLayout: PageLayout = {
   ],
   right: [],
   afterBody: [
-    Component.PostListing({
-      excludeTags: ["private"],
-      collapsedItemCount: 5,
-      showEmptyMessage: false,
-    }),
   ],
 }

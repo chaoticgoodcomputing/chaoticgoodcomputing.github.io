@@ -1,5 +1,5 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
-import { resolveRelative } from "../util/path"
+import { resolveAbsolute } from "../util/path"
 import { QuartzPluginData } from "../plugins/vfile"
 import { Date, getDate } from "./Date"
 import { byDateAndAlphabetical, SortFn } from "./PageList"
@@ -207,7 +207,7 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
               )}
               <div class="desc">
                 <h3>
-                  <a href={resolveRelative(fileData.slug!, page.slug!)} class="internal">
+                  <a href={resolveAbsolute(page.slug!)} class="internal">
                     {title}
                   </a>
                 </h3>

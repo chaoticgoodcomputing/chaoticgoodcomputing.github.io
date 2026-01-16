@@ -1,4 +1,3 @@
-import { pathToRoot } from "../util/path"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { classNames } from "../util/lang"
 import { i18n } from "../i18n"
@@ -7,12 +6,11 @@ import { i18n } from "../i18n"
  * IndexTitle component - displays the site title as an H1 heading.
  * Specifically designed for the homepage/index page.
  */
-const IndexTitle: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzComponentProps) => {
+const IndexTitle: QuartzComponent = ({ cfg, displayClass }: QuartzComponentProps) => {
   const title = cfg?.pageTitle ?? i18n(cfg.locale).propertyDefaults.title
-  const baseDir = pathToRoot(fileData.slug!)
   return (
     <h1 class={classNames(displayClass, "index-title")}>
-      <a href={baseDir}>{title}</a>
+      <a href="/">{title}</a>
     </h1>
   )
 }

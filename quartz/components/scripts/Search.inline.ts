@@ -1,7 +1,7 @@
 import FlexSearch, { DefaultDocumentSearchResults } from "flexsearch"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { registerEscapeHandler, removeAllChildren } from "./util"
-import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/path"
+import { FullSlug, normalizeRelativeURLs, resolveAbsolute } from "../../util/path"
 
 // ============================================================================
 // HELPER TYPES & STATE
@@ -375,11 +375,11 @@ function _createShowSearchHandler(
 }
 
 /**
- * Resolve a slug to a full URL relative to current slug
+ * Resolve a slug to a full URL using absolute path from site root
  */
 function _createUrlResolver(currentSlug: FullSlug) {
   return function resolveUrl(slug: FullSlug): URL {
-    return new URL(resolveRelative(currentSlug, slug), location.toString())
+    return new URL(resolveAbsolute(slug), location.toString())
   }
 }
 

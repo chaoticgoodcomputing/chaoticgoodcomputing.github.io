@@ -1,4 +1,3 @@
-import { pathToRoot } from "../util/path"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { classNames } from "../util/lang"
 
@@ -6,11 +5,10 @@ import { classNames } from "../util/lang"
  * NotFoundTitle component - displays "404: Page Not Found" as an H1 heading.
  * Specifically designed for the 404 error page.
  */
-const NotFoundTitle: QuartzComponent = ({ fileData, displayClass }: QuartzComponentProps) => {
-  const baseDir = pathToRoot(fileData.slug!)
+const NotFoundTitle: QuartzComponent = ({ displayClass }: QuartzComponentProps) => {
   return (
     <h1 class={classNames(displayClass, "not-found-title")}>
-      <a href={baseDir}>404: Page Not Found</a>
+      <a href="/">404: Page Not Found</a>
     </h1>
   )
 }

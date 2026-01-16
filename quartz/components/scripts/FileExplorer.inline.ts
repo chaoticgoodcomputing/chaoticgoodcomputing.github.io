@@ -1,5 +1,5 @@
 import { FileTrieNode } from "../../util/fileTrie"
-import { FullSlug, resolveRelative, simplifySlug } from "../../util/path"
+import { FullSlug, resolveAbsolute, simplifySlug } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 
 type MaybeHTMLElement = HTMLElement | undefined
@@ -103,7 +103,7 @@ function _createFileNode(currentSlug: FullSlug, node: FileTrieNode): HTMLLIEleme
   const clone = template.content.cloneNode(true) as DocumentFragment
   const li = clone.querySelector("li") as HTMLLIElement
   const a = li.querySelector("a") as HTMLAnchorElement
-  a.href = resolveRelative(currentSlug, node.slug)
+  a.href = resolveAbsolute(node.slug)
   a.dataset.for = node.slug
   a.textContent = node.displayName
 
@@ -137,7 +137,7 @@ function _createFolderNode(
     // Replace button with link for link behavior
     const button = titleContainer.querySelector(".folder-button") as HTMLElement
     const a = document.createElement("a")
-    a.href = resolveRelative(currentSlug, folderPath)
+    a.href = resolveAbsolute(folderPath)
     a.dataset.for = folderPath
     a.className = "folder-title"
     a.textContent = node.displayName

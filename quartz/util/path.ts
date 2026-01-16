@@ -173,6 +173,23 @@ export function resolveRelative(current: FullSlug, target: FullSlug | SimpleSlug
   return res
 }
 
+/**
+ * Resolve a target slug to an absolute URL from the site root.
+ * This is more robust than relative URLs as it doesn't depend on the current page's directory structure.
+ * 
+ * @param target - The target slug to resolve
+ * @returns An absolute URL starting with "/"
+ * 
+ * @example
+ * resolveAbsolute("content/my-article") // returns "/content/my-article"
+ * resolveAbsolute("tags/engineering") // returns "/tags/engineering"
+ */
+export function resolveAbsolute(target: FullSlug | SimpleSlug): string {
+  const simplified = simplifySlug(target as FullSlug)
+  // Ensure the path starts with "/" for absolute URLs
+  return simplified.startsWith("/") ? simplified : `/${simplified}`
+}
+
 export function splitAnchor(link: string): [string, string] {
   let [fp, anchor] = link.split("#", 2)
   if (fp.endsWith(".pdf")) {
@@ -247,12 +264,12 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
       // only match, just use it
       if (matchingFileNames.length === 1) {
         const targetSlug = matchingFileNames[0]
-        return (resolveRelative(src, targetSlug) + targetAnchor) as RelativeURL
+        return (resolveAbsolute(targetSlug) + targetAnchor) as RelativeURL
       }
     }
 
     // if it's not unique, then it's the absolute path from the vault root
-    return (joinSegments(pathToRoot(src), canonicalSlug) + folderTail) as RelativeURL
+    return (resolveAbsolute(canonicalSlug) + folderTail) as RelativeURL
   }
 }
 

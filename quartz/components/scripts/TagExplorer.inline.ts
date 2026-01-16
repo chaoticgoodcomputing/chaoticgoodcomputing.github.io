@@ -1,4 +1,4 @@
-import { FullSlug, resolveRelative } from "../../util/path"
+import { FullSlug, resolveAbsolute } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import type { TagIndex } from "../../util/tags"
 import { normalizeTag } from "../../util/tags"
@@ -185,7 +185,7 @@ async function _createFileNode(currentSlug: FullSlug, fileSlug: FullSlug, detail
   const iconSpan = li.querySelector(".file-icon") as HTMLElement
   const titleSpan = li.querySelector(".file-title") as HTMLElement
 
-  a.href = resolveRelative(currentSlug, details.slug)
+  a.href = resolveAbsolute(details.slug)
   a.dataset.for = details.slug
   titleSpan.textContent = details.title
 
@@ -221,7 +221,7 @@ function _buildTagAsLink(
   const button = container.querySelector(".tag-button") as HTMLElement
   const a = document.createElement("a")
 
-  a.href = resolveRelative(currentSlug, `tags/${tagName}` as FullSlug)
+  a.href = resolveAbsolute(`tags/${tagName}` as FullSlug)
   a.dataset.for = tagName
   a.className = "tag-link"
 
