@@ -19,11 +19,11 @@ import {
 } from "../core"
 import { getVisited } from "../adapters/visited"
 import { LinkRenderData, NodeRenderData } from "../core/renderTypes"
-import { createPixiApp, setupPixiContainers } from "./pixiSetup"
+import { createCanvasApp } from "./canvasSetup"
 import { getComputedStyleMap, createColorFunction } from "./styles"
 import { createNode, createLink } from "./nodeFactory"
-import { renderPixiFromD3, startAnimationLoop } from "./rendering"
-import { setupDragBehavior, setupClickBehavior, setupZoomBehavior } from "../adapters/d3Behaviors"
+import { updateRenderData, startAnimationLoop } from "./rendering"
+import { setupDragBehavior, setupClickBehavior, setupZoomBehavior, setupHoverBehavior } from "../adapters/d3Behaviors"
 import {
   normalizeLinkDistance,
   normalizeLinkStrength,
@@ -114,9 +114,12 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   }
   const linkRenderData: LinkRenderData[] = []
   const nodeRenderData: NodeRenderData[] = []
+  
+  // Shared transform state for zoom/pan
+  const transform = { x: 0, y: 0, k: 1 }
 
-  const renderAllPixi = () => {
-    renderPixiFromD3(
+  const renderAll = () => {
+    updateRenderData(
       tweenManager,
       linkRenderData,
       nodeRenderData,
@@ -129,14 +132,9 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
   tweenManager.clear()
 
-  // Create PixiJS app and containers
-  const app = await createPixiApp(width, height)
+  // Create Canvas2D app
+  const app = createCanvasApp(width, height)
   graph.appendChild(app.canvas)
-
-  const stage = app.stage
-  stage.interactive = false
-
-  const { labelsContainer, nodesContainer, linkContainer } = setupPixiContainers(stage)
 
   // Create all nodes
   for (const n of graphData.nodes) {
@@ -153,39 +151,49 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         labelAnchorConfig,
         tagIndex,
       },
-      nodesContainer,
-      labelsContainer,
+      hoverState,
       hoverState,
       linkRenderData,
       nodeRenderData,
-      renderAllPixi,
+      renderAll,
     )
     nodeRenderData.push(result.nodeRenderData)
   }
 
   // Create all links
   for (const l of graphData.links) {
-    const linkRenderDatum = createLink(l, linkContainer, computedStyleMap)
+    const linkRenderDatum = createLink(l, computedStyleMap)
     linkRenderData.push(linkRenderDatum)
   }
 
+  // Setup hover behavior (always active for hover effects)
+  setupHoverBehavior(
+    app.canvas,
+    nodeRenderData,
+    linkRenderData,
+    hoverState,
+    width,
+    height,
+    transform,
+    renderAll,
+  )
+
   // Setup interactions
   if (enableDrag) {
-    setupDragBehavior(app.canvas, graphData, hoverState, simulation)
+    setupDragBehavior(app.canvas, graphData, hoverState, simulation, transform, renderAll)
   } else {
-    setupClickBehavior(nodeRenderData)
+    setupClickBehavior(app.canvas, nodeRenderData, width, height, transform)
   }
 
   if (enableZoom) {
     setupZoomBehavior(
       app.canvas,
-      stage,
       width,
       height,
       opacityScale,
-      labelsContainer,
       nodeRenderData,
       slug,
+      transform,
     )
   }
 
@@ -195,10 +203,10 @@ export async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     linkRenderData,
     tweenManager,
     app,
-    stage,
     width,
     height,
     linkDistanceConfig,
     edgeOpacityConfig,
+    transform,
   )
 }

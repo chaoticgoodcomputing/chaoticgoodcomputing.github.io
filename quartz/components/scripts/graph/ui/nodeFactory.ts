@@ -1,12 +1,11 @@
-import { Circle, Container, Graphics, Sprite, Text } from "pixi.js"
 import { SimpleSlug } from "../../../../util/path"
 import { IconService } from "../../../../util/iconService"
 import type { TagIndex } from "../../../../util/tags"
 import { getTagIcon, getIconForTagsFromIndex } from "../core/tagIndex"
 import { NodeData } from "../core/types"
-import { LinkRenderData, NodeRenderData } from "../core/renderTypes"
+import { LinkRenderData, NodeRenderData, LabelData } from "../core/renderTypes"
 import { HoverState, updateHoverInfo } from "../core/hoverState"
-import { createIconTexture } from "./pixiSetup"
+import { loadIconImage } from "./canvasSetup"
 
 export type NodeCreationParams = {
   node: NodeData
@@ -23,18 +22,14 @@ export type NodeCreationParams = {
 
 export type NodeCreationResult = {
   nodeRenderData: NodeRenderData
-  gfx: Graphics
-  label: Text
 }
 
 export async function createNode(
   params: NodeCreationParams,
-  nodesContainer: Container<Graphics>,
-  labelsContainer: Container<Text>,
   hoverState: HoverState,
   linkRenderData: LinkRenderData[],
   nodeRenderData: NodeRenderData[],
-  renderAllPixi: () => void,
+  renderAll: () => void,
 ): Promise<NodeCreationResult> {
   const {
     node: n,
@@ -59,62 +54,33 @@ export async function createNode(
   const radius = nodeRadius(n)
   const yAnchor = labelAnchorConfig.baseY + (radius - 2) * labelAnchorConfig.scaleFactor
 
-  const label = new Text({
-    interactive: false,
-    eventMode: "none",
+  const label: LabelData = {
     text: n.text,
     alpha: initialOpacity,
+    scale: 1 / scale,
+    fontSize: fontSize * 15,
+    color: computedStyleMap["--dark"],
+    fontFamily: computedStyleMap["--bodyFont"],
     anchor: { x: 0.5, y: yAnchor },
-    style: {
-      fontSize: fontSize * 15,
-      fill: computedStyleMap["--dark"],
-      fontFamily: computedStyleMap["--bodyFont"],
-    },
-    resolution: window.devicePixelRatio * 4,
-  })
-  label.scale.set(1 / scale)
+    x: 0,
+    y: 0,
+    initialAlpha: initialOpacity,
+  }
 
   let oldLabelOpacity = initialOpacity
   const nodeColor = color(n)
   const fillColor = isTagNode ? computedStyleMap["--gray"] : nodeColor
-  const gfx = new Graphics({
-    interactive: true,
-    label: nodeId,
-    eventMode: "static",
-    hitArea: new Circle(0, 0, radius),
-    cursor: "pointer",
-  })
-    .circle(0, 0, radius)
-    .fill({ color: fillColor })
-    .on("pointerover", (e) => {
-      updateHoverInfo(hoverState, linkRenderData, nodeRenderData, e.target.label)
-      oldLabelOpacity = label.alpha
-      if (!hoverState.dragging) {
-        renderAllPixi()
-      }
-    })
-    .on("pointerleave", () => {
-      updateHoverInfo(hoverState, linkRenderData, nodeRenderData, null)
-      label.alpha = oldLabelOpacity
-      if (!hoverState.dragging) {
-        renderAllPixi()
-      }
-    })
-
-  if (isTagNode) {
-    gfx.stroke({ width: 2, color: nodeColor })
-  }
-
-  nodesContainer.addChild(gfx)
-  labelsContainer.addChild(label)
 
   const nodeRenderDatum: NodeRenderData = {
     simulationData: n,
-    gfx,
     label,
     color: nodeColor,
     alpha: 1,
     active: false,
+    radius,
+    fillColor,
+    strokeColor: isTagNode ? nodeColor : undefined,
+    strokeWidth: isTagNode ? 2 : undefined,
   }
 
   // Handle icon asynchronously
@@ -130,40 +96,27 @@ export async function createNode(
   }
 
   if (iconId) {
-    IconService.getIcon(iconId).then((iconData) => {
+    const currentIconId = iconId
+    IconService.getIcon(currentIconId).then((iconData) => {
       if (!iconData) return
-      createIconTexture(iconData.dataUri).then((texture) => {
-        if (!texture) return
-        const iconSprite = new Sprite({
-          texture,
-          anchor: { x: 0.5, y: 0.5 },
-          eventMode: "none",
-          interactive: false,
-        })
+      loadIconImage(iconData.dataUri, currentIconId).then((img) => {
+        if (!img) return
         const iconSize = radius * 1.4
-        iconSprite.width = iconSize
-        iconSprite.height = iconSize
-        iconSprite.tint = 0xffffff
-        gfx.addChild(iconSprite)
-        nodeRenderDatum.iconSprite = iconSprite
+        nodeRenderDatum.iconImage = img
+        nodeRenderDatum.iconSize = iconSize
       })
     })
   }
 
-  return { nodeRenderData: nodeRenderDatum, gfx, label }
+  return { nodeRenderData: nodeRenderDatum }
 }
 
 export function createLink(
   linkData: any,
-  linkContainer: Container<Graphics>,
   computedStyleMap: Record<string, string>,
 ): LinkRenderData {
-  const gfx = new Graphics({ interactive: false, eventMode: "none" })
-  linkContainer.addChild(gfx)
-
   const linkRenderDatum: LinkRenderData = {
     simulationData: linkData,
-    gfx,
     color: computedStyleMap["--lightgray"],
     alpha: 1,
     active: false,

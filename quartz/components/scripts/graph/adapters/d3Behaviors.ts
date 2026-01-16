@@ -1,5 +1,4 @@
 import { Simulation, drag, select, zoom, zoomIdentity } from "d3"
-import { Container, Text } from "pixi.js"
 import { SimpleSlug } from "../../../../util/path"
 import { LinkData, NodeData } from "../core/types"
 import { NodeRenderData } from "../core/renderTypes"
@@ -10,9 +9,9 @@ export function setupDragBehavior(
   graphData: { nodes: NodeData[]; links: LinkData[] },
   hoverState: HoverState,
   simulation: Simulation<NodeData, LinkData>,
+  transform: { x: number; y: number; k: number },
+  renderAll: () => void,
 ) {
-  let currentTransform = zoomIdentity
-
   select<HTMLCanvasElement, NodeData | undefined>(canvas).call(
     drag<HTMLCanvasElement, NodeData | undefined>()
       .container(() => canvas)
@@ -32,8 +31,8 @@ export function setupDragBehavior(
       })
       .on("drag", function dragged(event) {
         const initPos = event.subject.__initialDragPos
-        event.subject.fx = initPos.x + (event.x - initPos.x) / currentTransform.k
-        event.subject.fy = initPos.y + (event.y - initPos.y) / currentTransform.k
+        event.subject.fx = initPos.x + (event.x - initPos.x) / transform.k
+        event.subject.fy = initPos.y + (event.y - initPos.y) / transform.k
       })
       .on("end", function dragended(event) {
         if (!event.active) simulation.alphaTarget(0)
@@ -48,31 +47,53 @@ export function setupDragBehavior(
         }
       }),
   )
-
-  return { currentTransform }
 }
 
-export function setupClickBehavior(nodeRenderData: NodeRenderData[]) {
-  for (const node of nodeRenderData) {
-    node.gfx.on("click", () => {
-      const targ = "/" + node.simulationData.id
-      window.spaNavigate(new URL(targ, window.location.toString()))
-    })
-  }
+export function setupClickBehavior(
+  canvas: HTMLCanvasElement,
+  nodeRenderData: NodeRenderData[],
+  width: number,
+  height: number,
+  transform: { x: number; y: number; k: number },
+) {
+  canvas.addEventListener("click", (event) => {
+    const rect = canvas.getBoundingClientRect()
+    const mouseX = event.clientX - rect.left
+    const mouseY = event.clientY - rect.top
+    
+    // Transform mouse coordinates to graph space
+    const graphX = (mouseX - transform.x) / transform.k
+    const graphY = (mouseY - transform.y) / transform.k
+    
+    // Check if click hit any node
+    for (const node of nodeRenderData) {
+      const { x, y } = node.simulationData
+      if (!x || !y) continue
+      
+      const nodeX = x + width / 2
+      const nodeY = y + height / 2
+      const dx = graphX - nodeX
+      const dy = graphY - nodeY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      
+      if (distance < node.radius) {
+        const targ = "/" + node.simulationData.id
+        window.spaNavigate(new URL(targ, window.location.toString()))
+        break
+      }
+    }
+  })
 }
 
 export function setupZoomBehavior(
   canvas: HTMLCanvasElement,
-  stage: Container,
   width: number,
   height: number,
   opacityScale: number,
-  labelsContainer: Container<Text>,
   nodeRenderData: NodeRenderData[],
   currentPageSlug: SimpleSlug,
+  transform: { x: number; y: number; k: number },
 ) {
-  let currentTransform = zoomIdentity
-
   select<HTMLCanvasElement, NodeData>(canvas).call(
     zoom<HTMLCanvasElement, NodeData>()
       .extent([
@@ -80,25 +101,128 @@ export function setupZoomBehavior(
         [width, height],
       ])
       .scaleExtent([0.25, 4])
-      .on("zoom", ({ transform }) => {
-        currentTransform = transform
-        stage.scale.set(transform.k, transform.k)
-        stage.position.set(transform.x, transform.y)
+      .on("zoom", ({ transform: t }) => {
+        transform.x = t.x
+        transform.y = t.y
+        transform.k = t.k
 
-        const scale = transform.k * opacityScale
+        const scale = t.k * opacityScale
         const scaleOpacity = Math.max((scale - 1) / 3.75, 0)
-        const activeNodes = nodeRenderData.filter((n) => n.active).flatMap((n) => n.label)
 
-        for (const label of labelsContainer.children) {
-          if (!activeNodes.includes(label)) {
-            const nodeData = nodeRenderData.find((n) => n.label === label)
-            const isTagNode = nodeData?.simulationData.id.startsWith("tags/")
-            const isCurrentPage = nodeData?.simulationData.id === currentPageSlug
-            label.alpha = isTagNode || isCurrentPage ? 1 : scaleOpacity
+        for (const node of nodeRenderData) {
+          if (!node.active) {
+            const isTagNode = node.simulationData.id.startsWith("tags/")
+            const isCurrentPage = node.simulationData.id === currentPageSlug
+            node.label.alpha = isTagNode || isCurrentPage ? 1 : scaleOpacity
           }
         }
       }),
   )
+}
 
-  return { currentTransform }
+export function setupHoverBehavior(
+  canvas: HTMLCanvasElement,
+  nodeRenderData: NodeRenderData[],
+  linkRenderData: LinkRenderData[],
+  hoverState: HoverState,
+  width: number,
+  height: number,
+  transform: { x: number; y: number; k: number },
+  renderAll: () => void,
+) {
+  canvas.addEventListener("mousemove", (event) => {
+    const rect = canvas.getBoundingClientRect()
+    const mouseX = event.clientX - rect.left
+    const mouseY = event.clientY - rect.top
+    
+    // Transform mouse coordinates to graph space
+    const graphX = (mouseX - transform.x) / transform.k
+    const graphY = (mouseY - transform.y) / transform.k
+    
+    let hoveredNode: string | null = null
+    let minDistance = Infinity
+    
+    // Find closest node within its radius
+    for (const node of nodeRenderData) {
+      const { x, y } = node.simulationData
+      if (!x || !y) continue
+      
+      const nodeX = x + width / 2
+      const nodeY = y + height / 2
+      const dx = graphX - nodeX
+      const dy = graphY - nodeY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      
+      if (distance < node.radius && distance < minDistance) {
+        hoveredNode = node.simulationData.id
+        minDistance = distance
+      }
+    }
+    
+    // Update hover state if changed
+    if (hoveredNode !== hoverState.hoveredNodeId) {
+      hoverState.hoveredNodeId = hoveredNode
+      
+      // Update active/hover states for nodes and links
+      if (hoveredNode) {
+        const hoveredNodeData = nodeRenderData.find(n => n.simulationData.id === hoveredNode)
+        if (hoveredNodeData) {
+          // Calculate neighborhood
+          const neighbors = new Set<string>()
+          for (const link of linkRenderData) {
+            if (link.simulationData.source.id === hoveredNode) {
+              neighbors.add(link.simulationData.target.id)
+            }
+            if (link.simulationData.target.id === hoveredNode) {
+              neighbors.add(link.simulationData.source.id)
+            }
+          }
+          hoverState.hoveredNeighbours = neighbors
+          
+          // Update active states
+          for (const node of nodeRenderData) {
+            node.active = node.simulationData.id === hoveredNode || neighbors.has(node.simulationData.id)
+          }
+          for (const link of linkRenderData) {
+            link.active = link.simulationData.source.id === hoveredNode || 
+                         link.simulationData.target.id === hoveredNode
+          }
+        }
+        canvas.style.cursor = "pointer"
+      } else {
+        // Clear active states
+        for (const node of nodeRenderData) {
+          node.active = false
+        }
+        for (const link of linkRenderData) {
+          link.active = false
+        }
+        hoverState.hoveredNeighbours.clear()
+        canvas.style.cursor = "default"
+      }
+      
+      if (!hoverState.dragging) {
+        renderAll()
+      }
+    }
+  })
+  
+  canvas.addEventListener("mouseleave", () => {
+    if (hoverState.hoveredNodeId !== null) {
+      hoverState.hoveredNodeId = null
+      hoverState.hoveredNeighbours.clear()
+      
+      for (const node of nodeRenderData) {
+        node.active = false
+      }
+      for (const link of linkRenderData) {
+        link.active = false
+      }
+      
+      canvas.style.cursor = "default"
+      if (!hoverState.dragging) {
+        renderAll()
+      }
+    }
+  })
 }

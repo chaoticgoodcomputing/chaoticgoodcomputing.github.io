@@ -1,8 +1,8 @@
 import { Group as TweenGroup, Tween as Tweened } from "@tweenjs/tween.js"
-import { Application, Container, Graphics, Text } from "pixi.js"
-import { LinkRenderData, NodeRenderData } from "../core/renderTypes"
+import { LinkRenderData, NodeRenderData, LabelData } from "../core/renderTypes"
 import { calculateEdgeOpacity } from "../core/graphData"
 import { TweenManager } from "../core/tweenManager"
+import { CanvasApp } from "./canvasSetup"
 
 export function renderLinks(
   tweenManager: TweenManager,
@@ -45,16 +45,10 @@ export function renderLabels(
   for (const n of nodeRenderData) {
     const nodeId = n.simulationData.id
     if (hoveredNodeId === nodeId) {
-      tweenGroup.add(
-        new Tweened<Text>(n.label).to({ alpha: 1, scale: { x: activeScale, y: activeScale } }, 100),
-      )
+      tweenGroup.add(new Tweened<LabelData>(n.label).to({ alpha: 1, scale: activeScale }, 100))
     } else {
-      tweenGroup.add(
-        new Tweened<Text>(n.label).to(
-          { alpha: n.label.alpha, scale: { x: defaultScale, y: defaultScale } },
-          100,
-        ),
-      )
+      // Reset to initial alpha when not hovered
+      tweenGroup.add(new Tweened<LabelData>(n.label).to({ alpha: n.label.initialAlpha, scale: defaultScale }, 100))
     }
   }
 
@@ -81,7 +75,7 @@ export function renderNodes(
     if (hoveredNodeId !== null && focusOnHover) {
       alpha = n.active ? 1 : 0.2
     }
-    tweenGroup.add(new Tweened<Graphics>(n.gfx, tweenGroup).to({ alpha }, 200))
+    tweenGroup.add(new Tweened<NodeRenderData>(n).to({ alpha }, 200))
   }
 
   tweenGroup.getAll().forEach((tw) => tw.start())
@@ -93,7 +87,7 @@ export function renderNodes(
   })
 }
 
-export function renderPixiFromD3(
+export function updateRenderData(
   tweenManager: TweenManager,
   linkRenderData: LinkRenderData[],
   nodeRenderData: NodeRenderData[],
@@ -107,12 +101,86 @@ export function renderPixiFromD3(
   renderNodes(tweenManager, nodeRenderData, hoveredNodeId, focusOnHover)
 }
 
+function drawNode(
+  ctx: CanvasRenderingContext2D,
+  node: NodeRenderData,
+  x: number,
+  y: number,
+) {
+  ctx.save()
+  ctx.globalAlpha = node.alpha
+
+  // Draw circle
+  ctx.beginPath()
+  ctx.arc(x, y, node.radius, 0, 2 * Math.PI)
+  ctx.fillStyle = node.fillColor
+  ctx.fill()
+
+  // Draw stroke if present
+  if (node.strokeColor && node.strokeWidth) {
+    ctx.strokeStyle = node.strokeColor
+    ctx.lineWidth = node.strokeWidth
+    ctx.stroke()
+  }
+
+  // Draw icon if present
+  if (node.iconImage && node.iconSize) {
+    const iconX = x - node.iconSize / 2
+    const iconY = y - node.iconSize / 2
+    ctx.drawImage(node.iconImage, iconX, iconY, node.iconSize, node.iconSize)
+  }
+
+  ctx.restore()
+}
+
+function drawLabel(
+  ctx: CanvasRenderingContext2D,
+  label: LabelData,
+  x: number,
+  y: number,
+  nodeRadius: number,
+) {
+  ctx.save()
+  ctx.globalAlpha = label.alpha
+  
+  const scaledFontSize = label.fontSize * label.scale
+  ctx.font = `${scaledFontSize}px ${label.fontFamily}`
+  ctx.fillStyle = label.color
+  ctx.textAlign = "center"
+  ctx.textBaseline = "top"
+  
+  // Position label just below node bottom edge
+  const offsetY = y + nodeRadius + 2
+  ctx.fillText(label.text, x, offsetY)
+  
+  ctx.restore()
+}
+
+function drawLink(
+  ctx: CanvasRenderingContext2D,
+  link: LinkRenderData,
+  sx: number,
+  sy: number,
+  tx: number,
+  ty: number,
+  finalAlpha: number,
+) {
+  ctx.save()
+  ctx.globalAlpha = finalAlpha
+  ctx.strokeStyle = link.color
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(sx, sy)
+  ctx.lineTo(tx, ty)
+  ctx.stroke()
+  ctx.restore()
+}
+
 export function startAnimationLoop(
   nodeRenderData: NodeRenderData[],
   linkRenderData: LinkRenderData[],
   tweenManager: TweenManager,
-  app: Application,
-  stage: Container,
+  app: CanvasApp,
   width: number,
   height: number,
   linkDistanceConfig: { tagTag: number; tagPost: number; postPost: number },
@@ -121,19 +189,24 @@ export function startAnimationLoop(
     tagPost: { min: number; max: number }
     postPost: { min: number; max: number }
   },
+  transform: { x: number; y: number; k: number },
 ): () => void {
+  const { ctx } = app
   let stopAnimation = false
 
   function animate(time: number) {
     if (stopAnimation) return
 
-    for (const n of nodeRenderData) {
-      const { x, y } = n.simulationData
-      if (!x || !y) continue
-      n.gfx.position.set(x + width / 2, y + height / 2)
-      n.label.position.set(x + width / 2, y + height / 2)
-    }
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height)
 
+    ctx.save()
+    
+    // Apply zoom/pan transform
+    ctx.translate(transform.x, transform.y)
+    ctx.scale(transform.k, transform.k)
+
+    // Draw links first (background layer)
     for (const l of linkRenderData) {
       const linkData = l.simulationData
       const sx = linkData.source.x! + width / 2
@@ -167,13 +240,30 @@ export function startAnimationLoop(
       )
       const finalAlpha = baseOpacity * l.alpha
 
-      l.gfx.clear()
-      l.gfx.moveTo(sx, sy)
-      l.gfx.lineTo(tx, ty).stroke({ alpha: finalAlpha, width: 1, color: l.color })
+      drawLink(ctx, l, sx, sy, tx, ty, finalAlpha)
     }
 
+    // Draw nodes (middle layer)
+    for (const n of nodeRenderData) {
+      const { x, y } = n.simulationData
+      if (!x || !y) continue
+      const nodeX = x + width / 2
+      const nodeY = y + height / 2
+      drawNode(ctx, n, nodeX, nodeY)
+    }
+
+    // Draw labels (top layer)
+    for (const n of nodeRenderData) {
+      const { x, y } = n.simulationData
+      if (!x || !y) continue
+      const labelX = x + width / 2
+      const labelY = y + height / 2
+      drawLabel(ctx, n.label, labelX, labelY, n.radius)
+    }
+
+    ctx.restore()
+
     tweenManager.updateAll(time)
-    app.renderer.render(stage)
     requestAnimationFrame(animate)
   }
 

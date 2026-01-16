@@ -1,9 +1,7 @@
-import { Graphics, Text, Sprite } from "pixi.js"
 import { LinkData, NodeData } from "./types"
 
 export type GraphicsInfo = {
   color: string
-  gfx: Graphics
   alpha: number
   active: boolean
 }
@@ -12,10 +10,28 @@ export type LinkRenderData = GraphicsInfo & {
   simulationData: LinkData
 }
 
+export type LabelData = {
+  text: string
+  x: number
+  y: number
+  alpha: number
+  scale: number
+  fontSize: number
+  color: string
+  fontFamily: string
+  anchor: { x: number; y: number }
+  initialAlpha: number
+}
+
 export type NodeRenderData = GraphicsInfo & {
   simulationData: NodeData
-  label: Text
-  iconSprite?: Sprite
+  label: LabelData
+  radius: number
+  fillColor: string
+  strokeColor?: string
+  strokeWidth?: number
+  iconImage?: HTMLImageElement | null
+  iconSize?: number
 }
 
 export type TweenNode = {
