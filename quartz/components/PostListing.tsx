@@ -6,11 +6,20 @@ import { byDateAndAlphabetical, SortFn } from "./PageList"
 import { matchesTagFilter } from "../util/tags"
 import readingTime from "reading-time"
 import { i18n } from "../i18n"
+import { classNames } from "../util/lang"
+import style from "./styles/postListing.scss"
 
 // @ts-ignore
 import script from "./scripts/PostListing.inline"
 
 export interface PostListingOptions {
+  /**
+   * Title to display above the post listing.
+   * If undefined, uses the i18n default ("Posts").
+   * Set to false to hide the title.
+   */
+  title?: string | false
+
   /**
    * Maximum number of posts to display. If undefined, shows all posts.
    */
@@ -116,8 +125,14 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
     cfg,
     fileData,
     allFiles,
+    displayClass,
   }: QuartzComponentProps) => {
     const sorter = opts.sort ?? byDateAndAlphabetical(cfg)
+
+    // Determine the title to display
+    const title = opts.title === false
+      ? null
+      : opts.title ?? i18n(cfg.locale).components.postListing.title
 
     // Apply filtering
     let filteredFiles = allFiles
@@ -226,129 +241,29 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
       })
 
     // Handle collapsible list if collapsedItemCount is set
-    if (opts.collapsedItemCount && list.length > opts.collapsedItemCount) {
-      const visibleItems = list.slice(0, opts.collapsedItemCount)
-      const collapsedItems = list.slice(opts.collapsedItemCount)
+    const content = opts.collapsedItemCount && list.length > opts.collapsedItemCount ? (
+      <>
+        <ul class="section-ul">{renderListItems(list.slice(0, opts.collapsedItemCount))}</ul>
+        <details class="post-listing-collapse">
+          <summary>
+            Show {list.length - opts.collapsedItemCount} more {list.length - opts.collapsedItemCount === 1 ? "post" : "posts"}
+          </summary>
+          <ul class="section-ul">{renderListItems(list.slice(opts.collapsedItemCount))}</ul>
+        </details>
+      </>
+    ) : (
+      <ul class="section-ul">{renderListItems(list)}</ul>
+    )
 
-      return (
-        <div>
-          <ul class="section-ul">{renderListItems(visibleItems)}</ul>
-          <details class="post-listing-collapse">
-            <summary>
-              Show {collapsedItems.length} more {collapsedItems.length === 1 ? "post" : "posts"}
-            </summary>
-            <ul class="section-ul">{renderListItems(collapsedItems)}</ul>
-          </details>
-        </div>
-      )
-    }
-
-    return <ul class="section-ul">{renderListItems(list)}</ul>
+    return (
+      <div class={classNames(displayClass, "post-listing")}>
+        {title && <h3>{title}</h3>}
+        {content}
+      </div>
+    )
   }
 
-  PostListing.css = `
-.section h3 {
-  margin: 0;
-}
-
-.section .post-description {
-  margin: 0.5rem 0 0 0;
-  color: var(--gray);
-  font-size: 0.95em;
-  line-height: 1.5;
-}
-
-.section > .tags {
-  margin: 0;
-  list-style: none;
-  display: flex;
-  padding-left: 0;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.section > .tags > .tag-item {
-  display: inline-block;
-  white-space: nowrap;
-  margin: 0;
-  overflow-wrap: normal;
-}
-
-.section > .tags a.internal.tag-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 18px 8px 8px 18px;
-  background-color: var(--highlight);
-  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
-  margin: 0;
-  text-decoration: none;
-  color: inherit;
-  transition: background-color 0.2s ease;
-}
-
-.section > .tags a.internal.tag-link:hover {
-  background-color: var(--gray);
-}
-
-.section > .tags .tag-icon-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  border-radius: 50%;
-  background-color: transparent;
-  border: 2.5px solid var(--tag-color, #888888);
-  font-size: 16px;
-  line-height: 1;
-}
-
-.section > .tags .tag-name {
-  font-weight: 500;
-  font-size: 0.95em;
-  display: flex;
-  align-items: center;
-}
-
-.section > .tags .tag-name::before {
-  content: "#";
-  margin-right: 0.2em;
-  opacity: 0.7;
-}
-
-.section > .tags .tag-count {
-  color: var(--gray);
-  font-size: 0.85em;
-  margin-left: 0.2rem;
-}
-
-.post-listing-empty {
-  color: var(--gray);
-  font-style: italic;
-}
-
-.post-listing-collapse {
-  margin-top: 1rem;
-}
-
-.post-listing-collapse > summary {
-  cursor: pointer;
-  color: var(--secondary);
-  font-weight: 600;
-  padding: 0.5rem 0;
-}
-
-.post-listing-collapse > summary:hover {
-  color: var(--tertiary);
-}
-
-.post-listing-collapse > .section-ul {
-  margin-top: 1rem;
-}
-`
-
+  PostListing.css = style
   PostListing.afterDOMLoaded = script
   return PostListing
 }) satisfies QuartzComponentConstructor<PostListingOptions>

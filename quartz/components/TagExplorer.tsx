@@ -1,5 +1,6 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import style from "./styles/tagExplorer.scss"
+import { i18n } from "../i18n"
 
 // @ts-ignore
 import script from "./scripts/TagExplorer.inline"
@@ -56,8 +57,9 @@ export default ((userOpts?: Partial<Options>) => {
   const opts: Options = { ...defaultOptions, ...userOpts }
   const { OverflowList, overflowListAfterDOMLoaded } = OverflowListFactory()
 
-  const TagExplorer: QuartzComponent = ({ displayClass }: QuartzComponentProps) => {
+  const TagExplorer: QuartzComponent = ({ displayClass, cfg }: QuartzComponentProps) => {
     const id = `tag-explorer-${numTagExplorers++}`
+    const title = opts.title ?? i18n(cfg.locale).components.tagExplorer.title
 
     return (
       <div
@@ -73,6 +75,7 @@ export default ((userOpts?: Partial<Options>) => {
         })}
         data-use-tag-index="true"
       >
+        {title && <h3>{title}</h3>}
         <div id={id} class="tag-explorer-content" role="group">
           <OverflowList class="tag-explorer-ul" />
         </div>

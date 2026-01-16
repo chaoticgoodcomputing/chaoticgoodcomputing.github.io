@@ -8,6 +8,11 @@
   min-height: 1.2rem;
   flex: 0 1 auto;
 
+  &>h3 {
+    font-size: 1.2rem;
+    margin: 0.75rem 0 0.25rem 0;
+  }
+
   &.collapsed {
     flex: 0 1 1.2rem;
 

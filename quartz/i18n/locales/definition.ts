@@ -28,6 +28,12 @@ export interface Translation {
       title: string
       noBacklinksFound: string
     }
+    postListing: {
+      title: string
+    }
+    tagExplorer: {
+      title: string
+    }
     themeToggle: {
       lightMode: string
       darkMode: string

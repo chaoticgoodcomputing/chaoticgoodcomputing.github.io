@@ -25,6 +25,12 @@ export default {
       title: "Backlinks",
       noBacklinksFound: "No backlinks found",
     },
+    postListing: {
+      title: "Recent Posts",
+    },
+    tagExplorer: {
+      title: "Tag Explorer",
+    },
     themeToggle: {
       lightMode: "Light mode",
       darkMode: "Dark mode",
