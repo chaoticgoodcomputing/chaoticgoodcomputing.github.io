@@ -14,7 +14,10 @@
         ],
         "cwd": "content",
         "parallel": false
-      }
+      },
+      "dependsOn": [
+        "resume:publish"
+      ]
     },
     "sync": {
       "//": "Extract frontmatter from private content and create cleaned versions in public.",
