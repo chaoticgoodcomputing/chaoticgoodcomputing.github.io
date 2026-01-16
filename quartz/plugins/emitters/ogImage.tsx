@@ -19,6 +19,7 @@ const defaultOptions: SocialImageOptions = {
   height: 630,
   imageStructure: defaultImage,
   excludeRoot: false,
+  generateOnServe: false,
 }
 
 /**
@@ -110,6 +111,11 @@ export const CustomOgImages: QuartzEmitterPlugin<Partial<SocialImageOptions>> = 
       return []
     },
     async *emit(ctx, content, _resources) {
+      // Skip generation during serve mode if generateOnServe is false
+      if (ctx.argv.serve && !fullOptions.generateOnServe) {
+        return
+      }
+
       const cfg = ctx.cfg.configuration
       const headerFont = cfg.theme.typography.header
       const bodyFont = cfg.theme.typography.body
@@ -121,6 +127,11 @@ export const CustomOgImages: QuartzEmitterPlugin<Partial<SocialImageOptions>> = 
       }
     },
     async *partialEmit(ctx, _content, _resources, changeEvents) {
+      // Skip generation during serve mode if generateOnServe is false
+      if (ctx.argv.serve && !fullOptions.generateOnServe) {
+        return
+      }
+
       const cfg = ctx.cfg.configuration
       const headerFont = cfg.theme.typography.header
       const bodyFont = cfg.theme.typography.body

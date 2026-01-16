@@ -4,6 +4,8 @@ import { QuartzPluginData } from "../plugins/vfile"
 import { Date, getDate } from "./Date"
 import { byDateAndAlphabetical, SortFn } from "./PageList"
 import { matchesTagFilter } from "../util/tags"
+import readingTime from "reading-time"
+import { i18n } from "../i18n"
 
 // @ts-ignore
 import script from "./scripts/PostListing.inline"
@@ -77,10 +79,24 @@ export interface PostListingOptions {
   showDates?: boolean
 
   /**
+   * Whether to show descriptions on each post.
+   * Default: true
+   */
+  showDescriptions?: boolean
+
+  /**
    * Whether to show post counts in tag badges.
    * Default: false
    */
   showTagCounts?: boolean
+
+  /**
+   * Whether to exclude tag index pages from the listing.
+   * Tag pages (e.g., tags/engineering/index) are meta pages whose links
+   * are already included in tag bubbles.
+   * Default: true
+   */
+  excludeTagPages?: boolean
 }
 
 const defaultOptions: PostListingOptions = {
@@ -89,6 +105,8 @@ const defaultOptions: PostListingOptions = {
   emptyMessage: "No posts found.",
   showTags: true,
   showDates: true,
+  showDescriptions: true,
+  excludeTagPages: true,
 }
 
 export default ((userOpts?: Partial<PostListingOptions>) => {
@@ -108,6 +126,11 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
       // Use custom filter if provided
       filteredFiles = filteredFiles.filter(opts.filter)
     } else {
+      // Exclude tag index pages by default
+      if (opts.excludeTagPages) {
+        filteredFiles = filteredFiles.filter((file) => !file.slug?.startsWith("tags/"))
+      }
+
       // Apply filterToCurrentTag if on a tag page
       if (opts.filterToCurrentTag && fileData.slug?.startsWith("tags/")) {
         // Extract tag from slug: "tags/horticulture/index" -> "horticulture"
@@ -147,7 +170,17 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
     const renderListItems = (items: QuartzPluginData[]) =>
       items.map((page) => {
         const title = page.frontmatter?.title
+        const description = page.frontmatter?.description
         const tags = page.frontmatter?.tags ?? []
+
+        // Calculate reading time
+        let readingTimeText: string | undefined
+        if (page.text) {
+          const { minutes } = readingTime(page.text)
+          readingTimeText = i18n(cfg.locale).components.contentMeta.readingTime({
+            minutes: Math.ceil(minutes),
+          })
+        }
 
         return (
           <li class="section-li">
@@ -163,24 +196,30 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
                     {title}
                   </a>
                 </h3>
+                {opts.showTags && tags.length > 0 && (
+                  <ul
+                    class="tags"
+                    data-component="post-listing"
+                    data-showcount={opts.showTagCounts}
+                  >
+                    {tags.map((tag) => (
+                      <li class="tag-item" data-tag={tag}>
+                        <a href="#" class="internal tag-link">
+                          <span class="tag-icon-badge"></span>
+                          <span class="tag-name"></span>
+                          <span class="tag-count"></span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {opts.showDescriptions && description && (
+                  <p class="post-description">
+                    {description}
+                    {readingTimeText && ` (${readingTimeText})`}
+                  </p>
+                )}
               </div>
-              {opts.showTags && tags.length > 0 && (
-                <ul
-                  class="tags"
-                  data-component="post-listing"
-                  data-showcount={opts.showTagCounts}
-                >
-                  {tags.map((tag) => (
-                    <li class="tag-item" data-tag={tag}>
-                      <a href="#" class="internal tag-link">
-                        <span class="tag-icon-badge"></span>
-                        <span class="tag-name"></span>
-                        <span class="tag-count"></span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </li>
         )
@@ -210,6 +249,13 @@ export default ((userOpts?: Partial<PostListingOptions>) => {
   PostListing.css = `
 .section h3 {
   margin: 0;
+}
+
+.section .post-description {
+  margin: 0.5rem 0 0 0;
+  color: var(--gray);
+  font-size: 0.95em;
+  line-height: 1.5;
 }
 
 .section > .tags {

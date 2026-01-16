@@ -54,7 +54,7 @@ const config: QuartzConfig = {
         { tag: "engineering/bio", icon: "mdi:molecule" },
         { tag: "engineering/languages", icon: "mdi:code-braces" },
         { tag: "engineering/data", icon: "mdi:pulse" },
-        { tag: "engineering/devops", icon: "mdi:truck" },
+        { tag: "engineering/devops", icon: "mdi:cloud" },
         { tag: "engineering/frontend", icon: "mdi:palette" },
         { tag: "engineering/ai", icon: "mdi:robot" },
         
@@ -75,7 +75,7 @@ const config: QuartzConfig = {
         { tag: "horticulture/seasons", icon: "mdi:weather-sunny" },
         
         // Top-level Categories
-        { tag: "engineering", icon: "mdi:tools" },
+        { tag: "engineering", icon: "mdi:wrench" },
         { tag: "economics", icon: "mdi:chart-bell-curve" },
         { tag: "horticulture", icon: "mdi:flower" },
         { tag: "projects", icon: "mdi:folder-cog" },
@@ -197,7 +197,7 @@ const config: QuartzConfig = {
       Plugin.Static(),
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-      // Plugin.CustomOgImages(),
+      Plugin.CustomOgImages({ generateOnServe: false }),
     ],
   },
 }

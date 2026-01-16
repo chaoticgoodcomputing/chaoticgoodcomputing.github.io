@@ -239,7 +239,7 @@ const pageAssetsWidget = createWidgetScript({
       if (chartContainer) {
         chartContainer.style.display = "block"
       }
-    }, 3000)
+    }, 10000)
     
     // Return cleanup function
     return () => {

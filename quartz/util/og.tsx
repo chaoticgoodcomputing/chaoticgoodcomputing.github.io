@@ -135,6 +135,12 @@ export type SocialImageOptions = {
    */
   excludeRoot: boolean
   /**
+   * Whether to generate OG images during development serve mode (default: false).
+   * Set to false to speed up hot reload by skipping expensive image generation.
+   * Production builds always generate OG images regardless of this setting.
+   */
+  generateOnServe: boolean
+  /**
    * JSX to use for generating image. See satori docs for more info (https://github.com/vercel/satori)
    */
   imageStructure: (
