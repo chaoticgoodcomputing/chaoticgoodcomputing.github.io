@@ -7,12 +7,16 @@ const PageTitle: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzCompo
   const title = cfg?.pageTitle ?? i18n(cfg.locale).propertyDefaults.title
   const baseDir = pathToRoot(fileData.slug!)
   const iconPath = joinSegments(baseDir, "static/icon.png")
+  const authorName = cfg?.structuredData?.author?.name
 
   return (
     <h2 class={classNames(displayClass, "page-title")}>
       <a href={baseDir}>
         <img src={iconPath} class="page-title-icon" alt="" />
-        <span>{title}</span>
+        <div class="page-title-text">
+          <span class="page-title-name">{title}</span>
+          {authorName && <span class="page-title-author">by {authorName}</span>}
+        </div>
       </a>
     </h2>
   )
@@ -39,6 +43,23 @@ PageTitle.css = `
   border-radius: 0.25rem;
   flex-shrink: 0;
   object-fit: cover;
+}
+
+.page-title-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.page-title-name {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.page-title-author {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  font-weight: normal;
 }
 `
 

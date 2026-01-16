@@ -4,11 +4,11 @@
 export function loadPDFLib(): Promise<void> {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script")
-    script.src = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"
-    script.async = true
+    script.src = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/build/pdf.min.mjs"
+    script.type = "module"
     script.onload = () => {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/build/pdf.worker.min.mjs"
       resolve()
     }
     script.onerror = reject

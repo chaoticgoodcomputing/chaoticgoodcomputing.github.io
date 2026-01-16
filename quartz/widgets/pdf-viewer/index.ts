@@ -1,11 +1,12 @@
 import { WidgetDefinition } from "../types"
-import { PDFViewerPlaceholder } from "./component.tsx"
-import script from "./script.inline.ts"
+import { PDFViewer } from "./component"
+import script from "./script.inline"
+import style from "./style.inline.scss"
 
 export const pdfViewer: WidgetDefinition = {
-  name: "PDFViewer",
-  Component: PDFViewerPlaceholder,
+  Component: PDFViewer,
   script: script,
+  css: style,
   selector: ".widget-pdf-viewer",
   scriptName: "pdf-viewer",
 }

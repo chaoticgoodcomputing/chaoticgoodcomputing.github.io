@@ -24,3 +24,21 @@ import { ContentWidget } from '@content/widgets/{widget-name}'
 <WidgetName prop1="value" prop2={123} />
 <ContentWidget config={[1, 2, 3]} />
 ```
+
+### PDF Viewer Example
+
+```mdx
+import { PDFViewer } from '@widgets/pdf-viewer'
+
+<PDFViewer 
+  src="/assets/document.pdf" 
+  title="My Document"
+  height="800px"
+/>
+```
+
+The PDF viewer supports:
+- Full PDF.js rendering for accurate display
+- Download button for offline access
+- Responsive sizing with configurable dimensions
+- Multiple pages with automatic scaling

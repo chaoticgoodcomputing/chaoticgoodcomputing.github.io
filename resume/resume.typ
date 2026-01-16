@@ -113,7 +113,7 @@
   // summary: "Generating higher investment alpha with alternative data-driven market insights",
   // location: "Remote",
   details: [
-    - Lead implementation of *Spark/AWS* optimizations, resulting in >\$1M annual compute cost reductions
+    - Lead implementation of *Spark/AWS* optimizations, resulting in \$1M+ annual compute cost reductions
     - Constructed optimized and durable ETL processes for #link("https://mscience.com/blog/?topics=223%2C223")[cornerstone TMT/games reporting]
     - Planned & constructed unified DataOps & statistics libraries to streamline financial research operations
     // - Construct DataOps CI/CD pipelines for end-to-end *Python/SQL* ETL dev lifecycles
