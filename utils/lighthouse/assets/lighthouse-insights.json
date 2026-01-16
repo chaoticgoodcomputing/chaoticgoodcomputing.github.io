@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "fetchTime": "2026-01-11T01:36:10.482Z",
+    "finalUrl": "http://localhost:8080/",
+    "lighthouseVersion": "13.0.1"
+  },
+  "scores": {
+    "performance": 0,
+    "accessibility": 93,
+    "bestPractices": 96,
+    "seo": 100
+  },
+  "metrics": {
+    "first-contentful-paint": {
+      "title": "First Contentful Paint",
+      "displayValue": "3.7 s",
+      "score": 0.29,
+      "numericValue": 3708.3086000000003,
+      "numericUnit": "millisecond"
+    },
+    "largest-contentful-paint": {
+      "title": "Largest Contentful Paint",
+      "score": null
+    },
+    "total-blocking-time": {
+      "title": "Total Blocking Time",
+      "score": null
+    },
+    "cumulative-layout-shift": {
+      "title": "Cumulative Layout Shift",
+      "displayValue": "0",
+      "score": 1,
+      "numericValue": 0,
+      "numericUnit": "unitless"
+    },
+    "speed-index": {
+      "title": "Speed Index",
+      "displayValue": "5.0 s",
+      "score": 0.64,
+      "numericValue": 4982.899704529155,
+      "numericUnit": "millisecond"
+    },
+    "interactive": {
+      "title": "Time to Interactive",
+      "score": null
+    }
+  },
+  "opportunities": [],
+  "diagnostics": [
+    {
+      "id": "errors-in-console",
+      "title": "Browser errors were logged to the console",
+      "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+      "score": 0,
+      "items": [
+        {
+          "source": "network",
+          "description": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+          "sourceLocation": "https://plausible.io/js/script.manual.js"
+        }
+      ]
+    },
+    {
+      "id": "mainthread-work-breakdown",
+      "title": "Minimize main-thread work",
+      "description": "Consider reducing the time spent parsing, compiling and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to minimize main-thread work](https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/)",
+      "displayValue": "5.7 s",
+      "score": 0.5,
+      "items": [
+        {
+          "group": "scriptEvaluation",
+          "groupLabel": "Script Evaluation",
+          "duration": 4835.655999999776
+        },
+        {
+          "group": "other",
+          "groupLabel": "Other",
+          "duration": 409.9160000000077
+        },
+        {
+          "group": "garbageCollection",
+          "groupLabel": "Garbage Collection",
+          "duration": 218.72399999999965
+        },
+        {
+          "group": "styleLayout",
+          "groupLabel": "Style & Layout",
+          "duration": 158.92800000000022
+        },
+        {
+          "group": "paintCompositeRender",
+          "groupLabel": "Rendering",
+          "duration": 63.27599999999939
+        },
+        {
+          "group": "parseHTML",
+          "groupLabel": "Parse HTML & CSS",
+          "duration": 34.22799999999997
+        },
+        {
+          "group": "scriptParseCompile",
+          "groupLabel": "Script Parsing & Compilation",
+          "duration": 29.211999999999996
+        }
+      ]
+    },
+    {
+      "id": "bootup-time",
+      "title": "Reduce JavaScript execution time",
+      "description": "Consider reducing the time spent parsing, compiling, and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to reduce Javascript execution time](https://developer.chrome.com/docs/lighthouse/performance/bootup-time/).",
+      "displayValue": "4.8 s",
+      "score": 0.5,
+      "items": [
+        {
+          "url": "http://localhost:8080/postscript.js",
+          "total": 4913.247999999835,
+          "scripting": 4664.847999999835,
+          "scriptParseCompile": 3.864
+        },
+        {
+          "url": "Unattributable",
+          "total": 582.1560000000045,
+          "scripting": 125.23600000000032,
+          "scriptParseCompile": 0
+        },
+        {
+          "url": "http://localhost:8080/",
+          "total": 183.504,
+          "scripting": 10.743999999999994,
+          "scriptParseCompile": 2.94
+        }
+      ]
+    },
+    {
+      "id": "valid-source-maps",
+      "title": "Missing source maps for large first-party JavaScript",
+      "description": "Source maps translate minified code to the original source code. This helps developers debug in production. In addition, Lighthouse is able to provide further insights. Consider deploying source maps to take advantage of these benefits. [Learn more about source maps](https://developer.chrome.com/docs/devtools/javascript/source-maps/).",
+      "score": 0,
+      "items": [
+        {
+          "scriptUrl": "http://localhost:8080/postscript.js"
+        }
+      ]
+    },
+    {
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "description": "Low-contrast text is difficult or impossible for many users to read. [Learn how to provide sufficient color contrast](https://dequeuniversity.com/rules/axe/4.11/color-contrast).",
+      "score": 0,
+      "items": [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    },
+    {
+      "id": "heading-order",
+      "title": "Heading elements are not in a sequentially-descending order",
+      "description": "Properly ordered headings that do not skip levels convey the semantic structure of the page, making it easier to navigate and understand when using assistive technologies. [Learn more about heading order](https://dequeuniversity.com/rules/axe/4.11/heading-order).",
+      "score": 0,
+      "items": [
+        {}
+      ]
+    },
+    {
+      "id": "landmark-one-main",
+      "title": "Document does not have a main landmark.",
+      "description": "One main landmark helps screen reader users navigate a web page. [Learn more about landmarks](https://dequeuniversity.com/rules/axe/4.11/landmark-one-main).",
+      "score": 0,
+      "items": [
+        {}
+      ]
+    },
+    {
+      "id": "cache-insight",
+      "title": "Use efficient cache lifetimes",
+      "description": "A long cache lifetime can speed up repeat visits to your page. [Learn more about caching](https://developer.chrome.com/docs/performance/insights/cache).",
+      "displayValue": "Est savings of 231 KiB",
+      "score": 0,
+      "items": [
+        {
+          "url": "http://localhost:8080/postscript.js",
+          "cacheLifetimeMs": 0,
+          "totalBytes": 223171,
+          "wastedBytes": 223171
+        },
+        {
+          "url": "http://localhost:8080/index.css",
+          "cacheLifetimeMs": 0,
+          "totalBytes": 9623,
+          "wastedBytes": 9623
+        },
+        {
+          "url": "http://localhost:8080/static/icon.png",
+          "cacheLifetimeMs": 0,
+          "totalBytes": 2783,
+          "wastedBytes": 2783
+        },
+        {
+          "url": "http://localhost:8080/prescript.js",
+          "cacheLifetimeMs": 0,
+          "totalBytes": 830,
+          "wastedBytes": 830
+        }
+      ]
+    },
+    {
+      "id": "render-blocking-insight",
+      "title": "Render blocking requests",
+      "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://developer.chrome.com/docs/performance/insights/render-blocking) can move these network requests out of the critical path.",
+      "score": 0,
+      "items": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Schibsted%20Grotesk:wght@400;700&family=Source%20Sans%20Pro:ital,wght@0,400;0,600;1,400;1,600&family=IBM%20Plex%20Mono:wght@400;600&display=swap",
+          "totalBytes": 1630
+        },
+        {
+          "url": "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css",
+          "totalBytes": 4199
+        },
+        {
+          "url": "http://localhost:8080/index.css",
+          "totalBytes": 9623
+        },
+        {
+          "url": "http://localhost:8080/prescript.js",
+          "totalBytes": 830
+        }
+      ]
+    }
+  ],
+  "failedAudits": [
+    {
+      "id": "errors-in-console",
+      "title": "Browser errors were logged to the console",
+      "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+      "score": 0,
+      "items": [
+        {
+          "source": "network",
+          "description": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+        }
+      ]
+    },
+    {
+      "id": "valid-source-maps",
+      "title": "Missing source maps for large first-party JavaScript",
+      "description": "Source maps translate minified code to the original source code. This helps developers debug in production. In addition, Lighthouse is able to provide further insights. Consider deploying source maps to take advantage of these benefits. [Learn more about source maps](https://developer.chrome.com/docs/devtools/javascript/source-maps/).",
+      "score": 0,
+      "items": [
+        {
+          "scriptUrl": "http://localhost:8080/postscript.js"
+        }
+      ]
+    },
+    {
+      "id": "color-contrast",
+      "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+      "description": "Low-contrast text is difficult or impossible for many users to read. [Learn how to provide sufficient color contrast](https://dequeuniversity.com/rules/axe/4.11/color-contrast).",
+      "score": 0,
+      "items": [
+        {
+          "selector": "ul.tags > li.tag-item > a.internal > span.tag-count",
+          "snippet": "<span class=\"tag-count\">"
+        },
+        {
+          "selector": "ul.tags > li.tag-item > a.internal > span.tag-count",
+          "snippet": "<span class=\"tag-count\">"
+        },
+        {
+          "selector": "ul.tags > li.tag-item > a.internal > span.tag-count",
+          "snippet": "<span class=\"tag-count\">"
+        },
+        {
+          "selector": "footer > ul > li > a",
+          "snippet": "<a href=\"https://github.com/spelkington\">"
+        },
+        {
+          "selector": "footer > ul > li > a",
+          "snippet": "<a href=\"https://www.linkedin.com/in/spelkington\">"
+        },
+        {
+          "selector": "footer > ul > li > a",
+          "snippet": "<a href=\"https://chaoticgood.computer/ai-policy\">"
+        },
+        {
+          "selector": "div#quartz-body > footer > p > a",
+          "snippet": "<a href=\"https://chaoticgood.computer/contact\">"
+        },
+        {
+          "selector": "div#quartz-body > footer > p > a",
+          "snippet": "<a href=\"https://chaoticgood.computer\">"
+        },
+        {
+          "selector": "div#quartz-body > footer > p > a",
+          "snippet": "<a href=\"https://quartz.jzhao.xyz/\">"
+        }
+      ]
+    },
+    {
+      "id": "heading-order",
+      "title": "Heading elements are not in a sequentially-descending order",
+      "description": "Properly ordered headings that do not skip levels convey the semantic structure of the page, making it easier to navigate and understand when using assistive technologies. [Learn more about heading order](https://dequeuniversity.com/rules/axe/4.11/heading-order).",
+      "score": 0,
+      "items": [
+        {
+          "selector": "li.section-li > div.section > div.desc > h3",
+          "snippet": "<h3>"
+        }
+      ]
+    },
+    {
+      "id": "landmark-one-main",
+      "title": "Document does not have a main landmark.",
+      "description": "One main landmark helps screen reader users navigate a web page. [Learn more about landmarks](https://dequeuniversity.com/rules/axe/4.11/landmark-one-main).",
+      "score": 0,
+      "items": [
+        {
+          "selector": "html",
+          "snippet": "<html lang=\"en\" dir=\"ltr\" saved-theme=\"dark\" reader-mode=\"off\">"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}
