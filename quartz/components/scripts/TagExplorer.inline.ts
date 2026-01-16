@@ -298,12 +298,35 @@ async function _appendChildNodes(
     ul.appendChild(childNode)
   }
 
-  // Add files with this tag
+  // Collect files with this tag
+  const filesWithTag: Array<[FullSlug, ContentDetails]> = []
   for (const [fileSlug, details] of contentIndex) {
     if (details.tags.includes(tagName)) {
-      const fileNode = await _createFileNode(currentSlug, fileSlug, details)
-      ul.appendChild(fileNode)
+      filesWithTag.push([fileSlug, details])
     }
+  }
+
+  // Sort files: public first, then private; within each group, sort by date descending
+  filesWithTag.sort(([, a], [, b]) => {
+    const aIsPrivate = a.tags.includes("private")
+    const bIsPrivate = b.tags.includes("private")
+
+    // Public posts come before private posts
+    if (aIsPrivate !== bIsPrivate) {
+      return aIsPrivate ? 1 : -1
+    }
+
+    // Within same privacy level, sort by date descending
+    if (!a.date && !b.date) return 0
+    if (!a.date) return 1
+    if (!b.date) return -1
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
+
+  // Add sorted file nodes
+  for (const [fileSlug, details] of filesWithTag) {
+    const fileNode = await _createFileNode(currentSlug, fileSlug, details)
+    ul.appendChild(fileNode)
   }
 }
 
