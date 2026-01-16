@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "totalPages": 20,
-    "totalRuns": 70,
-    "timestamp": "2026-01-11T02:48:26.002Z",
+    "totalPages": 21,
+    "totalRuns": 130,
+    "timestamp": "2026-01-16T18:38:03.763Z",
     "lighthouseVersion": "12.6.1"
   },
   "overall": {
     "performance": {
-      "average": 35,
+      "average": 63,
       "min": 0,
-      "max": 72
+      "max": 83
     },
     "accessibility": {
       "average": 95,
@@ -47,24 +47,24 @@
     },
     {
       "url": "http://localhost:8080/ai-policy",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 0,
+        "performance": 55,
         "accessibility": 94,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3982.1623,
-        "largest-contentful-paint": 5507.504199999999,
-        "total-blocking-time": 146,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4911.180992459425
+        "first-contentful-paint": 3871.19025,
+        "largest-contentful-paint": 3444.159275,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.15869188182194,
+        "speed-index": 3903.9016
       }
     },
     {
       "url": "http://localhost:8080/contact",
-      "runs": 4,
+      "runs": 7,
       "scores": {
         "performance": 0,
         "accessibility": 94,
@@ -72,84 +72,84 @@
         "seo": 92
       },
       "metrics": {
-        "first-contentful-paint": 3887.9115,
-        "largest-contentful-paint": null,
-        "total-blocking-time": null,
+        "first-contentful-paint": 3723.4931,
+        "largest-contentful-paint": 3046.728,
+        "total-blocking-time": 0,
         "cumulative-layout-shift": 0,
-        "speed-index": 4901.700279575209
+        "speed-index": 4824.560546982197
       }
     },
     {
       "url": "http://localhost:8080/content/annotations/clinard-dissertation",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 31,
+        "performance": 64,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3757.3948250000003,
-        "largest-contentful-paint": 5249.64015,
-        "total-blocking-time": 126.5,
-        "cumulative-layout-shift": 0.09352478720330329,
-        "speed-index": 4239.484148498668
+        "first-contentful-paint": 3453.3212000000003,
+        "largest-contentful-paint": 3051.7311,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.13872984758973378,
+        "speed-index": 3453.3212000000003
       }
     },
     {
       "url": "http://localhost:8080/content/annotations/college-admissions-and-the-stability-of-marriage",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 62,
+        "performance": 63,
         "accessibility": 93,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 4518.543299999999,
-        "largest-contentful-paint": 9808.280475,
-        "total-blocking-time": 57,
-        "cumulative-layout-shift": 0,
-        "speed-index": 5146.338576918484
+        "first-contentful-paint": 4052.7391000000002,
+        "largest-contentful-paint": 9150.300325,
+        "total-blocking-time": 65,
+        "cumulative-layout-shift": 0.009644271784601326,
+        "speed-index": 4052.7391000000002
       }
     },
     {
       "url": "http://localhost:8080/content/annotations/simple-economics-of-open-source",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 64,
+        "performance": 66,
         "accessibility": 93,
         "bestPractices": 96,
         "seo": 92
       },
       "metrics": {
-        "first-contentful-paint": 4540.218000000001,
-        "largest-contentful-paint": 7301.9892375,
-        "total-blocking-time": 47.5,
-        "cumulative-layout-shift": 0,
-        "speed-index": 5109.9775431023445
+        "first-contentful-paint": 4054.0666499999998,
+        "largest-contentful-paint": 7015.414600000002,
+        "total-blocking-time": 40,
+        "cumulative-layout-shift": 0.006392492705535378,
+        "speed-index": 4054.0666499999998
       }
     },
     {
       "url": "http://localhost:8080/content/articles/binglish",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 48,
+        "performance": 52,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 4204.46835,
-        "largest-contentful-paint": 7217.9935000000005,
-        "total-blocking-time": 179,
-        "cumulative-layout-shift": 0.3096048002808347,
-        "speed-index": 4204.46835
+        "first-contentful-paint": 3623.5303999999996,
+        "largest-contentful-paint": 5604.735575000001,
+        "total-blocking-time": 58,
+        "cumulative-layout-shift": 0.16338004384462054,
+        "speed-index": 3651.1800726615133
       }
     },
     {
       "url": "http://localhost:8080/content/articles/hello-blog",
-      "runs": 4,
+      "runs": 7,
       "scores": {
         "performance": 0,
         "accessibility": 95,
@@ -157,16 +157,16 @@
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3908.7938999999997,
-        "largest-contentful-paint": null,
-        "total-blocking-time": null,
-        "cumulative-layout-shift": 0.09968105445365374,
-        "speed-index": 4967.023487393535
+        "first-contentful-paint": 3453.6066000000005,
+        "largest-contentful-paint": 3349.1364000000003,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.10353792056059662,
+        "speed-index": 3453.6066000000005
       }
     },
     {
       "url": "http://localhost:8080/content/articles/littlefield",
-      "runs": 4,
+      "runs": 7,
       "scores": {
         "performance": 48,
         "accessibility": 96,
@@ -174,223 +174,223 @@
         "seo": 92
       },
       "metrics": {
-        "first-contentful-paint": 4204.3039499999995,
-        "largest-contentful-paint": 8500.636000000002,
-        "total-blocking-time": 135.0000000000009,
+        "first-contentful-paint": 3824.0829999999996,
+        "largest-contentful-paint": 7119.59425,
+        "total-blocking-time": 61,
         "cumulative-layout-shift": 0.3099747595135143,
-        "speed-index": 4479.7764779678855
+        "speed-index": 4363.228409039088
       }
     },
     {
       "url": "http://localhost:8080/content/articles/resume-ci-pipeline",
-      "runs": 4,
+      "runs": 7,
       "scores": {
-        "performance": 59,
+        "performance": 66,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3837.403300000001,
-        "largest-contentful-paint": 5565.589325000001,
-        "total-blocking-time": 128,
-        "cumulative-layout-shift": 0.21248885190894815,
-        "speed-index": 3837.403300000001
+        "first-contentful-paint": 2702.8565,
+        "largest-contentful-paint": 4256.8565,
+        "total-blocking-time": 49,
+        "cumulative-layout-shift": 0.2925318702945795,
+        "speed-index": 2702.8565
       }
     },
     {
       "url": "http://localhost:8080/content/articles/robloxaville",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 51,
+        "performance": 69,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 4054.519399999999,
-        "largest-contentful-paint": 5927.719950000001,
-        "total-blocking-time": 99.5,
-        "cumulative-layout-shift": 0.2389190940933152,
-        "speed-index": 4054.519399999999
+        "first-contentful-paint": 2479.8944,
+        "largest-contentful-paint": 4512.952499999999,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.22251770032609672,
+        "speed-index": 2479.8944
       }
     },
     {
       "url": "http://localhost:8080/content/articles/structured-streaming",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 56,
+        "performance": 62,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 92
       },
       "metrics": {
-        "first-contentful-paint": 3895.8576999999996,
-        "largest-contentful-paint": 14104.461075,
-        "total-blocking-time": 155,
-        "cumulative-layout-shift": 0.157271687627402,
-        "speed-index": 4823.731093817332
+        "first-contentful-paint": 3073.07535,
+        "largest-contentful-paint": 12012.3456,
+        "total-blocking-time": 7,
+        "cumulative-layout-shift": 0.1464015000751739,
+        "speed-index": 3431.6991280252682
       }
     },
     {
       "url": "http://localhost:8080/content/notes/arc-review",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 0,
+        "performance": 83,
         "accessibility": 94,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3429.8060000000005,
-        "largest-contentful-paint": 3472.8390000000004,
-        "total-blocking-time": 58,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4752.897492775203
+        "first-contentful-paint": 2533.8082000000004,
+        "largest-contentful-paint": 3263.2398000000003,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.00715299055992164,
+        "speed-index": 3385.882628965208
       }
     },
     {
       "url": "http://localhost:8080/content/notes/beethoven",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 72,
+        "performance": 80,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3453.7202,
-        "largest-contentful-paint": 5057.291150000001,
-        "total-blocking-time": 104.00000000000045,
-        "cumulative-layout-shift": 0.06273443713839527,
-        "speed-index": 3453.7202
+        "first-contentful-paint": 2813.6943,
+        "largest-contentful-paint": 3719.621,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.008508149967959526,
+        "speed-index": 3019.9281849891013
       }
     },
     {
       "url": "http://localhost:8080/content/notes/caveat-lector",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 0,
+        "performance": 79,
         "accessibility": 94,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3594.5301999999992,
-        "largest-contentful-paint": 5296.2812,
-        "total-blocking-time": 211,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4774.681364318016
+        "first-contentful-paint": 2778.88785,
+        "largest-contentful-paint": 3201.4893500000003,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.041482843072260696,
+        "speed-index": 2778.88785
       }
     },
     {
       "url": "http://localhost:8080/content/notes/digital-gardening-with-quartz",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 0,
+        "performance": 74,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3768.4007999999994,
-        "largest-contentful-paint": 5741.00815,
-        "total-blocking-time": 170,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4920.713661728274
+        "first-contentful-paint": 2853.6789499999995,
+        "largest-contentful-paint": 3148.4403,
+        "total-blocking-time": 4,
+        "cumulative-layout-shift": 0.055790019837450605,
+        "speed-index": 2853.6789499999995
       }
     },
     {
       "url": "http://localhost:8080/content/notes/encrypted-queue",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 68,
+        "performance": 78,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3453.8875,
-        "largest-contentful-paint": 5065.42545,
-        "total-blocking-time": 108.99999999999977,
-        "cumulative-layout-shift": 0.13914198252051924,
-        "speed-index": 3453.8875
+        "first-contentful-paint": 2778.6116999999995,
+        "largest-contentful-paint": 3063.8678999999997,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.13124562911389795,
+        "speed-index": 2778.6116999999995
       }
     },
     {
       "url": "http://localhost:8080/content/notes/event-storming-intro",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 0,
+        "performance": 66,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3777.8325999999997,
-        "largest-contentful-paint": 5225.6899,
-        "total-blocking-time": 145,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4803.501225412019
+        "first-contentful-paint": 2929.4474500000006,
+        "largest-contentful-paint": 3207.9309,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.260468057542507,
+        "speed-index": 2929.4474500000006
       }
     },
     {
       "url": "http://localhost:8080/content/notes/hostage-negotiations",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 62,
+        "performance": 83,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3603.1248,
-        "largest-contentful-paint": 4446.228125,
-        "total-blocking-time": 76.25,
-        "cumulative-layout-shift": 0.2077649178953196,
-        "speed-index": 3603.1248
+        "first-contentful-paint": 2479.0052,
+        "largest-contentful-paint": 3350.6872999999996,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.008615693546794536,
+        "speed-index": 2479.0052
       }
     },
     {
       "url": "http://localhost:8080/content/notes/kickoff-season-of-rhythm",
-      "runs": 3,
+      "runs": 6,
       "scores": {
-        "performance": 0,
+        "performance": 79,
         "accessibility": 96,
         "bestPractices": 96,
         "seo": 100
       },
       "metrics": {
-        "first-contentful-paint": 3614.4346,
-        "largest-contentful-paint": 5066.8153999999995,
-        "total-blocking-time": 154,
-        "cumulative-layout-shift": 0,
-        "speed-index": 4757.610345868539
+        "first-contentful-paint": 2778.89855,
+        "largest-contentful-paint": 3203.77245,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.08732681637630259,
+        "speed-index": 2778.89855
+      }
+    },
+    {
+      "url": "http://localhost:8080/content/notes/kickoff-season-of-systems",
+      "runs": 3,
+      "scores": {
+        "performance": 77,
+        "accessibility": 96,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 2104.2938,
+        "largest-contentful-paint": 3206.2937999999995,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 0.3086750919018904,
+        "speed-index": 2104.2938
       }
     }
   ],
   "worstPerformers": {
     "performance": [
       {
-        "url": "http://localhost:8080/ai-policy",
-        "runs": 4,
-        "scores": {
-          "performance": 0,
-          "accessibility": 94,
-          "bestPractices": 96,
-          "seo": 100
-        },
-        "metrics": {
-          "first-contentful-paint": 3982.1623,
-          "largest-contentful-paint": 5507.504199999999,
-          "total-blocking-time": 146,
-          "cumulative-layout-shift": 0,
-          "speed-index": 4911.180992459425
-        }
-      },
-      {
         "url": "http://localhost:8080/contact",
-        "runs": 4,
+        "runs": 7,
         "scores": {
           "performance": 0,
           "accessibility": 94,
@@ -398,16 +398,16 @@
           "seo": 92
         },
         "metrics": {
-          "first-contentful-paint": 3887.9115,
-          "largest-contentful-paint": null,
-          "total-blocking-time": null,
+          "first-contentful-paint": 3723.4931,
+          "largest-contentful-paint": 3046.728,
+          "total-blocking-time": 0,
           "cumulative-layout-shift": 0,
-          "speed-index": 4901.700279575209
+          "speed-index": 4824.560546982197
         }
       },
       {
         "url": "http://localhost:8080/content/articles/hello-blog",
-        "runs": 4,
+        "runs": 7,
         "scores": {
           "performance": 0,
           "accessibility": 95,
@@ -415,81 +415,98 @@
           "seo": 100
         },
         "metrics": {
-          "first-contentful-paint": 3908.7938999999997,
-          "largest-contentful-paint": null,
-          "total-blocking-time": null,
-          "cumulative-layout-shift": 0.09968105445365374,
-          "speed-index": 4967.023487393535
+          "first-contentful-paint": 3453.6066000000005,
+          "largest-contentful-paint": 3349.1364000000003,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 0.10353792056059662,
+          "speed-index": 3453.6066000000005
         }
       },
       {
-        "url": "http://localhost:8080/content/notes/arc-review",
-        "runs": 3,
+        "url": "http://localhost:8080/content/articles/littlefield",
+        "runs": 7,
         "scores": {
-          "performance": 0,
-          "accessibility": 94,
+          "performance": 48,
+          "accessibility": 96,
+          "bestPractices": 96,
+          "seo": 92
+        },
+        "metrics": {
+          "first-contentful-paint": 3824.0829999999996,
+          "largest-contentful-paint": 7119.59425,
+          "total-blocking-time": 61,
+          "cumulative-layout-shift": 0.3099747595135143,
+          "speed-index": 4363.228409039088
+        }
+      },
+      {
+        "url": "http://localhost:8080/content/articles/binglish",
+        "runs": 7,
+        "scores": {
+          "performance": 52,
+          "accessibility": 96,
           "bestPractices": 96,
           "seo": 100
         },
         "metrics": {
-          "first-contentful-paint": 3429.8060000000005,
-          "largest-contentful-paint": 3472.8390000000004,
+          "first-contentful-paint": 3623.5303999999996,
+          "largest-contentful-paint": 5604.735575000001,
           "total-blocking-time": 58,
-          "cumulative-layout-shift": 0,
-          "speed-index": 4752.897492775203
+          "cumulative-layout-shift": 0.16338004384462054,
+          "speed-index": 3651.1800726615133
         }
       },
       {
-        "url": "http://localhost:8080/content/notes/caveat-lector",
-        "runs": 3,
+        "url": "http://localhost:8080/ai-policy",
+        "runs": 7,
         "scores": {
-          "performance": 0,
+          "performance": 55,
           "accessibility": 94,
           "bestPractices": 96,
           "seo": 100
         },
         "metrics": {
-          "first-contentful-paint": 3594.5301999999992,
-          "largest-contentful-paint": 5296.2812,
-          "total-blocking-time": 211,
-          "cumulative-layout-shift": 0,
-          "speed-index": 4774.681364318016
+          "first-contentful-paint": 3871.19025,
+          "largest-contentful-paint": 3444.159275,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 0.15869188182194,
+          "speed-index": 3903.9016
         }
       }
     ],
     "accessibility": [
       {
         "url": "http://localhost:8080/content/annotations/college-admissions-and-the-stability-of-marriage",
-        "runs": 4,
+        "runs": 7,
         "scores": {
-          "performance": 62,
+          "performance": 63,
           "accessibility": 93,
           "bestPractices": 96,
           "seo": 100
         },
         "metrics": {
-          "first-contentful-paint": 4518.543299999999,
-          "largest-contentful-paint": 9808.280475,
-          "total-blocking-time": 57,
-          "cumulative-layout-shift": 0,
-          "speed-index": 5146.338576918484
+          "first-contentful-paint": 4052.7391000000002,
+          "largest-contentful-paint": 9150.300325,
+          "total-blocking-time": 65,
+          "cumulative-layout-shift": 0.009644271784601326,
+          "speed-index": 4052.7391000000002
         }
       },
       {
         "url": "http://localhost:8080/content/annotations/simple-economics-of-open-source",
-        "runs": 4,
+        "runs": 7,
         "scores": {
-          "performance": 64,
+          "performance": 66,
           "accessibility": 93,
           "bestPractices": 96,
           "seo": 92
         },
         "metrics": {
-          "first-contentful-paint": 4540.218000000001,
-          "largest-contentful-paint": 7301.9892375,
-          "total-blocking-time": 47.5,
-          "cumulative-layout-shift": 0,
-          "speed-index": 5109.9775431023445
+          "first-contentful-paint": 4054.0666499999998,
+          "largest-contentful-paint": 7015.414600000002,
+          "total-blocking-time": 40,
+          "cumulative-layout-shift": 0.006392492705535378,
+          "speed-index": 4054.0666499999998
         }
       },
       {
@@ -511,24 +528,24 @@
       },
       {
         "url": "http://localhost:8080/ai-policy",
-        "runs": 4,
+        "runs": 7,
         "scores": {
-          "performance": 0,
+          "performance": 55,
           "accessibility": 94,
           "bestPractices": 96,
           "seo": 100
         },
         "metrics": {
-          "first-contentful-paint": 3982.1623,
-          "largest-contentful-paint": 5507.504199999999,
-          "total-blocking-time": 146,
-          "cumulative-layout-shift": 0,
-          "speed-index": 4911.180992459425
+          "first-contentful-paint": 3871.19025,
+          "largest-contentful-paint": 3444.159275,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 0.15869188182194,
+          "speed-index": 3903.9016
         }
       },
       {
         "url": "http://localhost:8080/contact",
-        "runs": 4,
+        "runs": 7,
         "scores": {
           "performance": 0,
           "accessibility": 94,
@@ -536,11 +553,11 @@
           "seo": 92
         },
         "metrics": {
-          "first-contentful-paint": 3887.9115,
-          "largest-contentful-paint": null,
-          "total-blocking-time": null,
+          "first-contentful-paint": 3723.4931,
+          "largest-contentful-paint": 3046.728,
+          "total-blocking-time": 0,
           "cumulative-layout-shift": 0,
-          "speed-index": 4901.700279575209
+          "speed-index": 4824.560546982197
         }
       }
     ]
