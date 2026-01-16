@@ -128,7 +128,7 @@ async function findMarkdownFiles(dir) {
       if (entry.isDirectory()) {
         const subFiles = await findMarkdownFiles(fullPath);
         files.push(...subFiles);
-      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))) {
         files.push(fullPath);
       }
     }
