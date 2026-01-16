@@ -28,9 +28,9 @@ const config: QuartzConfig = {
     tags: {
       colors: [
         // Top-level categories
+        { tag: "horticulture", color: GREEN },
         { tag: "engineering", color: RED },
         { tag: "economics", color: ORANGE },
-        { tag: "horticulture", color: GREEN },
         { tag: "projects", color: BLUE },
         { tag: "writing", color: YELLOW },
         { tag: "private", color: BLUESTEEL },
@@ -41,7 +41,7 @@ const config: QuartzConfig = {
         { tag: "projects/games/roblox", icon: "custom:roblox" },
         { tag: "projects/games/magic-atlas", icon: "mdi:cards-outline" },
         { tag: "projects/flowthru", icon: "mdi:graph-outline" },
-        { tag: "projects/homelab", icon: "mdi:flask-outline" },
+        { tag: "projects/homelab", icon: "mdi:home-sound-out" },
         
         // Programming Languages
         { tag: "engineering/languages/python", icon: "mdi:language-python" },
@@ -75,15 +75,15 @@ const config: QuartzConfig = {
         { tag: "horticulture/seasons", icon: "mdi:weather-sunny" },
         
         // Top-level Categories
-        { tag: "engineering", icon: "mdi:wrench" },
-        { tag: "economics", icon: "mdi:chart-bell-curve" },
         { tag: "horticulture", icon: "mdi:flower" },
-        { tag: "projects", icon: "mdi:folder-cog" },
+        { tag: "economics", icon: "mdi:chart-bell-curve" },
+        { tag: "engineering", icon: "mdi:wrench" },
+        { tag: "projects", icon: "mdi:source-branch" },
         { tag: "writing", icon: "mdi:pencil" },
         
         // Seasonal Themes
         { tag: "horticulture/seasons/rhythm", icon: "mdi:music-note" },
-        { tag: "horticulture/seasons/systems", icon: "mdi:transit-connection-variant" },
+        { tag: "horticulture/seasons/systems", icon: "mdi:connection" },
 
         // Dayjob
         { tag: "projects/dayjob", icon: "mdi:vote" },

@@ -6,7 +6,7 @@
   "projectType": "application",
   "targets": {
     "clean": {
-      "//": "Cleans quartz cache files",
+      "//": "Cleans quartz cache files and output directory",
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -27,7 +27,8 @@
         "cwd": "{workspaceRoot}",
         "parallel": false
       },
-      "outputs": [ "{workspaceRoot}/quartz/static/fonts/" ]
+      "outputs": [ "{workspaceRoot}/quartz/static/fonts/" ],
+      "dependsOn": [ "site:clean" ]
     },
     "_subset-fonts": {
       "//": "Subsets fonts to only characters used on site (requires glyphhanger and completed build)",
@@ -41,13 +42,10 @@
       }
     },
     "_prebuild": {
-      "//": "Internal target to run pre-build steps",
+      "//": "Private target for pre-build hooks. Clean runs first via deps, then parallel prep.",
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "echo 'Pre-build steps complete!'"
-        ],
-        "cwd": "{workspaceRoot}",
+        "commands": [ ],
         "parallel": false
       },
       "dependsOn": [
@@ -55,60 +53,54 @@
         "vault:download-annotation-pdfs"
       ]
     },
-    "_postbuild": {
-      "//": "Internal target to run post-build steps (copy robots.txt to root)",
+    "_inbuild": {
+      "//": "Private target for the actual build execution. Runs Quartz build command.",
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cp quartz/static/robots.txt public/robots.txt"
+          "./quartz/bootstrap-cli.mjs build -d content/public"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      },
+      "outputs": [ "{workspaceRoot}/public" ]
+    },
+    "_postbuild": {
+      "//": "Private target for post-build hooks. Uses dependsOn for extensibility.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp quartz/static/robots.txt public/robots.txt",
+          "cp CNAME public/CNAME"
         ],
         "cwd": "{workspaceRoot}",
         "parallel": false
       }
     },
     "serve": {
-      "//": "Dev server with hot reload. Use serve:docs or serve:site for presets.",
+      "//": "Dev server with hot reload",
       "executor": "nx:run-commands",
       "options": {
-        "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d {args.dir}" ],
+        "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d content/public" ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
-      "configurations": {
-        "docs": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d docs/reference/external/quartz/repo/docs" ]
-        },
-        "site": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build --serve -d content/public" ]
-        }
-      },
-      "defaultConfiguration": "site",
       "continuous": true,
-      "dependsOn": [ "site: clean", "vault:sync", "site:_prebuild" ]
+      "dependsOn": [ "site:clean", "vault:sync", "site:_prebuild" ]
     },
     "build": {
-      "//": "Production build to public/. Use build:docs or build:site for presets.",
+      "//": "Public build target. Orchestrates _prebuild → _inbuild → _postbuild sequence.",
       "executor": "nx:run-commands",
       "options": {
-        "commands": [ ],
+        "commands": [
+          "nx run site:_inbuild",
+          "nx run site:_postbuild"
+        ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
-      "configurations": {
-        "docs": {
-          "commands": [ "./quartz/bootstrap-cli.mjs build -d docs/reference/external/quartz/repo/docs" ]
-        },
-        "site": {
-          "commands": [
-            "./quartz/bootstrap-cli.mjs build -d content/public",
-            "cp quartz/static/robots.txt public/robots.txt",
-            "cp CNAME public/CNAME"
-          ]
-        }
-      },
-      "defaultConfiguration": "site",
       "outputs": [ "{workspaceRoot}/public" ],
-      "dependsOn": [ "site:clean", "site:_prebuild" ]
+      "dependsOn": [ "site:_prebuild" ]
     },
     "check": {
       "//": "Type checking and formatting validation",

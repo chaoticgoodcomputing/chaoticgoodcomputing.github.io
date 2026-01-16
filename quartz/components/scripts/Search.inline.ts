@@ -1,4 +1,4 @@
-import FlexSearch, { DefaultDocumentSearchResults } from "flexsearch"
+import type { DefaultDocumentSearchResults } from "flexsearch"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, normalizeRelativeURLs, resolveAbsolute } from "../../util/path"
@@ -27,6 +27,11 @@ const contextWindowWords = 30
 const numSearchResults = 8
 const numTagResults = 5
 let indexPopulated = false
+
+// Lazy-loaded resources
+let FlexSearch: typeof import("flexsearch").default | null = null
+let contentIndexData: ContentIndex | null = null
+let searchDataPromise: Promise<void> | null = null
 
 // ============================================================================
 // HELPER FUNCTIONS - Text Processing
@@ -80,27 +85,64 @@ const _encoder = (str: string): string[] => {
   return tokens
 }
 
-let index = new FlexSearch.Document<Item>({
-  encode: _encoder,
-  document: {
-    id: "id",
-    tag: "tags",
-    index: [
-      {
-        field: "title",
-        tokenize: "forward",
-      },
-      {
-        field: "content",
-        tokenize: "forward",
-      },
-      {
-        field: "tags",
-        tokenize: "forward",
-      },
-    ],
-  },
-})
+// ============================================================================
+// LAZY LOADING
+// ============================================================================
+
+/**
+ * Lazy-load FlexSearch and content index data
+ * Only loads once, subsequent calls return cached promise
+ */
+async function loadSearchResources(): Promise<void> {
+  if (searchDataPromise) return searchDataPromise
+
+  searchDataPromise = (async () => {
+    // Load FlexSearch library
+    if (!FlexSearch) {
+      const module = await import("flexsearch")
+      FlexSearch = module.default
+    }
+
+    // Load content index
+    if (!contentIndexData) {
+      const response = await fetch("/static/contentIndex.json")
+      contentIndexData = await response.json()
+    }
+  })()
+
+  return searchDataPromise
+}
+
+let index: InstanceType<typeof import("flexsearch").default.Document<Item>> | null = null
+
+/**
+ * Initialize FlexSearch index (called after resources are loaded)
+ */
+function initializeIndex() {
+  if (!FlexSearch || index) return
+
+  index = new FlexSearch.Document<Item>({
+    encode: _encoder,
+    document: {
+      id: "id",
+      tag: "tags",
+      index: [
+        {
+          field: "title",
+          tokenize: "forward",
+        },
+        {
+          field: "content",
+          tokenize: "forward",
+        },
+        {
+          field: "tags",
+          tokenize: "forward",
+        },
+      ],
+    },
+  })
+}
 
 /**
  * Tokenize a search term into individual tokens and n-grams
@@ -244,6 +286,7 @@ function _highlightHTML(searchTerm: string, el: HTMLElement): HTMLElement {
 async function _performBasicSearch(
   query: string,
 ): Promise<DefaultDocumentSearchResults<Item>> {
+  if (!index) throw new Error("Search index not initialized")
   return await index.searchAsync({
     query,
     limit: numSearchResults,
@@ -255,6 +298,7 @@ async function _performBasicSearch(
  * Perform a tag-only search
  */
 async function _performTagSearch(query: string): Promise<DefaultDocumentSearchResults<Item>> {
+  if (!index) throw new Error("Search index not initialized")
   return await index.searchAsync({
     query,
     limit: numSearchResults,
@@ -269,6 +313,7 @@ async function _performTagWithQuerySearch(
   tag: string,
   query: string,
 ): Promise<DefaultDocumentSearchResults<Item>> {
+  if (!index) throw new Error("Search index not initialized")
   const searchResults = await index.searchAsync({
     query: query,
     limit: Math.max(numSearchResults, 10000),
@@ -308,7 +353,7 @@ function _aggregateSearchResults(
  * Fill the FlexSearch index with content data
  */
 async function _fillDocument(data: ContentIndex): Promise<void> {
-  if (indexPopulated) return
+  if (indexPopulated || !index) return
 
   let id = 0
   const promises: Array<Promise<unknown>> = []
@@ -578,19 +623,27 @@ function _handleSearchToggle(
   e: KeyboardEvent,
   container: HTMLElement,
   hideSearch: () => void,
-  showSearch: (type: SearchType) => void,
+  showSearch: (type: SearchType) => Promise<void>,
   searchBar: HTMLInputElement,
 ): boolean {
   if (e.key === "k" && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
     e.preventDefault()
     const searchBarOpen = container.classList.contains("active")
-    searchBarOpen ? hideSearch() : showSearch("basic")
+    if (searchBarOpen) {
+      hideSearch()
+    } else {
+      showSearch("basic")
+    }
     return true
   } else if (e.shiftKey && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
     e.preventDefault()
     const searchBarOpen = container.classList.contains("active")
-    searchBarOpen ? hideSearch() : showSearch("tags")
-    searchBar.value = "#"
+    if (searchBarOpen) {
+      hideSearch()
+    } else {
+      showSearch("tags")
+      searchBar.value = "#"
+    }
     return true
   }
   return false
@@ -662,7 +715,7 @@ function _createShortcutHandler(
   results: HTMLElement,
   searchBar: HTMLInputElement,
   hideSearch: () => void,
-  showSearch: (type: SearchType) => void,
+  showSearch: (type: SearchType) => Promise<void>,
   displayPreview: (el: HTMLElement | null) => Promise<void>,
   currentHoverRef: { value: HTMLInputElement | null },
 ) {
@@ -736,9 +789,8 @@ function _createOnTypeHandler(
  * Set up search functionality for a search element
  * @param searchElement - The search DOM element
  * @param currentSlug - Current page slug
- * @param data - Content index data
  */
-async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: ContentIndex) {
+async function setupSearch(searchElement: Element, currentSlug: FullSlug) {
   // Query and validate DOM elements
   const container = searchElement.querySelector(".search-container") as HTMLElement
   if (!container) return
@@ -753,7 +805,43 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   const searchLayout = searchElement.querySelector(".search-layout") as HTMLElement
   if (!searchLayout) return
 
-  // Initialize UI containers
+  // Track if search is initialized
+  let isInitialized = false
+
+  /**
+   * Initialize search on first activation
+   */
+  async function ensureSearchReady(): Promise<void> {
+    if (isInitialized) return
+
+    // Show loading state
+    searchBar.placeholder = "Loading search..."
+    searchBar.disabled = true
+
+    try {
+      // Lazy-load resources
+      await loadSearchResources()
+      
+      // Initialize index
+      initializeIndex()
+      
+      // Populate index with data
+      if (contentIndexData) {
+        await _fillDocument(contentIndexData)
+      }
+
+      isInitialized = true
+      searchBar.placeholder = searchBar.getAttribute("aria-label") || "Search"
+      searchBar.disabled = false
+    } catch (error) {
+      console.error("Failed to initialize search:", error)
+      searchBar.placeholder = "Search unavailable"
+      searchBar.disabled = false
+    }
+  }
+
+  // Initialize UI containers (but don't load data yet)
+  const data = contentIndexData || {} // Empty until loaded
   const idDataMap = Object.keys(data) as FullSlug[]
   const enablePreview = searchLayout.dataset.preview === "true"
   const results = document.createElement("div")
@@ -770,27 +858,59 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   // Create state and handler closures
   const currentHoverRef = { value: null as HTMLInputElement | null }
   const hideSearch = _createHideSearchHandler(container, searchBar, searchLayout, searchButton, results, preview, sidebar)
-  const showSearch = _createShowSearchHandler(container, searchBar, sidebar)
+  
+  // Wrap showSearch to ensure resources are loaded
+  const originalShowSearch = _createShowSearchHandler(container, searchBar, sidebar)
+  const showSearch = async (type: SearchType) => {
+    await ensureSearchReady()
+    originalShowSearch(type)
+  }
+  
   const resolveUrl = _createUrlResolver(currentSlug)
   const fetchContent = _createFetchContentHandler(resolveUrl)
   const displayPreview = _createDisplayPreviewHandler(searchLayout, enablePreview, preview, fetchContent)
-  const formatForDisplay = _createFormatForDisplay(data, idDataMap)
-  const resultToHTML = _createResultCardGenerator(resolveUrl, hideSearch, displayPreview)
-  const displayResults = _createDisplayResultsHandler(results, preview, resultToHTML, displayPreview)
+  
+  // These need to be recreated after data loads
+  let formatForDisplay = _createFormatForDisplay(data, idDataMap)
+  let resultToHTML = _createResultCardGenerator(resolveUrl, hideSearch, displayPreview)
+  let displayResults = _createDisplayResultsHandler(results, preview, resultToHTML, displayPreview)
+  let onType = _createOnTypeHandler(searchLayout, formatForDisplay, displayResults, currentHoverRef)
+  
+  // Update handlers after data loads
+  const updateHandlers = () => {
+    const newData = contentIndexData || {}
+    const newIdDataMap = Object.keys(newData) as FullSlug[]
+    formatForDisplay = _createFormatForDisplay(newData, newIdDataMap)
+    resultToHTML = _createResultCardGenerator(resolveUrl, hideSearch, displayPreview)
+    displayResults = _createDisplayResultsHandler(results, preview, resultToHTML, displayPreview)
+    onType = _createOnTypeHandler(searchLayout, formatForDisplay, displayResults, currentHoverRef)
+    
+    // Re-attach input handler
+    searchBar.removeEventListener("input", onType)
+    searchBar.addEventListener("input", onType)
+  }
+
   const shortcutHandler = _createShortcutHandler(container, results, searchBar, hideSearch, showSearch, displayPreview, currentHoverRef)
-  const onType = _createOnTypeHandler(searchLayout, formatForDisplay, displayResults, currentHoverRef)
 
   // Attach event listeners
   document.addEventListener("keydown", shortcutHandler)
   window.addCleanup(() => document.removeEventListener("keydown", shortcutHandler))
-  searchButton.addEventListener("click", () => showSearch("basic"))
+  
+  searchButton.addEventListener("click", async () => {
+    await showSearch("basic")
+  })
   window.addCleanup(() => searchButton.removeEventListener("click", () => showSearch("basic")))
-  searchBar.addEventListener("input", onType)
-  window.addCleanup(() => searchBar.removeEventListener("input", onType))
+  
+  // Wrap input handler to ensure data is ready
+  const wrappedOnType = async (e: Event) => {
+    await ensureSearchReady()
+    updateHandlers()
+    onType(e)
+  }
+  searchBar.addEventListener("input", wrappedOnType)
+  window.addCleanup(() => searchBar.removeEventListener("input", wrappedOnType))
+  
   registerEscapeHandler(container, hideSearch)
-
-  // Populate search index
-  await _fillDocument(data)
 }
 
 /**
@@ -799,10 +919,9 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
  */
 async function initializeSearch(e: CustomEventMap["nav"]) {
   const currentSlug = e.detail.url
-  const data = await fetchData
   const searchElements = document.getElementsByClassName("search")
   for (const element of searchElements) {
-    await setupSearch(element, currentSlug, data)
+    await setupSearch(element, currentSlug)
   }
 }
 
