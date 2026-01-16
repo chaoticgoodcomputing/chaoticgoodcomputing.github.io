@@ -10,6 +10,7 @@
       "options": {
         "commands": [
           "nx run vault:sync",
+          "nx run vault:fix-links",
           "nx run vault:index-tags"
         ],
         "cwd": "content",
@@ -25,6 +26,17 @@
       "options": {
         "commands": [
           "node utils/extract-private-metadata.mjs"
+        ],
+        "parallel": false,
+        "cwd": "content"
+      }
+    },
+    "fix-links": {
+      "//": "Fix all internal wikilinks and markdown links to be relative to public/ directory root.",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/fix-vault-links.mjs"
         ],
         "parallel": false,
         "cwd": "content"

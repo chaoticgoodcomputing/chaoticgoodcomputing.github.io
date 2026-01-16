@@ -36,9 +36,3 @@ import { PDFViewer } from '@widgets/pdf-viewer'
   height="800px"
 />
 ```
-
-The PDF viewer supports:
-- Full PDF.js rendering for accurate display
-- Download button for offline access
-- Responsive sizing with configurable dimensions
-- Multiple pages with automatic scaling

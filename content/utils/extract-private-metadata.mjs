@@ -220,51 +220,6 @@ async function extractPrivateMetadata() {
   console.log(`   ✅ Extracted: ${extracted}`)
   console.log(`   ⏭️  Skipped: ${skipped}`)
   console.log(`   ❌ Errors: ${errors}`)
-
-  // Fix links in all public markdown files
-  await fixLinksInPublicFiles()
-}
-
-/**
- * Fix links in public markdown files by stripping private/ and public/ prefixes
- */
-async function fixLinksInPublicFiles() {
-  console.log(`\n🔗 Fixing links in public markdown files...`)
-
-  const publicFiles = await globby([`${PUBLIC_DIR}/**/*.md`], {
-    ignore: ["**/node_modules/**", "**/.git/**", "**/templates/**"],
-  })
-
-  let fixed = 0
-
-  for (const publicFilePath of publicFiles) {
-    try {
-      let content = await readFile(publicFilePath, "utf-8")
-      const originalContent = content
-
-      // Strip private/ and public/ prefixes from wikilinks
-      content = content.replace(/\[\[(?:private|public)\/([-\w\/\.]+)(\|[^\]]+)?\]\]/g, '[[$1$2]]')
-
-      // Strip private/ and public/ prefixes from relative markdown links (not external URLs)
-      content = content.replace(/(?<!:\/\/[^\s]*)\]\((?:private|public)\/([-\w\/\.]+)\)/g, ']($1)')
-
-      // Only write if changes were made
-      if (content !== originalContent) {
-        await writeFile(publicFilePath, content, "utf-8")
-        const relativePath = relative(PUBLIC_DIR, publicFilePath)
-        console.log(`  ✅ Fixed links in ${relativePath}`)
-        fixed++
-      }
-    } catch (error) {
-      console.error(`  ❌ Error fixing links in ${publicFilePath}:`, error instanceof Error ? error.message : error)
-    }
-  }
-
-  if (fixed > 0) {
-    console.log(`\n🔗 Fixed links in ${fixed} file(s)`)
-  } else {
-    console.log(`\n🔗 No link fixes needed`)
-  }
 }
 
 // Run the extraction
