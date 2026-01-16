@@ -120,11 +120,11 @@ const config: QuartzConfig = {
       },
     },
     theme: {
-      fontOrigin: "googleFonts",
+      fontOrigin: "local",
       cdnCaching: true,
       typography: {
         header: "Schibsted Grotesk",
-        body: "Source Sans Pro",
+        body: "Source Sans 3",
         code: "IBM Plex Mono",
       },
       colors: {

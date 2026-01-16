@@ -17,6 +17,29 @@
         "parallel": true
       }
     },
+    "_prepare-fonts": {
+      "//": "Downloads and prepares self-hosted Google Fonts with optional subsetting",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/fonts/download-fonts.mjs"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      },
+      "outputs": [ "{workspaceRoot}/quartz/static/fonts/" ]
+    },
+    "_subset-fonts": {
+      "//": "Subsets fonts to only characters used on site (requires glyphhanger and completed build)",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node utils/fonts/subset-fonts.mjs"
+        ],
+        "cwd": "{workspaceRoot}",
+        "parallel": false
+      }
+    },
     "_prebuild": {
       "//": "Internal target to run pre-build steps",
       "executor": "nx:run-commands",
@@ -28,6 +51,7 @@
         "parallel": false
       },
       "dependsOn": [
+        "site:_prepare-fonts",
         "vault:download-annotation-pdfs"
       ]
     },

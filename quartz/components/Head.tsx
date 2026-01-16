@@ -66,7 +66,7 @@ export default (() => {
         <meta charSet="utf-8" />
         {/* Set base URL for 404 page to ensure links resolve from root, not relative to error path */}
         {fileData.slug === "404" && <base href="/" />}
-        {cfg.theme.cdnCaching && cfg.theme.fontOrigin === "googleFonts" && (
+        {cfg.theme.fontOrigin === "googleFonts" && cfg.theme.cdnCaching && (
           <>
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -75,6 +75,9 @@ export default (() => {
               <link rel="stylesheet" href={googleFontSubsetHref(cfg.theme, cfg.pageTitle)} />
             )}
           </>
+        )}
+        {cfg.theme.fontOrigin === "local" && (
+          <link rel="stylesheet" href="/static/fonts/fonts.css" />
         )}
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
