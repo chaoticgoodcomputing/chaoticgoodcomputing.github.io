@@ -34,7 +34,6 @@ export interface Options {
 
   // Display
   showFileCount: boolean
-  expandCurrentFileTags: boolean
 }
 
 const defaultOptions: Options = {
@@ -45,7 +44,6 @@ const defaultOptions: Options = {
   fileNodeSort: "date-desc",
   excludeTags: [],
   showFileCount: true,
-  expandCurrentFileTags: true,
 }
 
 export type TagState = {
@@ -72,7 +70,6 @@ export default ((userOpts?: Partial<Options>) => {
           fileNodeSort: opts.fileNodeSort,
           excludeTags: opts.excludeTags,
           showFileCount: opts.showFileCount,
-          expandCurrentFileTags: opts.expandCurrentFileTags,
         })}
         data-use-tag-index="true"
       >
@@ -111,6 +108,7 @@ export default ((userOpts?: Partial<Options>) => {
         <template id="template-file-node">
           <li>
             <a href="#" class="file-link">
+              <span class="file-icon"></span>
               <span class="file-title"></span>
             </a>
           </li>

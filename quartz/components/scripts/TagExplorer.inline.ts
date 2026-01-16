@@ -2,6 +2,7 @@ import { FullSlug, resolveRelative } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import type { TagIndex } from "../../util/tags"
 import { normalizeTag } from "../../util/tags"
+import { IconService } from "../../util/iconService"
 
 // Global variable injected by renderPage.tsx
 declare const fetchTagData: Promise<any>
@@ -17,7 +18,6 @@ interface ParsedOptions {
   fileNodeSort: string
   excludeTags: string[]
   showFileCount: boolean
-  expandCurrentFileTags: boolean
 }
 
 /**
@@ -88,60 +88,15 @@ function _isTagFiltered(tag: string, excludeTags: string[]): boolean {
 }
 
 /**
- * Check if a tag node has the given file in its files list
- */
-function _hasFileInTag(tagName: string, slug: FullSlug, contentIndex: Map<FullSlug, ContentDetails>): boolean {
-  for (const [fileSlug, details] of contentIndex) {
-    if (fileSlug === slug && details.tags.includes(tagName)) {
-      return true
-    }
-  }
-  return false
-}
-
-/**
- * Check if a tag node has the given file in any descendant tag
- */
-function _hasFileInDescendantTags(
-  tag: string,
-  slug: FullSlug,
-  tagIndex: TagIndex,
-  contentIndex: Map<FullSlug, ContentDetails>,
-): boolean {
-  const metadata = tagIndex.tags[tag]
-  if (!metadata) return false
-
-  // Check direct files with this tag
-  if (_hasFileInTag(tag, slug, contentIndex)) return true
-
-  // Check descendants
-  for (const descendant of metadata.descendants) {
-    if (_hasFileInTag(descendant, slug, contentIndex)) return true
-  }
-
-  return false
-}
-
-/**
- * Determine if a tag should be expanded based on state and options
+ * Determine if a tag should be expanded based on saved state
  */
 function _shouldExpandTag(
   tagName: string,
-  currentSlug: FullSlug,
-  tagIndex: TagIndex,
-  contentIndex: Map<FullSlug, ContentDetails>,
   opts: ParsedOptions,
 ): boolean {
   const savedState = currentTagExplorerState.find((item) => item.path === tagName)
   const isCollapsed = savedState?.collapsed ?? opts.folderDefaultState === "collapsed"
-
-  if (!isCollapsed) return true
-
-  if (opts.expandCurrentFileTags) {
-    return _hasFileInDescendantTags(tagName, currentSlug, tagIndex, contentIndex)
-  }
-
-  return false
+  return !isCollapsed
 }
 
 /**
@@ -222,17 +177,33 @@ function _createFileNodeSortFn(strategy: string) {
 /**
  * Create a file node list item from a ContentDetails object
  */
-function _createFileNode(currentSlug: FullSlug, fileSlug: FullSlug, details: ContentDetails): HTMLLIElement {
-  const template = document.getElementById("template-file-node") as HTMLTemplateElement
+async function _createFileNode(currentSlug: FullSlug, fileSlug: FullSlug, details: ContentDetails): Promise<HTMLLIElement> {
+  const template = document.getElementById("template-file-node") as HTMLTemplateTemplate
   const clone = template.content.cloneNode(true) as DocumentFragment
   const li = clone.querySelector("li") as HTMLLIElement
   const a = li.querySelector("a") as HTMLAnchorElement
+  const iconSpan = li.querySelector(".file-icon") as HTMLElement
+  const titleSpan = li.querySelector(".file-title") as HTMLElement
 
   a.href = resolveRelative(currentSlug, details.slug)
   a.dataset.for = details.slug
-  a.textContent = details.title
+  titleSpan.textContent = details.title
 
   if (currentSlug === details.slug) a.classList.add("active")
+
+  // Add lock icon if post has #private tag
+  if (details.tags.includes("private")) {
+    const iconData = await IconService.getIcon("mdi:lock")
+    if (iconData) {
+      iconSpan.innerHTML = iconData.svgContent
+      const svg = iconSpan.querySelector("svg") as SVGElement
+      if (svg) {
+        svg.setAttribute("width", "12")
+        svg.setAttribute("height", "12")
+        svg.style.marginRight = "4px"
+      }
+    }
+  }
 
   return li
 }
@@ -307,7 +278,7 @@ function _buildTagAsButton(
 /**
  * Append child tag nodes and file nodes to a parent list
  */
-function _appendChildNodes(
+async function _appendChildNodes(
   ul: HTMLUListElement,
   currentSlug: FullSlug,
   tagName: string,
@@ -323,14 +294,14 @@ function _appendChildNodes(
 
   for (const childTag of children) {
     if (_isTagFiltered(childTag, opts.excludeTags)) continue
-    const childNode = _createTagNode(currentSlug, childTag, tagIndex, contentIndex, opts)
+    const childNode = await _createTagNode(currentSlug, childTag, tagIndex, contentIndex, opts)
     ul.appendChild(childNode)
   }
 
   // Add files with this tag
   for (const [fileSlug, details] of contentIndex) {
     if (details.tags.includes(tagName)) {
-      const fileNode = _createFileNode(currentSlug, fileSlug, details)
+      const fileNode = await _createFileNode(currentSlug, fileSlug, details)
       ul.appendChild(fileNode)
     }
   }
@@ -339,13 +310,13 @@ function _appendChildNodes(
 /**
  * Create a tag node list item using TagIndex metadata
  */
-function _createTagNode(
+async function _createTagNode(
   currentSlug: FullSlug,
   tagName: string,
   tagIndex: TagIndex,
   contentIndex: Map<FullSlug, ContentDetails>,
   opts: ParsedOptions,
-): HTMLLIElement {
+): Promise<HTMLLIElement> {
   console.log("_createTagNode:", tagName)
   const template = document.getElementById("template-tag-node") as HTMLTemplateElement
   const clone = template.content.cloneNode(true) as DocumentFragment
@@ -365,12 +336,12 @@ function _createTagNode(
   }
 
   console.log("_createTagNode: checking if should expand")
-  if (_shouldExpandTag(tagName, currentSlug, tagIndex, contentIndex, opts)) {
+  if (_shouldExpandTag(tagName, opts)) {
     tagOuter.classList.add("open")
   }
 
   console.log("_createTagNode: appending child nodes")
-  _appendChildNodes(ul, currentSlug, tagName, tagIndex, contentIndex, opts)
+  await _appendChildNodes(ul, currentSlug, tagName, tagIndex, contentIndex, opts)
 
   return li
 }
@@ -494,7 +465,7 @@ function _initializeTagState(tagIndex: TagIndex, opts: ParsedOptions) {
 /**
  * Render the tag tree into the explorer list using TagIndex
  */
-function _renderTagTree(
+async function _renderTagTree(
   ul: Element,
   currentSlug: FullSlug,
   tagIndex: TagIndex,
@@ -516,7 +487,7 @@ function _renderTagTree(
 
   for (const tag of topLevelTags) {
     console.log("_renderTagTree: Creating node for tag =", tag)
-    const node = _createTagNode(currentSlug, tag, tagIndex, contentIndex, opts)
+    const node = await _createTagNode(currentSlug, tag, tagIndex, contentIndex, opts)
     fragment.appendChild(node)
   }
 
@@ -560,6 +531,9 @@ async function setupTagExplorer(currentSlug: FullSlug) {
   const allExplorers = document.querySelectorAll("div.tag-explorer") as NodeListOf<HTMLElement>
 
   try {
+    // Preload lock icon for private posts
+    await IconService.preloadIcons(["mdi:lock"])
+    
     // Fetch TagIndex and content data once
     console.log("TagExplorer: Fetching TagIndex...")
     const tagIndex = (await fetchTagData) as TagIndex
@@ -582,7 +556,7 @@ async function setupTagExplorer(currentSlug: FullSlug) {
       const explorerUl = explorer.querySelector(".tag-explorer-ul")
       if (!explorerUl) continue
 
-      _renderTagTree(explorerUl, currentSlug, tagIndex, contentIndex, opts)
+      await _renderTagTree(explorerUl, currentSlug, tagIndex, contentIndex, opts)
       _restoreScrollPosition(explorerUl)
       _attachEventListeners(explorer, opts)
     }

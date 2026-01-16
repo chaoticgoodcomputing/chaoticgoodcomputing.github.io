@@ -1,11 +1,14 @@
 ---
 title: AI Policy
+description: |
+  I may not have any control about how AI affects me, but I can at least make a policy for how I use it.
 date: 2026-01-04
 tags:
   - engineering/ai
   - horticulture
   - horticulture/seasons/systems
 ---
+
 Since we're now in the era of [[content/notes/hostage-negotiations|AI slop]], it feels necessary to have a general AI policy available for this site.
 
 This site originated as part of a note-taking habit I formed for my [[tags/horticulture/seasons/rhythm/index|season of rhythm]]. I picked the habit back up as part of Rhythm's follow-up, [[tags/horticulture/seasons/systems/index|season of systems]]. As a software engineer, it's become clear to me that LLM systems will continue to be an essential part of the trade moving forward. That said, I want to keep this site a space where I can practice writing, and develop other personal and professional development skills.

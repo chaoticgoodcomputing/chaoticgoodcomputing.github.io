@@ -72,13 +72,7 @@ export const defaultLocalGraphOptions: Partial<D3Config> = {
  * - Modify graph behavior by overriding defaultGraphOptions properties
  */
 export const indexLayout: PageLayout = {
-  pageHeader: [
-    Component.IndexTitle(),
-    Component.FullGraph({
-      globalGraph: defaultGraphOptions,
-      height: "500px", // Adjust this value to change graph height
-    }),
-  ],
+  pageHeader: [],
   beforeBody: [
     Component.ArticleTitle(),
     Component.ContentMeta(),
@@ -106,17 +100,21 @@ export const indexLayout: PageLayout = {
     }),
   ],
   body: [
-    Component.Content()
+    Component.Content(),
+    Component.FullGraph({
+      globalGraph: defaultGraphOptions,
+      height: "500px", // Adjust this value to change graph height
+    }),
+    Component.PostListing({
+      excludeTags: ["private"],
+      collapsedItemCount: 5,
+      showEmptyMessage: false,
+    }),
   ],
   right: [
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
   afterBody: [
-    Component.PostListing({
-      excludeTags: ["private"],
-      collapsedItemCount: 5,
-      showEmptyMessage: false,
-    }),
   ],
 }

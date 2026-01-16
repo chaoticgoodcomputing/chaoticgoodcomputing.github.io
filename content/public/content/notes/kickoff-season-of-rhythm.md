@@ -3,7 +3,7 @@ title: "Kickoff: Season of Rhythm"
 description: |
   "Fight or flight" is a rough way to treat white-collar life. My Season of Rhythm is dedicated to
   transitioning from constant sprints to slow-and-steady.
-date: 2024-02-27
+date: 2024-02-25
 tags:
   - horticulture/seasons/rhythm
   - horticulture
