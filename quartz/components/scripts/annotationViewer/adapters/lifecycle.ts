@@ -1,5 +1,4 @@
 import { extractPageText } from "../core/textExtraction"
-import { loadAnnotationsData } from "../ui/loader"
 import { createPageWrapper, renderPageToCanvas } from "../ui/pdfRenderer"
 import { setupScrollSync } from "./scrollSync"
 
@@ -16,26 +15,31 @@ export async function initPDFViewer(): Promise<void> {
   const container = viewer.querySelector("#pdf-viewer")
   if (!container) return
 
-  // Load annotations data
-  loadAnnotationsData()
-
   try {
     const loadingTask = window.pdfjsLib.getDocument(pdfUrl)
     const pdf = await loadingTask.promise
 
     container.innerHTML = ""
 
-    // Calculate scale to fit container width
-    const firstPage = await pdf.getPage(1)
-    const baseViewport = firstPage.getViewport({ scale: 1.0 })
+    // Calculate scale to fit container width based on widest page
+    // This ensures mixed portrait/landscape pages all fit the same container
     const containerWidth = (container.parentElement?.clientWidth || 800) - 32 // Account for padding
-    const scale = containerWidth / baseViewport.width
+    
+    // Find the maximum page width across all pages
+    let maxPageWidth = 0
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i)
+      const viewport = page.getViewport({ scale: 1.0 })
+      maxPageWidth = Math.max(maxPageWidth, viewport.width)
+    }
+    
+    const scale = containerWidth / maxPageWidth
 
     console.log(
       "[PDF] Container width:",
       containerWidth,
-      "PDF width:",
-      baseViewport.width,
+      "Max page width:",
+      maxPageWidth,
       "Scale:",
       scale,
     )

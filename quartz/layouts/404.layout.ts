@@ -8,9 +8,7 @@ import { defaultGraphOptions } from "./index.layout"
  * to help users find their way back to site content.
  */
 export const notFoundLayout: PageLayout = {
-  pageHeader: [
-    Component.NotFoundTitle(),
-  ],
+  pageHeader: [ ],
   beforeBody: [],
   body: [
     Component.NotFound(),

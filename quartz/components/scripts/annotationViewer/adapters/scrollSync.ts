@@ -1,4 +1,63 @@
-import { findTextPositionInPDF } from "../core/textExtraction"
+import { findPageForOffset } from "../core/textExtraction"
+
+/**
+ * Find the scroll position of text using TextLayer spans
+ */
+function findTextScrollPosition(startOffset: number, endOffset: number): number | null {
+  if (!window.pdfTextData) return null
+
+  // Find which page contains this text
+  const pageData = window.pdfTextData.find(
+    (p) => startOffset >= p.startOffset && startOffset < p.endOffset,
+  )
+
+  if (!pageData) return null
+
+  const container = document.querySelector("#pdf-viewer")
+  const pageWrapper = container?.querySelector(
+    `.pdf-page-wrapper[data-page-num="${pageData.pageNum}"]`,
+  ) as HTMLElement
+  const textLayerDiv = pageWrapper?.querySelector(".textLayer") as HTMLElement
+
+  if (!textLayerDiv) return null
+
+  // Get all text spans from the TextLayer
+  const textSpans = Array.from(textLayerDiv.querySelectorAll("span"))
+
+  // Calculate which character in the page corresponds to the start
+  const pageStartChar = startOffset - pageData.startOffset
+
+  // Find the span containing the start position
+  let currentChar = 0
+  let targetSpan: HTMLElement | null = null
+
+  for (const span of textSpans) {
+    const spanText = span.textContent || ""
+    const spanStart = currentChar
+    const spanEnd = currentChar + spanText.length
+
+    if (pageStartChar >= spanStart && pageStartChar < spanEnd) {
+      targetSpan = span
+      break
+    }
+
+    currentChar = spanEnd
+  }
+
+  if (!targetSpan) return null
+
+  // Get the span's position relative to the PDF container
+  const pdfContainer = document.querySelector(".annotation-pdf-container") as HTMLElement
+  if (!pdfContainer) return null
+
+  const spanRect = targetSpan.getBoundingClientRect()
+  const containerRect = pdfContainer.getBoundingClientRect()
+
+  // Calculate scroll position (accounting for current scroll offset)
+  const scrollPosition = pdfContainer.scrollTop + (spanRect.top - containerRect.top)
+
+  return scrollPosition
+}
 
 /**
  * Tracks which panel is currently being scrolled by the user
@@ -17,23 +76,25 @@ export function setupScrollSync(viewer: Element): void {
 
   if (annotationItems.length === 0 || !pdfContainer || !sidebar) return
 
-  // Position annotations based on PDF text positions
+  // Position annotations based on PDF text positions using TextLayer
   annotationItems.forEach((annotation) => {
     const start = parseInt(annotation.getAttribute("data-start") || "0")
     const end = parseInt(annotation.getAttribute("data-end") || "0")
 
     if (start && end && window.pdfTextData) {
-      const position = findTextPositionInPDF(start, end)
-      if (position) {
-        annotation.setAttribute("data-pdf-y", position.y.toString())
-        annotation.setAttribute("data-pdf-page", position.pageNum.toString())
+      const scrollY = findTextScrollPosition(start, end)
+      const pageNum = findPageForOffset(start)
+      
+      if (scrollY !== null && pageNum !== null) {
+        annotation.setAttribute("data-pdf-y", scrollY.toString())
+        annotation.setAttribute("data-pdf-page", pageNum.toString())
         console.log(
           "[Annotation]",
           annotation.getAttribute("data-annotation-id"),
           "at page",
-          position.pageNum,
-          "y:",
-          position.y,
+          pageNum,
+          "scroll y:",
+          scrollY,
         )
       }
     }

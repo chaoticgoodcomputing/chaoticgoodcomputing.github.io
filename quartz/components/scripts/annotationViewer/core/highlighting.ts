@@ -1,8 +1,7 @@
 import { Annotation } from "./types"
 
 /**
- * Render highlights for an annotation's quoted text
- * Uses page-width bars covering the approximate vertical space
+ * Render highlights for an annotation's quoted text using TextLayer positioning
  */
 export function renderHighlights(annotation: Annotation): void {
   // Clear existing highlights
@@ -21,52 +20,65 @@ export function renderHighlights(annotation: Annotation): void {
   )
   if (!textPositionSelector) return
 
-  const startOffset = textPositionSelector.start
-  const endOffset = textPositionSelector.end
-  const textLength = endOffset! - startOffset!
+  const startOffset = textPositionSelector.start!
+  const endOffset = textPositionSelector.end!
   const pdfTextData = window.pdfTextData
-  const container = document.querySelector("#pdf-viewer")
 
-  if (!pdfTextData || !container) return
+  if (!pdfTextData) return
 
   // Find the page where the annotation starts
   const pageData = pdfTextData.find(
-    (p) => startOffset! >= p.startOffset && startOffset! < p.endOffset,
+    (p) => startOffset >= p.startOffset && startOffset < p.endOffset,
   )
   if (!pageData) return
 
-  // Get the starting position
-  const pageStartOffset = startOffset! - pageData.startOffset
-  const startPos = pageData.positions[pageStartOffset]
-  if (!startPos) return
-
-  // Get highlight layer for this page
-  const pageWrapper = container.querySelector(
+  // Get the text layer for this page
+  const container = document.querySelector("#pdf-viewer")
+  const pageWrapper = container?.querySelector(
     `.pdf-page-wrapper[data-page-num="${pageData.pageNum}"]`,
   )
-  const highlightLayer = pageWrapper?.querySelector(".pdf-highlight-layer")
-  const canvas = pageWrapper?.querySelector(".pdf-page")
-  if (!highlightLayer || !canvas) return
+  const textLayerDiv = pageWrapper?.querySelector(".textLayer") as HTMLElement
+  const highlightLayer = pageWrapper?.querySelector(".pdf-highlight-layer") as HTMLElement
 
-  // Get the actual canvas dimensions and position
-  const canvasRect = canvas.getBoundingClientRect()
-  const layerRect = highlightLayer.getBoundingClientRect()
+  if (!textLayerDiv || !highlightLayer) return
 
-  // Calculate offset to match canvas centering
-  const leftOffset = canvasRect.left - layerRect.left
+  // Get all text spans from the TextLayer
+  const textSpans = Array.from(textLayerDiv.querySelectorAll("span"))
+  
+  // Calculate which characters in the page correspond to the annotation
+  const pageStartChar = startOffset - pageData.startOffset
+  const pageEndChar = Math.min(endOffset - pageData.startOffset, pageData.text.length)
 
-  // Estimate height based on text length
-  // Assume approximately 80 characters per line, 12px line height
-  const estimatedLines = Math.ceil(textLength / 80)
-  const lineHeight = 12
-  const highlightHeight = estimatedLines * lineHeight * 1.5 // Add some padding
+  // Find text spans that overlap with the annotation range
+  let currentChar = 0
+  const overlappingSpans: HTMLElement[] = []
 
-  // Create a page-width highlight bar matching canvas centering
-  const highlight = document.createElement("div")
-  highlight.className = "pdf-text-highlight"
-  highlight.style.left = leftOffset + "px"
-  highlight.style.top = pageData.viewport.height - startPos.y + 9 * lineHeight + "px"
-  highlight.style.width = canvasRect.width + "px"
-  highlight.style.height = highlightHeight + "px"
-  highlightLayer.appendChild(highlight)
+  for (const span of textSpans) {
+    const spanText = span.textContent || ""
+    const spanStart = currentChar
+    const spanEnd = currentChar + spanText.length
+
+    // Check if this span overlaps with the annotation range
+    if (spanStart < pageEndChar && spanEnd > pageStartChar) {
+      overlappingSpans.push(span)
+    }
+
+    currentChar = spanEnd
+  }
+
+  // Create highlights from the bounding boxes of overlapping spans
+  for (const span of overlappingSpans) {
+    const rect = span.getBoundingClientRect()
+    const layerRect = highlightLayer.getBoundingClientRect()
+
+    // Position highlight relative to the highlight layer
+    const highlight = document.createElement("div")
+    highlight.className = "pdf-text-highlight"
+    highlight.style.position = "absolute"
+    highlight.style.left = `${rect.left - layerRect.left}px`
+    highlight.style.top = `${rect.top - layerRect.top}px`
+    highlight.style.width = `${rect.width}px`
+    highlight.style.height = `${rect.height}px`
+    highlightLayer.appendChild(highlight)
+  }
 }

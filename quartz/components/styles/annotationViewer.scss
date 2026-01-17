@@ -59,12 +59,41 @@
   margin: 0 auto 1rem auto;
 }
 
+// TextLayer styling (for accurate text positioning and selection)
+.textLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 1; // Visible for text selection
+  line-height: 1.0;
+  pointer-events: auto; // Enable text selection
+
+  >span {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+  }
+
+  ::selection {
+    background: rgba(0, 100, 255, 0.3);
+  }
+
+  br::selection {
+    background: transparent;
+  }
+}
+
 .pdf-highlight-layer {
   position: absolute;
   top: 0;
   left: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2; // Above text layer
 }
 
 .pdf-text-highlight {
